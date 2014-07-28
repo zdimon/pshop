@@ -1,0 +1,12 @@
+Устанавливаем необходимое ПО
+sudo apt-get install python-virtualenv python-dev
+
+Создаем виртуальное окружение
+virtualenv pshop_ve
+
+Клонируем проект
+
+
+Установка nodejs и js зависимостей
+nodeenv --python-virtualenv --verbose --requirements=node.txt
+bower install

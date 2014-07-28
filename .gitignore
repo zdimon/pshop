@@ -1,0 +1,9 @@
+.idea
+*.pyc
+/media
+local.py
+db.sqlite3
+*~
+static/thumb/
+/backup
+static/dajaxice/dajaxice.core.js

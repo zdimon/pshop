@@ -1,0 +1,9 @@
+{
+  "name": "shop",
+  "version": "0.0.1",
+  "directory" : "main/static/components",
+  "dependencies": {
+    "jquery": "~2.0.3",
+    "bootstrap": "3.2.0"
+  }
+}
