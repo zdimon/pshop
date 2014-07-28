@@ -1,2 +1,5 @@
 Django
 south
+nodeenv
+django-mptt
+Pillow

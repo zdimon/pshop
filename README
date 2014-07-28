@@ -4,9 +4,24 @@ sudo apt-get install python-virtualenv python-dev
 Создаем виртуальное окружение
 virtualenv pshop_ve
 
-Клонируем проект
+Устанавливаем проект
+cd pshop_ve
+source ./bin/activate
+git clone https://github.com/zdimon/pshop.git
+cd pshop
+pip install -r requirements.txt
 
 
-Установка nodejs и js зависимостей
+Установка nodejs и библиотеки jquery и bootstrap
 nodeenv --python-virtualenv --verbose --requirements=node.txt
 bower install
+
+Создание таблиц
+chmod +x manage.py
+./manage.py syncdb
+./manage.py migrate
+
+Запуск сервера разработки
+./manage.py runserver
+
+
