@@ -1,11 +1,9 @@
 {% load staticfiles %}
+{% load catalog_tag %}
 <html lang="en">
 <head>
 <link rel="stylesheet" type="text/css" href="{% static "library/bootstrap/dist/css/bootstrap.css" %}">
-<script src="{% static "/static/library/underscore/underscore.js" %}"></script>
-<script src="{% static "/static/library/angular/angular.js" %}"></script>
-<script src="{% static "/static/library/angular-resource/angular-resource.js" %}"></script>
-<script src="{% static "js/script.js" %}"></script>
+<script src="{% static "/static/library/jquery/jquery.min.js" %}"></script>
 </head>
 <body ng-app="{% block ng_app %}example.app.static{% endblock %}">
 
@@ -14,19 +12,12 @@
           </div>
       </div>
 
-<div class="row" style="margin-top: 60px;">
-    <div class="col-md-4">
-        <div  ng-controller="{% block ng_controller %}AppController{% endblock %}">{% block content %}
-        {% verbatim %}
-            <div class="panel" ng-repeat="c in catalog">
-                <p class="well">{{ c.name }}</p>
-            </div>
-        {% endverbatim %}
-        {% endblock %}
-        </div>
+<div class="row" style="margin: 60px 10px 0 10px; ">
+    <div class="col-md-3 well">
+        {% catalog_tag %}
     </div>
 
-    <div class="col-md-8">
+    <div class="col-md-9">
         <div class="well">
 
         </div>
