@@ -1,3 +1,7 @@
+Сайт продажи электронных версий изданий, использующий API сайта pressa.ru
+
+Инструкция по развертыванию проекта на сервере (Ubuntu 12)
+
 Устанавливаем необходимое ПО
 sudo apt-get install python-virtualenv python-dev
 
@@ -20,6 +24,20 @@ bower install
 chmod +x manage.py
 ./manage.py syncdb
 ./manage.py migrate
+
+Загрузка каталога
+./manage.py load_catalog
+
+Загрузка изданий
+./manage.py load_journal
+
+Загрузка выпусков
+./manage.py load_issues
+
+Загрузка обложек
+./manage.py load_journal_cover
+
+
 
 Запуск сервера разработки
 ./manage.py runserver

@@ -4,3 +4,4 @@ nodeenv
 django-mptt
 Pillow
 pytils
+requests==2.3.0

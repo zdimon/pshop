@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load simplepaginator %}
+
+{% block 'content' %}
+    <ul>
+    {% for i in object_list %}
+        <li><a href="{{ i.get_absolute_url }}">{{ i }}</a></li>
+    {% endfor %}
+    </ul>
+
+     {% if is_paginated %}
+       {% simplepaginator %}
+    {% endif %}
+
+{% endblock %}
