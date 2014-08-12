@@ -2,7 +2,24 @@
 
 
 {% block 'content' %}
+
       <h1>{{ journal }}</h1>
+      <div class="col-md-3">
        {{ journal.get_cover }}
+      </div>
+      <div class="col-md-9">
+      <h3>Стоимость: {{ journal.price }} руб</h3>
       <p>{{ journal.description }}</p>
+      </div>
+      <div style="clear: both"></div>
+
+      <h2>Выпуски</h2>
+      {% for i in issues %}
+        <div class="journal_item">
+          {{ i.get_cover }}
+          <p>{{ i.name }}</p>
+        </div>
+      {% endfor %}
+       <div style="clear: both"></div>
+
 {% endblock %}

@@ -20,6 +20,8 @@ class JournalListView(ListView):
         qs = qs.filter(category__in=(cat.pk,))
         return qs
 
+
+
 class JournalDetailView(DetailView):
     model = Journal
     template_name = 'catalog/journal_detail.html'
@@ -32,6 +34,10 @@ class JournalDetailView(DetailView):
         except ObjectDoesNotExist:
             raise Http404('No found matching the query')
         return obj
+    def get_context_data(self, **kwargs):
+        context = super(JournalDetailView, self).get_context_data(**kwargs)
+        context['issues'] = self.object.issue_set.all()
+        return context
 
 def show(request,slug):
     return HttpResponse("OK %s" % slug)

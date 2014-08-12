@@ -66,7 +66,7 @@ class Journal(models.Model):
         try:
             return mark_safe('<img src="%s" />' % self.cover.url)
         except:
-            return ''
+            return mark_safe('<img src="%s" />' % '/media/journal_cover/plug.jpg')
 
     def get_absolute_url(self):
        return reverse("journal", kwargs={"slug": self.name_slug})
@@ -79,3 +79,10 @@ class Issue(models.Model):
     cover = models.ImageField(upload_to='issue_cover', verbose_name=_('Issue cover'), blank=True)
     name = models.CharField(verbose_name=_('Name'),max_length=250, blank=True)
     date = models.DateTimeField(blank=True, null=True)
+    original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
+    @property
+    def get_cover(self):
+        try:
+            return mark_safe('<img src="%s" />' % self.cover.url)
+        except:
+            return ''

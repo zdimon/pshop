@@ -6,3 +6,4 @@ Pillow
 pytils
 requests==2.3.0
 psycopg2
+bootstrap-admin==0.3.0

@@ -1,0 +1,28 @@
+.journal_item
+{
+  float: left;
+  width: 247px;
+  height: 360px;
+  border: 1px solid silver;
+  margin: 2px;
+}
+
+.journal_item p
+{
+  text-align: center;
+  padding-top: 5px;
+}
+
+.journal_item a img
+{
+  padding-left: 20px;
+  padding-top: 20px;
+  text-align: center;
+}
+
+.journal_item img
+{
+  padding-left: 20px;
+  padding-top: 20px;
+  text-align: center;
+}
