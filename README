@@ -40,7 +40,8 @@ chmod +x manage.py
 Загрузка соответствий изданий и категорий каталога
 ./manage.py load_journal_catalog
 
-
+Загрузка выпусков
+./manage.py load_journal_issue
 
 
 Запуск сервера разработки
