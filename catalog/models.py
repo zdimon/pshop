@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from mptt.models import TreeForeignKey, MPTTModel
 import pytils
 from django.core.urlresolvers import reverse
+from django.utils.safestring import mark_safe
 
 class Catalog(MPTTModel):
     JOURNAL_TYPE_CHOICES = (
@@ -53,10 +54,19 @@ class Journal(models.Model):
     price = models.DecimalField( verbose_name=_('Price'), max_digits= 12, decimal_places= 2)
     cover = models.ImageField(upload_to='journal_cover', verbose_name=_('Journal cover'), blank=True)
     original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
-
+    category = models.ManyToManyField(Catalog,
+                                      blank=True,
+                                      verbose_name=_(u'Catalogs'))
     def save(self, **kwargs):
         self.name_slug = pytils.translit.slugify(self.name)
         return super(Journal, self).save(**kwargs)
+
+    @property
+    def get_cover(self):
+        try:
+            return mark_safe('<img src="%s" />' % self.cover.url)
+        except:
+            return ''
 
     def get_absolute_url(self):
        return reverse("journal", kwargs={"slug": self.name_slug})

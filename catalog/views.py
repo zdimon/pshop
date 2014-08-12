@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.views.generic import ListView, DetailView
-from catalog.models import Journal
+from catalog.models import Journal, Catalog
 from django.http import Http404
 from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
@@ -13,6 +13,12 @@ class JournalListView(ListView):
     model = Journal
     template_name = 'catalog/journal_list.html'
     paginate_by = 20
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        category_slug = self.kwargs['slug']
+        cat = Catalog.objects.get(name_slug=category_slug)
+        qs = qs.filter(category__in=(cat.pk,))
+        return qs
 
 class JournalDetailView(DetailView):
     model = Journal

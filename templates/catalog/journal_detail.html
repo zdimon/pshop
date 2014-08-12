@@ -3,5 +3,6 @@
 
 {% block 'content' %}
       <h1>{{ journal }}</h1>
+       {{ journal.get_cover }}
       <p>{{ journal.description }}</p>
 {% endblock %}

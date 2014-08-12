@@ -37,6 +37,10 @@ chmod +x manage.py
 Загрузка обложек
 ./manage.py load_journal_cover
 
+Загрузка соответствий изданий и категорий каталога
+./manage.py load_journal_catalog
+
+
 
 
 Запуск сервера разработки
