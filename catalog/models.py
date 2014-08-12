@@ -23,6 +23,7 @@ class Catalog(MPTTModel):
                               blank=True, null=True)
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='sub_category')
+    original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
     def __unicode__(self):
         return self.name
 
@@ -35,3 +36,36 @@ class Catalog(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['name']
+
+class Journal(models.Model):
+    JOURNAL_TYPE_CHOICES = (
+        ('magazine', _(u'Журнал')),
+        ('paper', _(u'Газета')),
+        ('book', _(u'Книга')),
+    )
+    name = models.CharField(verbose_name=_('Name'),max_length=250, blank=True)
+    name_slug = models.CharField(verbose_name=_('Name slug'),max_length=250, blank=True)
+    description = models.TextField(verbose_name=_('Description'),max_length=250, blank=True)
+    journal_type = models.CharField(verbose_name=_(u'type of journal (magazine, paper or book)'),
+                                    choices=JOURNAL_TYPE_CHOICES,
+                                    default='magazine',
+                                    max_length=10)
+    price = models.DecimalField( verbose_name=_('Price'), max_digits= 12, decimal_places= 2)
+    cover = models.ImageField(upload_to='journal_cover', verbose_name=_('Journal cover'), blank=True)
+    original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
+
+    def save(self, **kwargs):
+        self.name_slug = pytils.translit.slugify(self.name)
+        return super(Journal, self).save(**kwargs)
+
+    def get_absolute_url(self):
+       return reverse("journal", kwargs={"slug": self.name_slug})
+
+    def __unicode__(self):
+        return self.name
+
+class Issue(models.Model):
+    journal =  models.ForeignKey(Journal, verbose_name=_('Journal'))
+    cover = models.ImageField(upload_to='issue_cover', verbose_name=_('Issue cover'), blank=True)
+    name = models.CharField(verbose_name=_('Name'),max_length=250, blank=True)
+    date = models.DateTimeField(blank=True, null=True)
