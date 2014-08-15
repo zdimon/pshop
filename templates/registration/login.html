@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block 'content' %}
+
+
+<div class="regAccount">
+    <div class="title">Sign in</div>
+    <!-- Login form -->
+    {% if form.non_field_errors %}
+    <ul class='errorlist'>
+        {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="col-md-4 login-signup-page">
+    <form method="post" action="{% url 'django.contrib.auth.views.login' %}" class="form_class">
+            {% csrf_token %}
+            <h2> Вход на сайт </h2>
+
+                    <div class="input-group margin-bottom-20">
+                        <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                        <input name="username" type="text" class="form-control" placeholder="{% trans 'Логин' %}">
+                    </div>
+                    </br>
+                    <div class="input-group margin-bottom-20">
+                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                        <input type="password" name="password"  class="form-control" placeholder="{% trans "Пароль" %}">
+
+
+                    </div>
+                     </br>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <button type="submit" class="btn btn-success pull-right">{% trans "Login" %}</button>
+                        </div>
+                    </div>
+    </form>
+        <a href="{% url 'registration_register' %}" class="login-signup-forgot-link">{% trans "Регистрация" %}</a>
+    </div>
+    <div style="clear: both"></div>
+   <!-- /Login form -->
+</div>
+
+
+
+<script type="text/javascript">
+document.getElementById('id_username').focus()
+</script>
+<!--
+ <br/><br/>
+<u>
+    <li><a href="{% url 'auth_password_reset' %}">Забыли пароль?</a></li>
+    <li><a href="{% url 'registration_register' %}">Регистрация</a></li>
+</ul>
+-->
+
+
+{% endblock %}

@@ -5,6 +5,7 @@ from mptt.models import TreeForeignKey, MPTTModel
 import pytils
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
+from django.contrib.auth.models import User
 
 class Catalog(MPTTModel):
     JOURNAL_TYPE_CHOICES = (
@@ -80,9 +81,17 @@ class Issue(models.Model):
     name = models.CharField(verbose_name=_('Name'),max_length=250, blank=True)
     date = models.DateTimeField(blank=True, null=True)
     original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
+    def __unicode__(self):
+        return self.journal.name+u' номер '+self.name
     @property
     def get_cover(self):
         try:
             return mark_safe('<img src="%s" />' % self.cover.url)
         except:
             return ''
+
+class Purchase(models.Model):
+    issue =  models.ForeignKey(Issue, verbose_name=_('Issue'))
+    user =   models.ForeignKey(User, verbose_name=_('User'))
+    price = models.DecimalField( verbose_name=_('Price'), max_digits= 12, decimal_places= 2)
+    created = models.DateTimeField(auto_now_add=True, auto_now=True, blank=True, null=True)

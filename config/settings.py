@@ -48,6 +48,11 @@ INSTALLED_APPS = (
     'south',
     'catalog',
     'mptt',
+    'registration',
+    'dbbackup',
+    'djsupervisor',
+    'djcelery',
+    'backup',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -72,7 +77,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
@@ -90,3 +95,21 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+LOGIN_REDIRECT_URL = '/'
+
+import djcelery
+djcelery.setup_loader()
+BROKER_URL = 'redis://localhost:6379/0'
+
+from celery.schedules import crontab
+from datetime import timedelta
+CELERYBEAT_SCHEDULE = {
+
+        #'backup': {'task': 'backup.tasks.backup','schedule': crontab(minute=0, hour=0)},
+         'backup': {'task': 'backup.tasks.backup','schedule': crontab()},
+
+}
+#CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+DBBACKUP_STORAGE = 'dbbackup.storage.filesystem_storage'
+DBBACKUP_FILESYSTEM_DIRECTORY = BASE_DIR+'/backup/data'

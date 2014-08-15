@@ -1,5 +1,5 @@
 from django.contrib import admin
-from catalog.models import Catalog, Journal, Issue
+from catalog.models import Catalog, Journal, Issue, Purchase
 from mptt.admin import MPTTModelAdmin
 class CatalogAdmin(MPTTModelAdmin):
     list_filter = ('category_type', )
@@ -23,3 +23,10 @@ class IssueAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Issue, IssueAdmin)
+
+
+class PurchaseAdmin(admin.ModelAdmin):
+    list_display = ( 'user', 'issue', 'price', 'created' )
+
+
+admin.site.register(Purchase, PurchaseAdmin)

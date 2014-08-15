@@ -11,7 +11,12 @@ urlpatterns = patterns('',
      url(r'^$', 'main.views.home', name='home'),
      url(r'^catalog/(?P<slug>[^\.]+).html', JournalListView.as_view(), name="catalog"),
      url(r'^journal/(?P<slug>[^\.]+).html', JournalDetailView.as_view(), name="journal"),
-
+     url(r'^buy/(?P<id>[^\.]+).html', 'catalog.views.buy', name="buy"),
+     url(r'^payment/(?P<id>[^\.]+).html', 'catalog.views.payment', name="payment"),
+     url(r'^report/(?P<time>[^\.]+)/(?P<sign>[^\.]+)', 'catalog.views.report', name="report"),
+     url(r'^accounts/', include('registration.urls')),
+     url(r'^logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}, name='logout'),
+     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
      url(r'^admin/', include(admin.site.urls)),
 
 )

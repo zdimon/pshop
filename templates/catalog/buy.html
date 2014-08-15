@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+
+{% block 'content' %}
+
+      <h1>Подтвердите покупку {{ issue.journal }} номер {{ issue.name }}</h1>
+
+        <p style="text-align: center"><a href="{% url 'payment' id=issue.pk %}" class="btn btn-success">Купить за {{ issue.journal.price }} руб.</a></p>
+
+{% endblock %}

@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load catalog_tag %}
+{% load i18n %}
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
 <link rel="stylesheet" type="text/css" href="{% static "library/bootstrap/dist/css/bootstrap.css" %}">
@@ -8,11 +9,25 @@
 </head>
 <body ng-app="{% block ng_app %}example.app.static{% endblock %}">
 
+
+
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+
           <div class="container">
-            <a class="navbar-brand" href="/">Pressa shop</a>
+
+            <div class="navbar-header">
+              <a class="navbar-brand" href="{% url 'home' %}">{% trans 'Пресса онлайн' %}</a>
+            </div>
+            <div class="navbar-collapse collapse">
+           {% if user.is_authenticated %}
+            <ul class="nav navbar-nav">
+              <li><a class="logBtn regOne" href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>Logout</a></i></li>
+            </ul>
+           {% endif %}
+            </div><!--/.navbar-collapse -->
           </div>
       </div>
+
 
 <div class="row" style="margin: 60px 10px 0 10px; ">
     <div class="col-md-3 well">
