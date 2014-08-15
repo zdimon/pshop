@@ -112,4 +112,4 @@ CELERYBEAT_SCHEDULE = {
 
 DBBACKUP_STORAGE = 'dbbackup.storage.filesystem_storage'
 DBBACKUP_FILESYSTEM_DIRECTORY = BASE_DIR+'/backup/data'
-INSTALLED_APPS += ('gunicorn', )
+
