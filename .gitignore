@@ -6,7 +6,6 @@ db.sqlite3
 *~
 static/thumb/
 main/static/library
-/backup
 static/dajaxice/dajaxice.core.js
 backup/data
 supervisord.log
