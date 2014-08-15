@@ -25,7 +25,6 @@ from local import *
 SECRET_KEY = '7^hy-ys*3nt@3dx67i$h&jwc4b2!e0wxjmt57+h+o=-io85tt4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 TEMPLATE_DEBUG = True
 
@@ -113,3 +112,4 @@ CELERYBEAT_SCHEDULE = {
 
 DBBACKUP_STORAGE = 'dbbackup.storage.filesystem_storage'
 DBBACKUP_FILESYSTEM_DIRECTORY = BASE_DIR+'/backup/data'
+INSTALLED_APPS += ('gunicorn', )

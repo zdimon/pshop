@@ -13,3 +13,4 @@ django-supervisor==0.3.2
 django-dbbackup==1.80.2
 django-redis==3.7.0
 django-celery==3.1.10
+tornado==4.0.1
