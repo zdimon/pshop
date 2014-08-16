@@ -8,7 +8,6 @@ requests==2.3.0
 psycopg2
 bootstrap-admin==0.3.0
 django-registration==1.0
-lxml==3.3.5
 django-supervisor==0.3.2
 django-dbbackup==1.80.2
 django-redis==3.7.0

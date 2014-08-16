@@ -104,8 +104,8 @@ from celery.schedules import crontab
 from datetime import timedelta
 CELERYBEAT_SCHEDULE = {
 
-        #'backup': {'task': 'backup.tasks.backup','schedule': crontab(minute=0, hour=0)},
-         'backup': {'task': 'backup.tasks.backup','schedule': crontab()},
+        'backup': {'task': 'backup.tasks.backup','schedule': crontab(minute=0, hour=0)},
+        #'backup': {'task': 'backup.tasks.backup','schedule': crontab()},
 
 }
 #CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
