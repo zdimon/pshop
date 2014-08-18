@@ -25,6 +25,9 @@ chmod +x manage.py
 ./manage.py syncdb
 ./manage.py migrate
 
+Сбор статики
+./manage.py collectstatic
+
 Загрузка каталога
 ./manage.py load_catalog
 
