@@ -56,7 +56,7 @@ def buy(request,id):
 
 @login_required
 def payment(request,id):
-    from config.settings import PURCHASE_REQUEST_URL, PARTNER_ID, PARTNER_SECRET_KEY, GET_FILE_URL
+    from config.settings import PURCHASE_REQUEST_URL, PARTNER_ID, PARTNER_SECRET_KEY, GET_FILE_URL, PARTNER_NAME
     issue = get_object_or_404(Issue, pk=id)
     md5 = make_md5(str(request.user.pk),str(issue.id),PARTNER_SECRET_KEY)
     url = PURCHASE_REQUEST_URL+'?user=%s&price=%s&art=%s&md5=%s&mail=%s&place=%s' % (request.user.pk,issue.journal.price,issue.id,md5,request.user.email,PARTNER_ID)
@@ -68,7 +68,7 @@ def payment(request,id):
     message = item[0].getAttribute('message')
     if status=='0':
         tm = int(time.time())
-        ln =  '/'.join((GET_FILE_URL,str(tm),str(request.user.id),str(issue.id)))
+        ln =  '/'.join((GET_FILE_URL,str(tm),str(request.user.id),str(issue.id),str(PARTNER_NAME)))
         link = '<a href="%s" target=_blank>Ссылка для скачивания выпуска</a>' % (ln,)
     else:
         link = ''
