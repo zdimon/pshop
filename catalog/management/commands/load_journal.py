@@ -5,7 +5,7 @@ from optparse import make_option
 from django.core.management.base import BaseCommand
 from config.local import  IMPORT_JOURNAL_URL
 from xml.dom import minidom
-from catalog.models import Journal
+from catalog.models import Journal, Issue
 from django.db import connection
 
 logger = logging.getLogger(__name__)
@@ -14,6 +14,10 @@ logger.setLevel(logging.DEBUG)
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        logger.info("Clear issue table.....")
+        Issue.objects.all().delete()
+        logger.info("Clear m2m table.....")
+        Journal.category.through.objects.all().delete()
         logger.info("Clear journal table.....")
         Journal.objects.all().delete()
         logger.info("Start loading.....")

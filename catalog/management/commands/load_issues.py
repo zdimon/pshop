@@ -21,7 +21,8 @@ class Command(BaseCommand):
         logger.info("Start loading.....")
         import urllib2
         for i in Journal.objects.all():
-            url = IMPORT_JOURNAL_ISSUE+'/'+str(i.pk)
+            url = IMPORT_JOURNAL_ISSUE+'/'+str(i.original_id)+'/3'
+            #import pdb; pdb.set_trace()
             doc = urllib2.urlopen(url)
             dom = minidom.parse(doc)
             items = dom.getElementsByTagName('issue')
