@@ -68,7 +68,7 @@ def payment(request,id):
     message = item[0].getAttribute('message')
     if status=='0':
         tm = int(time.time())
-        ln =  '/'.join((GET_FILE_URL,str(tm),str(request.user.id),str(issue.id),str(PARTNER_NAME)))
+        ln =  '/'.join((GET_FILE_URL,str(tm),str(request.user.id),str(issue.original_id),str(PARTNER_NAME)))
         link = '<a href="%s" target=_blank>Ссылка для скачивания выпуска</a>' % (ln,)
     else:
         link = ''
