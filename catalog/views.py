@@ -58,7 +58,7 @@ def buy(request,id):
 def payment(request,id):
     from config.settings import PURCHASE_REQUEST_URL, PARTNER_ID, PARTNER_SECRET_KEY, GET_FILE_URL, PARTNER_NAME
     issue = get_object_or_404(Issue, pk=id)
-    md5 = make_md5(str(request.user.pk),str(issue.id),PARTNER_SECRET_KEY)
+    md5 = make_md5(str(request.user.pk),str(issue.original_id),PARTNER_SECRET_KEY)
     url = PURCHASE_REQUEST_URL+'?user=%s&price=%s&art=%s&md5=%s&mail=%s&place=%s' % (request.user.pk,issue.journal.price,issue.original_id,md5,request.user.email,PARTNER_ID)
     #import pdb; pdb.set_trace()
     out = urllib2.urlopen(url)
