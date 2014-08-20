@@ -21,7 +21,7 @@ class Command(BaseCommand):
         for c in cat:
             logger.info("category %s" % c.pk)
             import urllib2
-            url = IMPORT_JOURNAL_CATALOG_URL+'/'+str(c.pk)
+            url = IMPORT_JOURNAL_CATALOG_URL+'/'+str(c.original_id)
             doc = urllib2.urlopen(url)
             dom = minidom.parse(doc)
             items=dom.getElementsByTagName('journal')
