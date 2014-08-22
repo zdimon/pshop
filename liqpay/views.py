@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 from django.template import RequestContext
 from django.shortcuts import render_to_response
+from django.shortcuts import render
 from catalog.models import Journal, Catalog, Issue, Purchase
 from django.http import Http404
 from django.core.exceptions import ObjectDoesNotExist
@@ -25,4 +26,4 @@ def server(request):
     #l = Liqpay()
     #l.save()
     context = {}
-    return render_to_response('liqpay/server.html', context, RequestContext(request))
+    return render(request, 'liqpay/server.html')
