@@ -7,4 +7,6 @@
 
         <p style="text-align: center"><a href="{% url 'payment' id=issue.pk %}" class="btn btn-success">Купить за {{ issue.journal.price }} руб.</a></p>
 
+        {{ button | safe }}
+
 {% endblock %}

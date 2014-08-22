@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'djsupervisor',
     'djcelery',
     'backup',
+    'liqpay',
 )
 
 MIDDLEWARE_CLASSES = (

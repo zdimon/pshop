@@ -13,6 +13,8 @@ from datetime import datetime
 import urllib2
 from xml.dom import minidom
 import time
+from config.settings import LIQPAY_PRIVATE_KEY, LIQPAY_PUBLIC_KEY, LIQPAY_RESULT_URL, LIQPAY_SERVER_URL
+from liqpay.liqpay import LiqPay
 # Create your views here.
 
 
@@ -50,7 +52,22 @@ class JournalDetailView(DetailView):
 @login_required
 def buy(request,id):
     issue = get_object_or_404(Issue, pk=id)
-    context = {"issue": issue}
+    from liqpay.models import Liqpay
+    l = Liqpay()
+    l.issue = issue
+    l.user = request.user
+    l.amount = issue.journal.price
+    l.save()
+    liqpay = LiqPay(LIQPAY_PUBLIC_KEY, LIQPAY_PRIVATE_KEY)
+    form = liqpay.cnb_form({"amount" : "3",
+                            "currency" : "RUB",
+                            "description" : "Покупка прессы",
+                            "order_id" : l.id,
+                            "result_url": LIQPAY_RESULT_URL,
+                            "server_url": LIQPAY_SERVER_URL,
+                            "type" : "buy",
+                            "sandbox" : "1"})
+    context = {"issue": issue, 'button': form}
     return render_to_response('catalog/buy.html', context, RequestContext(request))
 
 
