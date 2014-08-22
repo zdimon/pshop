@@ -10,13 +10,14 @@ from django.shortcuts import get_object_or_404
 from config.settings import LIQPAY_PRIVATE_KEY, LIQPAY_PUBLIC_KEY, LIQPAY_RESULT_URL, LIQPAY_SERVER_URL
 from liqpay import LiqPay
 # Create your views here.
+from django.views.decorators.csrf import csrf_exempt
 
-
+@csrf_exempt
 def result(request):
     context = {}
     return render_to_response('liqpay/result.html', context, RequestContext(request))
 
-
+@csrf_exempt
 def server(request):
     from models import Liqpay
     import pdb; pdb.set_trace()
