@@ -11,5 +11,4 @@ backup/data
 supervisord.log
 supervisord.pid
 celerybeat.pid
-static
 celerybeat-schedule
