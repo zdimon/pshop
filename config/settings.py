@@ -53,6 +53,9 @@ INSTALLED_APPS = (
     'djcelery',
     'backup',
     'liqpay',
+    'flatblocks',
+    'django.contrib.flatpages',
+    'django.contrib.sites',
 )
 
 MIDDLEWARE_CLASSES = (
