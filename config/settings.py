@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+from django.utils.translation import ugettext_lazy as _
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, "templates"),
@@ -36,6 +37,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
+    'flatblocks',
+    'django.contrib.flatpages',
     'bootstrap_admin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,22 +57,54 @@ INSTALLED_APPS = (
     'backup',
     'liqpay',
     'flatblocks',
-    'django.contrib.flatpages',
     'django.contrib.sites',
+    'modeltranslation',
+    'redactor',
+    #'admin_langswitch',
 )
 
 MIDDLEWARE_CLASSES = (
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'compressor.finders.CompressorFinder',
+    'dajaxice.finders.DajaxiceFinder',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+        'django.contrib.auth.context_processors.auth',
+        'django.core.context_processors.request',
+        'django.core.context_processors.media',
+        'django.core.context_processors.static',
+        'django.core.context_processors.i18n',
+        'django.contrib.messages.context_processors.messages'
+
 )
 
 ROOT_URLCONF = 'config.urls'
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+LANGUAGES = (
+    ('ar', _('Armenian')),
+    ('ru', _('Russian')),
+)
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'ar'
+REDACTOR_OPTIONS = {'lang': 'ar'}
+REDACTOR_UPLOAD = 'uploads/'
+    
+SITE_ID = 1
 
 
 # Database

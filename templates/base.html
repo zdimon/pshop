@@ -1,6 +1,7 @@
 {% load staticfiles %}
 {% load catalog_tag %}
 {% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}  
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
 <link rel="stylesheet" type="text/css" href="{% static "library/bootstrap/dist/css/bootstrap.css" %}">
@@ -16,14 +17,37 @@
           <div class="container">
 
             <div class="navbar-header">
-              <a class="navbar-brand" href="{% url 'home' %}">{% trans 'Пресса онлайн' %}</a>
+              <a class="navbar-brand" href="{% url 'home' %}">{% trans 'pressinfo.am' %}</a>
+   
+            
             </div>
             <div class="navbar-collapse collapse">
-           {% if user.is_authenticated %}
-            <ul class="nav navbar-nav">
-              <li><a class="logBtn regOne" href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>Logout</a></i></li>
+            <ul class="nav navbar-nav" style="float: right">
+                
+                
+                  <li><a href="{% url 'about' %}">{% trans 'О нас' %}</a></li>
+                  <li><a href="{% url 'contact' %}">{% trans 'Контакты' %}</a></li>
+                {% if user.is_authenticated %}
+                  <li><a class="logBtn regOne" href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>{% trans 'Выход' %}</a></i></li>
+                {% else %}
+                  <li><a class="logBtn regOne" href="{% url 'login' %}"><i class="fa fa-sign-out"></i>{% trans 'Вход' %}</a></i></li>
+                  <li><a class="logBtn regOne" href="{% url 'registration_register' %}"><i class="fa fa-sign-out"></i>{% trans 'Зарегистрироваться' %}</a></i></li>
+                {% endif %}
+                    {% if LANGUAGE_CODE == 'ru' %}
+                        <li>
+                            <a href="{% url 'main.views.change_language' %}?language=ar&next={{request.get_full_path}}">
+                               {% trans 'Армянский' %}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li>
+                           <a href="{% url 'main.views.change_language' %}?language=ru&next={{request.get_full_path}}">
+                               {% trans 'Русский' %}
+                           </a>
+                       </li>
+                    {% endif %}                 
             </ul>
-           {% endif %}
+           
             </div><!--/.navbar-collapse -->
           </div>
       </div>

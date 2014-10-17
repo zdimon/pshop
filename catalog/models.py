@@ -6,6 +6,7 @@ import pytils
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
+from redactor.fields import RedactorField
 
 class Catalog(MPTTModel):
     JOURNAL_TYPE_CHOICES = (
@@ -47,7 +48,7 @@ class Journal(models.Model):
     )
     name = models.CharField(verbose_name=_('Name'),max_length=250, blank=True)
     name_slug = models.CharField(verbose_name=_('Name slug'),max_length=250, blank=True)
-    description = models.TextField(verbose_name=_('Description'),max_length=250, blank=True)
+    description = RedactorField(verbose_name=_('Description'),max_length=250, blank=True)
     journal_type = models.CharField(verbose_name=_(u'type of journal (magazine, paper or book)'),
                                     choices=JOURNAL_TYPE_CHOICES,
                                     default='magazine',
