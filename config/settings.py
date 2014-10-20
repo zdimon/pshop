@@ -102,7 +102,8 @@ LANGUAGES = (
     ('ar', _('Armenian')),
     ('ru', _('Russian')),
 )
-MODELTRANSLATION_DEFAULT_LANGUAGE = 'ar'
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
 REDACTOR_OPTIONS = {'lang': 'ar'}
 REDACTOR_UPLOAD = 'uploads/'
     

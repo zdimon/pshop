@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load i18n %}
 
 {% block 'content' %}
 
@@ -8,8 +8,8 @@
        {{ journal.get_cover }}
       </div>
       <div class="col-md-9">
-      <h3>Стоимость: {{ journal.price }} руб</h3>
-      <p>{{ journal.description }}</p>
+      <h3>Стоимость: {{ journal.price }} {% trans 'руб' %}</h3>
+      <p>{{ journal.description | safe }}</p>
       </div>
       <div style="clear: both"></div>
 
@@ -18,7 +18,7 @@
         <div class="journal_item">
           {{ i.get_cover }}
           <p>{{ i.name }}</p>
-           <p><a href="{% url 'buy' id=i.id %}">Купить выпуск</a></p>
+           <p><a href="{% url 'buy' id=i.id %}">{% trans 'Купить выпуск' %}</a></p>
         </div>
       {% endfor %}
        <div style="clear: both"></div>
