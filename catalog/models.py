@@ -42,9 +42,9 @@ class Catalog(MPTTModel):
 
 class Journal(models.Model):
     JOURNAL_TYPE_CHOICES = (
-        ('magazine', _(u'Журнал')),
-        ('paper', _(u'Газета')),
-        ('book', _(u'Книга')),
+        ('magazine', _(u'Journal')),
+        ('paper', _(u'Paper')),
+        ('book', _(u'Book')),
     )
     name = models.CharField(verbose_name=_('Name'),max_length=250, blank=True)
     name_slug = models.CharField(verbose_name=_('Name slug'),max_length=250, blank=True)
