@@ -25,24 +25,24 @@
             <ul class="nav navbar-nav" style="float: right">
                 
                 
-                  <li><a href="{% url 'about' %}">{% trans 'О нас' %}</a></li>
-                  <li><a href="{% url 'contact' %}">{% trans 'Контакты' %}</a></li>
+                  <li><a href="{% url 'about' %}">{% trans 'About us' %}</a></li>
+                  <li><a href="{% url 'contact' %}">{% trans 'Contacts' %}</a></li>
                 {% if user.is_authenticated %}
-                  <li><a class="logBtn regOne" href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>{% trans 'Выход' %}</a></i></li>
+                  <li><a class="logBtn regOne" href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>{% trans 'Logout' %}</a></i></li>
                 {% else %}
-                  <li><a class="logBtn regOne" href="{% url 'login' %}"><i class="fa fa-sign-out"></i>{% trans 'Вход' %}</a></i></li>
-                  <li><a class="logBtn regOne" href="{% url 'registration_register' %}"><i class="fa fa-sign-out"></i>{% trans 'Зарегистрироваться' %}</a></i></li>
+                  <li><a class="logBtn regOne" href="{% url 'login' %}"><i class="fa fa-sign-out"></i>{% trans 'Login' %}</a></i></li>
+                  <li><a class="logBtn regOne" href="{% url 'registration_register' %}"><i class="fa fa-sign-out"></i>{% trans 'Registration' %}</a></i></li>
                 {% endif %}
                     {% if LANGUAGE_CODE == 'ru' %}
                         <li>
                             <a href="{% url 'main.views.change_language' %}?language=ar&next={{request.get_full_path}}">
-                               {% trans 'Армянский' %}
+                               {% trans 'Armenian' %}
                             </a>
                         </li>
                     {% else %}
                         <li>
                            <a href="{% url 'main.views.change_language' %}?language=ru&next={{request.get_full_path}}">
-                               {% trans 'Русский' %}
+                               {% trans 'Russian' %}
                            </a>
                        </li>
                     {% endif %}                 

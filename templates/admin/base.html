@@ -48,7 +48,7 @@
                             
                             <p class="welcome-message pull-right hidden-phone">
                             &nbsp;
-                              <a href="{% url 'rosetta-home' %}" target="_blank">{% trans 'Перевод' %} </a>
+                              <a href="{% url 'rosetta-home' %}" target="_blank">{% trans 'Translate' %} </a>
                             |
                             {% for lang in LANGUAGES %}
 	                            <a href="#" onclick="AdminLangswitch(this.innerHTML);" style="text-transform: uppercase; {% if lang.0 == LANGUAGE_CODE %}font-weight: bold;{% endif %}">{{ lang.0 }}</a>
