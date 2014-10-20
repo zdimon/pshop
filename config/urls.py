@@ -23,7 +23,7 @@ urlpatterns = patterns('',
      url(r'^liqpay/', include('liqpay.urls')),
      url(r'^redactor/', include('redactor.urls')),
      url(r'^change_language/', 'main.views.change_language', name='change_language'),
-     
+     url(r'^rosetta/', include('rosetta.urls')),
 
 )
 

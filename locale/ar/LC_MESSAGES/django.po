@@ -1,0 +1,188 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-10-20 06:14+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: catalog/models.py:13 catalog/models.py:80
+msgid "Journal"
+msgstr ""
+
+#: catalog/models.py:14
+msgid "Paper"
+msgstr ""
+
+#: catalog/models.py:15
+msgid "Book"
+msgstr ""
+
+#: catalog/models.py:17
+msgid "Is published?"
+msgstr ""
+
+#: catalog/models.py:18 catalog/models.py:49 catalog/models.py:82
+msgid "Name"
+msgstr ""
+
+#: catalog/models.py:19 catalog/models.py:50
+msgid "Name slug"
+msgstr ""
+
+#: catalog/models.py:20
+msgid "type of the publication"
+msgstr ""
+
+#: catalog/models.py:24
+msgid "image of the category"
+msgstr ""
+
+#: catalog/models.py:29 catalog/models.py:58 catalog/models.py:84
+msgid "Original id"
+msgstr ""
+
+#: catalog/models.py:45
+msgid "Журнал"
+msgstr ""
+
+#: catalog/models.py:46
+msgid "Газета"
+msgstr ""
+
+#: catalog/models.py:47
+msgid "Книга"
+msgstr ""
+
+#: catalog/models.py:51
+msgid "Description"
+msgstr ""
+
+#: catalog/models.py:52
+msgid "type of journal (magazine, paper or book)"
+msgstr ""
+
+#: catalog/models.py:56 catalog/models.py:97
+msgid "Price"
+msgstr ""
+
+#: catalog/models.py:57
+msgid "Journal cover"
+msgstr ""
+
+#: catalog/models.py:61
+msgid "Catalogs"
+msgstr ""
+
+#: catalog/models.py:81
+msgid "Issue cover"
+msgstr ""
+
+#: catalog/models.py:95
+msgid "Issue"
+msgstr ""
+
+#: catalog/models.py:96
+msgid "User"
+msgstr ""
+
+#: catalog/views.py:66
+msgid "Payment for magazine"
+msgstr ""
+
+#: catalog/views.py:91
+msgid "Link to download"
+msgstr ""
+
+#: config/settings.py:101
+msgid "Armenian"
+msgstr ""
+
+#: config/settings.py:102
+msgid "Russian"
+msgstr ""
+
+#: templates/base.html:20
+msgid "pressinfo.am"
+msgstr ""
+
+#: templates/base.html:28
+msgid "О нас"
+msgstr ""
+
+#: templates/base.html:29
+msgid "Контакты"
+msgstr ""
+
+#: templates/base.html:31
+msgid "Выход"
+msgstr ""
+
+#: templates/base.html:33
+msgid "Вход"
+msgstr ""
+
+#: templates/base.html:34
+msgid "Зарегистрироваться"
+msgstr ""
+
+#: templates/base.html:39
+msgid "Армянский"
+msgstr ""
+
+#: templates/base.html:45
+msgid "Русский"
+msgstr ""
+
+#: templates/admin/base.html:72
+msgid "Documentation"
+msgstr ""
+
+#: templates/admin/base.html:79
+msgid "Change password"
+msgstr ""
+
+#: templates/admin/base.html:86
+msgid "Log out"
+msgstr ""
+
+#: templates/admin/base.html:99
+msgid "Welcome,"
+msgstr ""
+
+#: templates/admin/base.html:116
+msgid "Home"
+msgstr ""
+
+#: templates/registration/activate.html:4
+msgid "Вы уже активировали свой аккаунт!"
+msgstr ""
+
+#: templates/registration/login.html:23
+msgid "Логин"
+msgstr ""
+
+#: templates/registration/login.html:28
+msgid "Пароль"
+msgstr ""
+
+#: templates/registration/login.html:37
+msgid "Login"
+msgstr ""
+
+#: templates/registration/login.html:41
+msgid "Регистрация"
+msgstr ""

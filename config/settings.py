@@ -60,7 +60,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'modeltranslation',
     'redactor',
-    #'admin_langswitch',
+    'rosetta',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -125,6 +126,11 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOCALE_PATHS = 'locale'
+ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS = True
+YANDEX_TRANSLATE_KEY = 'trnsl.1.1.20140521T130035Z.1014ae2799c685e3.97b1345108ab3a8520d96f730016a9dac947049b'
+ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = 'en'
+ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME = 'English'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/

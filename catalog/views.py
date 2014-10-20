@@ -15,6 +15,7 @@ from xml.dom import minidom
 import time
 from config.settings import LIQPAY_PRIVATE_KEY, LIQPAY_PUBLIC_KEY, LIQPAY_RESULT_URL, LIQPAY_SERVER_URL
 from liqpay.liqpay import LiqPay
+from django.utils.translation import ugettext as _
 # Create your views here.
 
 
@@ -59,9 +60,10 @@ def buy(request,id):
     l.amount = issue.journal.price
     l.save()
     liqpay = LiqPay(LIQPAY_PUBLIC_KEY, LIQPAY_PRIVATE_KEY)
+
     form = liqpay.cnb_form({"amount" : "3",
                             "currency" : "RUB",
-                            "description" : "Покупка прессы",
+                            "description" : _(u"Payment for magazine"),
                             "order_id" : l.id,
                             "result_url": LIQPAY_RESULT_URL,
                             "server_url": LIQPAY_SERVER_URL,
@@ -86,7 +88,7 @@ def payment(request,id):
     if status=='0':
         tm = int(time.time())
         ln =  '/'.join((GET_FILE_URL,str(tm),str(request.user.id),str(issue.original_id),str(PARTNER_NAME)))
-        link = '<a href="%s" target=_blank>Ссылка для скачивания выпуска</a>' % (ln,)
+        link = '<a href="%s" target=_blank>' % (ln,) +_(u'Link to download')+'</a>'
     else:
         link = ''
     #import pdb; pdb.set_trace()

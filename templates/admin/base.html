@@ -45,13 +45,16 @@
 	                            }
 	
                             </script>
-
-                            /
+                            
+                            <p class="welcome-message pull-right hidden-phone">
+                            &nbsp;
+                              <a href="{% url 'rosetta-home' %}" target="_blank">{% trans 'Перевод' %} </a>
+                            |
                             {% for lang in LANGUAGES %}
 	                            <a href="#" onclick="AdminLangswitch(this.innerHTML);" style="text-transform: uppercase; {% if lang.0 == LANGUAGE_CODE %}font-weight: bold;{% endif %}">{{ lang.0 }}</a>
                             {% endfor %}
-                            /
-
+                            |
+                            </p>
                             <form action="{% url 'django.views.i18n.set_language' %}" method="post" style="display: none;" id="adminLangswitchForm">
                                 {% csrf_token %}
 	                            <input name="next" type="hidden" value="{% url 'admin:index' %}" />
