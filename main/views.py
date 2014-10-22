@@ -6,11 +6,11 @@ from django.conf import settings
 from django.utils.translation import check_for_language
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import translation
-from django.contrib.flatpages.models import FlatPage
+from page.models import Page
 # Create your views here.
 def home(request):
     try:
-        page = FlatPage.objects.get(url='/home/')
+        page = Page.objects.get(slug='home')
     except:
         page = None
     context = {'page': page}
@@ -25,6 +25,8 @@ def change_language(request):
         _next = '/'
 
     # если уже есть языковой префикс URL, надо убрать его
+    #import pdb; pdb.set_trace()
+    #settings.LANGUAGES = settings.LANGUAGES 
     for supported_language in settings.LANGUAGES:
         prefix = '/%s/' % supported_language[0]
         if _next.startswith(prefix):
@@ -32,18 +34,18 @@ def change_language(request):
             break
 
     language = request.REQUEST.get(u'language', None)
-    if language and check_for_language(language):
-        if _next == '/':
-            response = HttpResponseRedirect('/')
-        else:
-            response = HttpResponseRedirect('/%s/%s' % (language, _next))
-
-        if hasattr(request, 'session'):
-            request.session['django_language'] = language
-        else:
-            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
-
-        translation.activate(language)
-        return response
+    #if language and check_for_language(language):
+    if _next == '/':
+        response = HttpResponseRedirect('/')
     else:
-        return HttpResponse(status=400)
+        response = HttpResponseRedirect('/%s/%s' % (language, _next))
+
+    if hasattr(request, 'session'):
+        request.session['django_language'] = language
+    else:
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
+
+    translation.activate(language)
+    return response
+    #else:
+    #    return HttpResponse(status=400)

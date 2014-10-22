@@ -59,6 +59,9 @@ class Journal(models.Model):
     category = models.ManyToManyField(Catalog,
                                       blank=True,
                                       verbose_name=_(u'Catalogs'))
+    seo_content = models.TextField(verbose_name=_(u'МЕТА content'))
+    seo_title =   models.TextField(verbose_name=_(u'МЕТА title'))
+    seo_keywords = models.TextField(verbose_name=_(u'МЕТА keywords'))
     def save(self, **kwargs):
         self.name_slug = pytils.translit.slugify(self.name)
         return super(Journal, self).save(**kwargs)

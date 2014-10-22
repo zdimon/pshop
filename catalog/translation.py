@@ -8,6 +8,6 @@ class CatalogTranslationOptions(TranslationOptions):
 translator.register(Catalog, CatalogTranslationOptions)
 
 class JournalTranslationOptions(TranslationOptions):
-    fields = ('name', 'description', 'price')
+    fields = ('name', 'description', 'price', 'seo_title', 'seo_keywords', 'seo_content')
 translator.register(Journal, JournalTranslationOptions)
 

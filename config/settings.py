@@ -39,7 +39,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = (
     'flatblocks',
-    'django.contrib.flatpages',
+    'page',
     'bootstrap_admin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -99,12 +99,13 @@ ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 
 LANGUAGES = (
-    ('ar', _('Armenian')),
+    ('hy', _('Armenian')),
     ('ru', _('Russian')),
+    ('en', _('English')),
 )
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
-REDACTOR_OPTIONS = {'lang': 'ar'}
+REDACTOR_OPTIONS = {'lang': 'hy'}
 REDACTOR_UPLOAD = 'uploads/'
     
 SITE_ID = 1

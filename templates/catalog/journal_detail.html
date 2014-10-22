@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block meta_title %}{{ journal.seo_title }}{% endblock %}
+{% block meta_description %}{{ journal.seo_content }}{% endblock %}
+{% block meta_keywords %}{{ journal.seo_keywords }}{% endblock %}
+
 {% block 'content' %}
 
       <h1>{{ journal }}</h1>

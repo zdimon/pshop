@@ -1,0 +1,59 @@
+{% extends "splash.html" %}
+{% load staticfiles %}
+{% load get_page %}
+{% load dajaxice_templatetags %}
+{% load calendar %}
+
+
+
+{% block content %}
+
+<div class="content_teaser">
+
+
+  {{ page.content | safe  }}
+
+
+
+
+</div>
+
+{% calendar %}
+
+
+<!--КАЛЕНДАРЬ-->
+
+            <div class="site_size">
+
+                <section class="calendar_bar">
+
+                    <div class="calendar_wrapper">
+
+                       
+
+         
+				{% dajaxice_js_import %}
+
+				 <script type="text/javascript">
+				 Dajaxice.events.show_calendar(Dajax.process,{'ycur': {{ycur}}, 'mcur': {{mcur}}})
+				 </script>
+				<div id="calendar"> </div>
+                            
+			
+
+			<div id="calendar"> </div>
+
+
+
+
+                    </div>
+
+                    <div class="clear"></div>
+
+                </section>
+
+            </div>
+
+
+
+{% endblock %}

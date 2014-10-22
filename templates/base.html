@@ -4,6 +4,10 @@
 {% get_current_language as LANGUAGE_CODE %}  
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
+<title>{% block meta_title %}{% endblock %}</title>
+   <meta name="description" content="{% block meta_description %}{% endblock %}">
+
+    <meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
 <link rel="stylesheet" type="text/css" href="{% static "library/bootstrap/dist/css/bootstrap.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
 <script src="{% static "/static/library/jquery/jquery.min.js" %}"></script>
@@ -25,8 +29,8 @@
             <ul class="nav navbar-nav" style="float: right">
                 
                 
-                  <li><a href="{% url 'about' %}">{% trans 'About us' %}</a></li>
-                  <li><a href="{% url 'contact' %}">{% trans 'Contacts' %}</a></li>
+                  <li><a href="{% url 'page' 'about' %}">{% trans 'About us' %}</a></li>
+                  <li><a href="{% url 'page' 'contact' %}">{% trans 'Contacts' %}</a></li>
                 {% if user.is_authenticated %}
                   <li><a class="logBtn regOne" href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>{% trans 'Logout' %}</a></i></li>
                 {% else %}
@@ -35,15 +39,35 @@
                 {% endif %}
                     {% if LANGUAGE_CODE == 'ru' %}
                         <li>
-                            <a href="{% url 'main.views.change_language' %}?language=ar&next={{request.get_full_path}}">
+                            <a href="{% url 'main.views.change_language' %}?language=hy&next={{request.get_full_path}}">
                                {% trans 'Armenian' %}
                             </a>
+                         </li><li>
+                            <a href="{% url 'main.views.change_language' %}?language=en&next={{request.get_full_path}}">
+                               {% trans 'English' %}
+                            </a>                           
                         </li>
-                    {% else %}
+                    {% endif %}
+                    {% if LANGUAGE_CODE == 'hy' %}
+                      <li>
+                            <a href="{% url 'main.views.change_language' %}?language=ru&next={{request.get_full_path}}">
+                               {% trans 'Russian' %}
+                            </a>
+                       </li><li>
+                            <a href="{% url 'main.views.change_language' %}?language=hy&next={{request.get_full_path}}">
+                               {% trans 'English' %}
+                            </a>
+                      </li>
+                    {% endif %}
+                    {% if LANGUAGE_CODE == 'en' %}
                         <li>
                            <a href="{% url 'main.views.change_language' %}?language=ru&next={{request.get_full_path}}">
                                {% trans 'Russian' %}
                            </a>
+                        </li><li>
+                            <a href="{% url 'main.views.change_language' %}?language=hy&next={{request.get_full_path}}">
+                               {% trans 'Armenian' %}
+                            </a>
                        </li>
                     {% endif %}                 
             </ul>

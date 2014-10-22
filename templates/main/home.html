@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block meta_title %}{{ page.seo_title }}{% endblock %}
+{% block meta_description %}{{ page.seo_content }}{% endblock %}
+{% block meta_keywords %}{{ page.seo_keywords }}{% endblock %}
 
 
        {% block 'content' %}

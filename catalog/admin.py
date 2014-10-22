@@ -24,7 +24,7 @@ class JournalAdminForm(forms.ModelForm):
 class JournalAdmin(TranslationAdmin):
     list_display = ( 'name', 'price', 'journal_type' )
     list_filter = ('journal_type', )
-    search_fields = ['name', 'name_ru', 'name_ar']
+    search_fields = ['name', 'name_ru', 'name_hy', 'name_en']
     form = JournalAdminForm
 
 

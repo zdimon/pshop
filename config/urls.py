@@ -32,10 +32,10 @@ urlpatterns += i18n_patterns(
     '',
     url(r'^catalog/(?P<slug>[^\.]+).html', JournalListView.as_view(), name="catalog"),
     url(r'^journal/(?P<slug>[^\.]+).html', JournalDetailView.as_view(), name="journal"),
-    url(r'^pages/', include('django.contrib.flatpages.urls')),
     url(r'^about-us/$', views.flatpage, {'url': '/about/'}, name='about'),
     url(r'^contact/$', views.flatpage, {'url': '/contact/'}, name='contact'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^page/(?P<slug>\w+)$', 'page.views.show', name='page'),
     )
 
 if settings.DEBUG:

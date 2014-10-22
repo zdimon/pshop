@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load get_page %}
+{% load staticfiles %}
+{% block meta_title %}{{ page.seo_title }}{% endblock %}
+{% block meta_description %}{{ page.seo_content }}{% endblock %}
+{% block meta_keywords %}{{ page.seo_keywords }}{% endblock %}
+
+
+{% block 'content' %}
+
+
+					<div class="content">
+						<h2>{{ page.title }}</h2>
+                        {{ page.content|safe }}
+					</div><!-- .content -->
+
+{% endblock %}
+
+
+
