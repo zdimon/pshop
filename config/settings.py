@@ -31,9 +31,10 @@ SECRET_KEY = '7^hy-ys*3nt@3dx67i$h&jwc4b2!e0wxjmt57+h+o=-io85tt4'
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+ACCOUNT_ACTIVATION_DAYS = 2
 
-
- 
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/home/zarik/tmp' # change this to a proper location
 
 # Application definition
 

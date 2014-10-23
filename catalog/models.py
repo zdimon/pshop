@@ -7,6 +7,12 @@ from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
 from redactor.fields import RedactorField
+from catalog.tasks import reg 
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from registration.models import RegistrationProfile
+from registration.signals import user_registered 
+
 
 class Catalog(MPTTModel):
     JOURNAL_TYPE_CHOICES = (
@@ -99,3 +105,14 @@ class Purchase(models.Model):
     user =   models.ForeignKey(User, verbose_name=_('User'))
     price = models.DecimalField( verbose_name=_('Price'), max_digits= 12, decimal_places= 2)
     created = models.DateTimeField(auto_now_add=True, auto_now=True, blank=True, null=True)
+    
+    
+def register(sender, user, request, **kwarg):    
+    reg.delay(user)  
+    
+user_registered.connect(register)
+
+    
+            
+    
+    
