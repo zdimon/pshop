@@ -107,7 +107,9 @@ class Purchase(models.Model):
     created = models.DateTimeField(auto_now_add=True, auto_now=True, blank=True, null=True)
     
     
-def register(sender, user, request, **kwarg):    
+def register(sender, user, request, **kwarg):   
+    print 'ddddddddddddddddddddddddddddddddddddd'
+    #import pdb; pdb.set_trace() 
     reg.delay(user)  
     
 user_registered.connect(register)
