@@ -129,3 +129,33 @@ def report(request,time,sign):
     http_response['Content-Length'] = len(text)
     http_response['Content-Encoding'] = "utf-8"
     return http_response
+    
+    
+    
+def reg(request):
+    from django.utils import simplejson
+    from django.http import HttpResponse
+    import requests
+    import jsons
+    url = "http://localhost:8002/mirror/registration/"
+    data = {'sender': 'Alice', 'receiver': 'Bob', 'message': 'We did it!'}
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post(url, data=json.dumps(data), headers=headers)
+
+    some_data_to_dump = {
+        'status': 0,
+        'message': 'ok',
+    }
+    data = simplejson.dumps(some_data_to_dump)
+    
+    #req = urllib2.Request('http://localhost:8002/mirror/registration/')
+    #req.add_header('Content-Type', 'application/json')
+    #response = urllib2.urlopen(req, data)
+    return HttpResponse(data, mimetype='application/json')
+
+
+
+
+
+    
+    

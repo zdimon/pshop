@@ -31,9 +31,10 @@ SECRET_KEY = '7^hy-ys*3nt@3dx67i$h&jwc4b2!e0wxjmt57+h+o=-io85tt4'
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+ACCOUNT_ACTIVATION_DAYS = 2
 
-
- 
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/home/zarik/tmp' # change this to a proper location
 
 # Application definition
 
@@ -163,4 +164,9 @@ CELERYBEAT_SCHEDULE = {
 
 DBBACKUP_STORAGE = 'dbbackup.storage.filesystem_storage'
 DBBACKUP_FILESYSTEM_DIRECTORY = BASE_DIR+'/backup/data'
+
+SECRET = 'secret'
+MIRROR_ID = 1
+REGISTRATION_URL = 'http://localhost:8002/mirror/registration/'
+
 
