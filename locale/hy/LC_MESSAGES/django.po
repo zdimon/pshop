@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-10-22 07:44+0000\n"
-"PO-Revision-Date: 2014-10-22 07:57+0000\n"
+"PO-Revision-Date: 2014-10-22 11:55+0000\n"
 "Last-Translator:   <qqq@qqq.qq>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,67 +20,67 @@ msgstr ""
 
 #: catalog/models.py:13 catalog/models.py:45 catalog/models.py:80
 msgid "Journal"
-msgstr ""
+msgstr "Ամսագիրը"
 
 #: catalog/models.py:14 catalog/models.py:46
 msgid "Paper"
-msgstr ""
+msgstr "Թուղթ"
 
 #: catalog/models.py:15 catalog/models.py:47
 msgid "Book"
-msgstr ""
+msgstr "Գիրք"
 
 #: catalog/models.py:17
 msgid "Is published?"
-msgstr ""
+msgstr "Հրապարակվում է?"
 
 #: catalog/models.py:18 catalog/models.py:49 catalog/models.py:82
 msgid "Name"
-msgstr ""
+msgstr "Անունը"
 
 #: catalog/models.py:19 catalog/models.py:50
 msgid "Name slug"
-msgstr ""
+msgstr "Անունը слизень"
 
 #: catalog/models.py:20
 msgid "type of the publication"
-msgstr ""
+msgstr "Տեսակի հրատարակություններ"
 
 #: catalog/models.py:24
 msgid "image of the category"
-msgstr ""
+msgstr "կերպար կատեգորիայի"
 
 #: catalog/models.py:29 catalog/models.py:58 catalog/models.py:84
 msgid "Original id"
-msgstr ""
+msgstr "Original id"
 
 #: catalog/models.py:51
 msgid "Description"
-msgstr ""
+msgstr "Նկարագրություն"
 
 #: catalog/models.py:52
 msgid "type of journal (magazine, paper or book)"
-msgstr ""
+msgstr "Տեսակը ամսագրի (ամսագիր, հոդվածը կամ գիրքը)"
 
 #: catalog/models.py:56 catalog/models.py:97
 msgid "Price"
-msgstr ""
+msgstr "Գինը"
 
 #: catalog/models.py:57
 msgid "Journal cover"
-msgstr ""
+msgstr "Կափարիչը ամսագրի"
 
 #: catalog/models.py:61
 msgid "Catalogs"
-msgstr ""
+msgstr "Կատալոգներ"
 
 #: catalog/models.py:81
 msgid "Issue cover"
-msgstr ""
+msgstr "Խնդիրը կափարիչը"
 
 #: catalog/models.py:95
 msgid "Issue"
-msgstr ""
+msgstr "Հարցը"
 
 #: catalog/models.py:96
 msgid "User"
@@ -88,23 +88,23 @@ msgstr "Օգտագործողը"
 
 #: catalog/views.py:66
 msgid "Payment for magazine"
-msgstr ""
+msgstr "Վճարում ամսագիրը"
 
 #: catalog/views.py:91
 msgid "Link to download"
-msgstr ""
+msgstr "Ուղեցույց ներբեռնման համար"
 
 #: config/settings.py:102 templates/base.html:39
 msgid "Armenian"
-msgstr ""
+msgstr "Հայ"
 
 #: config/settings.py:103 templates/base.html:45
 msgid "Russian"
-msgstr ""
+msgstr "Ռուսերեն"
 
 #: templates/base.html:20
 msgid "pressinfo.am"
-msgstr ""
+msgstr "pressinfo.am"
 
 #: templates/base.html:28
 msgid "About us"
@@ -125,44 +125,44 @@ msgstr "Մուտք"
 
 #: templates/base.html:34 templates/registration/login.html:41
 msgid "Registration"
-msgstr ""
+msgstr "Գրանցում"
 
 #: templates/admin/base.html:51
 msgid "Translate"
-msgstr ""
+msgstr "Թարգմանել"
 
 #: templates/admin/base.html:75
 msgid "Documentation"
-msgstr ""
+msgstr "Փաստաթղթերի"
 
 #: templates/admin/base.html:82
 msgid "Change password"
-msgstr ""
+msgstr "Փոխել գաղտնաբառը"
 
 #: templates/admin/base.html:89
 msgid "Log out"
-msgstr ""
+msgstr "Log out"
 
 #: templates/admin/base.html:102
 msgid "Welcome,"
-msgstr ""
+msgstr "Բարի գալուստ,"
 
 #: templates/admin/base.html:119
 msgid "Home"
-msgstr ""
+msgstr "Տանը"
 
 #: templates/catalog/journal_detail.html:11
 msgid "руб"
-msgstr ""
+msgstr "rub"
 
 #: templates/catalog/journal_detail.html:21
 msgid "Купить выпуск"
-msgstr ""
+msgstr "Գնել թողարկումը"
 
 #: templates/registration/activate.html:4
 msgid "Your account is already activated!"
-msgstr ""
+msgstr "Ձեր account արդեն ակտիվացնել նաեւ մարդու բջիջները!"
 
 #: templates/registration/login.html:28
 msgid "Password"
-msgstr ""
+msgstr "Գաղտնաբառը"
