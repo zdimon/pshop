@@ -30,6 +30,11 @@
                 
                 
                   <li><a href="{% url 'page' 'about' %}">{% trans 'About us' %}</a></li>
+                   <li><a href="{% url 'page' 'advertiser' %}">{% trans 'For advertiser' %}</a></li>
+                    <li><a href="{% url 'page' 'agreement' %}">{% trans 'User agreement' %}</a></li>
+                     <li><a href="{% url 'page' 'privacy' %}">{% trans 'Privacy' %}</a></li>
+                      <li><a href="{% url 'page' 'publisher' %}">{% trans 'For publisher' %}</a></li>
+                       <li><a href="{% url 'page' 'help' %}">{% trans 'Help' %}</a></li>
                   <li><a href="{% url 'page' 'contact' %}">{% trans 'Contacts' %}</a></li>
                 {% if user.is_authenticated %}
                   <li><a class="logBtn regOne" href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>{% trans 'Logout' %}</a></i></li>
