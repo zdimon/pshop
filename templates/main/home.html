@@ -2,6 +2,10 @@
 {% block meta_title %}{{ page.seo_title }}{% endblock %}
 {% block meta_description %}{{ page.seo_content }}{% endblock %}
 {% block meta_keywords %}{{ page.seo_keywords }}{% endblock %}
+{% load in_armenian_tag %}
+{% load in_daily_tag %}
+{% load in_pressa_tag %}
+{% load i18n %}
 
 
        {% block 'content' %}
@@ -9,4 +13,14 @@
            <p> 
                {{ page.content|safe }}
            </p>
+           <h2> {% trans 'Армянские издания' %} </h2>
+           {% in_armenian_tag %}
+           
+           <h2> {% trans 'Ежедневные издания' %} </h2>
+           {% in_daily_tag %}
+           
+           <h2> {% trans 'Издания от пресса.ру' %} </h2>
+           {% in_pressa_tag %}
+           
+           
        {% endblock %}

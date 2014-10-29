@@ -67,9 +67,12 @@ class Journal(models.Model):
     category = models.ManyToManyField(Catalog,
                                       blank=True,
                                       verbose_name=_(u'Catalogs'))
-    seo_content = models.TextField(verbose_name=_(u'МЕТА content'))
-    seo_title =   models.TextField(verbose_name=_(u'МЕТА title'))
-    seo_keywords = models.TextField(verbose_name=_(u'МЕТА keywords'))
+    seo_content = models.TextField(verbose_name=_(u'МЕТА content'), blank=True)
+    seo_title =   models.TextField(verbose_name=_(u'МЕТА title'), blank=True)
+    seo_keywords = models.TextField(verbose_name=_(u'МЕТА keywords'), blank=True)
+    in_am = models.BooleanField(verbose_name=_('In armenian'), default=False)
+    in_everyday = models.BooleanField(verbose_name=_('In daily'), default=False)
+    in_pressa = models.BooleanField(verbose_name=_('In pressa.ru'), default=False)
     def save(self, **kwargs):
         self.name_slug = pytils.translit.slugify(self.name)
         return super(Journal, self).save(**kwargs)
