@@ -59,7 +59,9 @@ class Journal(models.Model):
                                     choices=JOURNAL_TYPE_CHOICES,
                                     default='magazine',
                                     max_length=10)
-    price = models.DecimalField( verbose_name=_('Price'), max_digits= 12, decimal_places= 2)
+    price = models.DecimalField( verbose_name=_('Price RUB'), max_digits= 12, decimal_places= 2)
+    price_dram = models.DecimalField( verbose_name=_('Price DRAM'), max_digits= 12, decimal_places= 2)
+    price_usd = models.DecimalField( verbose_name=_('Price USD'), max_digits= 12, decimal_places= 2)
     cover = models.ImageField(upload_to='journal_cover', verbose_name=_('Journal cover'), blank=True)
     original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
     category = models.ManyToManyField(Catalog,
@@ -107,6 +109,14 @@ class Purchase(models.Model):
     created = models.DateTimeField(auto_now_add=True, auto_now=True, blank=True, null=True)
     
     
+class CurrencyHistory(models.Model):
+    rub2dram = models.DecimalField( verbose_name=_('RUB to DRAM'), max_digits= 8, decimal_places= 4)
+    dram2usd = models.DecimalField( verbose_name=_('DRAM to USD'), max_digits= 8, decimal_places= 4)
+    date = models.DateField(blank=True, null=True)
+    
+
+
+
 def register(sender, user, request, **kwarg):   
     print 'ddddddddddddddddddddddddddddddddddddd'
     #import pdb; pdb.set_trace() 

@@ -1,9 +1,11 @@
 from django.contrib import admin
-from catalog.models import Catalog, Journal, Issue, Purchase
+from catalog.models import Catalog, Journal, Issue, Purchase, CurrencyHistory
 from mptt.admin import MPTTModelAdmin
 from django import forms
 from redactor.widgets import RedactorEditor
 from modeltranslation.admin import TranslationAdmin
+
+
 
 class CatalogAdmin(MPTTModelAdmin,TranslationAdmin):
     list_filter = ('category_type', )
@@ -22,7 +24,7 @@ class JournalAdminForm(forms.ModelForm):
 
 
 class JournalAdmin(TranslationAdmin):
-    list_display = ( 'name', 'price', 'journal_type' )
+    list_display = ( 'name', 'price', 'price_dram', 'price_usd', 'journal_type' )
     list_filter = ('journal_type', )
     search_fields = ['name', 'name_ru', 'name_hy', 'name_en']
     form = JournalAdminForm
@@ -45,3 +47,10 @@ class PurchaseAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Purchase, PurchaseAdmin)
+
+
+class CurrencyAdmin(admin.ModelAdmin):
+    list_display = ( 'date', 'rub2dram', 'dram2usd' )
+
+
+admin.site.register(CurrencyHistory, CurrencyAdmin)
