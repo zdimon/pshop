@@ -4,7 +4,7 @@
 
 
 <div class="regAccount">
-    <div class="title">Sign in</div>
+   
     <!-- Login form -->
     {% if form.non_field_errors %}
     <ul class='errorlist'>
@@ -16,7 +16,7 @@
     <div class="col-md-4 login-signup-page">
     <form method="post" action="{% url 'django.contrib.auth.views.login' %}" class="form_class">
             {% csrf_token %}
-            <h2> Вход на сайт </h2>
+            <h2> {% trans 'Enter' %} </h2>
 
                     <div class="input-group margin-bottom-20">
                         <span class="input-group-addon"><i class="fa fa-envelope"></i></span>

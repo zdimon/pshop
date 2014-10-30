@@ -11,7 +11,7 @@ from catalog.tasks import reg
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from registration.models import RegistrationProfile
-from registration.signals import user_registered 
+from registration.signals import user_activated 
 
 
 class Catalog(MPTTModel):
@@ -125,7 +125,7 @@ def register(sender, user, request, **kwarg):
     #import pdb; pdb.set_trace() 
     reg.delay(user)  
     
-user_registered.connect(register)
+user_activated.connect(register)
 
     
             

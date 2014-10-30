@@ -16,6 +16,12 @@ import time
 from config.settings import LIQPAY_PRIVATE_KEY, LIQPAY_PUBLIC_KEY, LIQPAY_RESULT_URL, LIQPAY_SERVER_URL
 from liqpay.liqpay import LiqPay
 from django.utils.translation import ugettext as _
+import requests
+import json
+from config.settings import SECRET, MIRROR_ID, PAYMENT_URL
+import hashlib
+from django.utils import simplejson
+from registration.models import RegistrationProfile
 # Create your views here.
 
 
@@ -50,6 +56,15 @@ class JournalDetailView(DetailView):
         return context
 
 
+def payrequest(user_id,issue_id):
+    url = PAYMENT_URL
+    sign = hashlib.md5(SECRET+str(user_id)).hexdigest()
+    data = {'user_id': user_id, 'issue_id': issue_id, 'sign': sign}
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    out = simplejson.loads(requests.post(url, data=json.dumps(data), headers=headers).content)
+    #import pdb; pdb.set_trace()
+    return out['url']
+
 @login_required
 def buy(request,id):
     issue = get_object_or_404(Issue, pk=id)
@@ -60,7 +75,8 @@ def buy(request,id):
     l.amount = issue.journal.price
     l.save()
     liqpay = LiqPay(LIQPAY_PUBLIC_KEY, LIQPAY_PRIVATE_KEY)
-
+    pr = RegistrationProfile.objects.get(user=request.user)
+    link = payrequest(pr.pressa_id,issue.original_id)
     form = liqpay.cnb_form({"amount" : "3",
                             "currency" : "RUB",
                             "description" : _(u"Payment for magazine"),
@@ -69,8 +85,10 @@ def buy(request,id):
                             "server_url": LIQPAY_SERVER_URL,
                             "type" : "buy",
                             "sandbox" : "1"})
-    context = {"issue": issue, 'button': form}
+    context = {"issue": issue, 'button': form, 'link': link}
     return render_to_response('catalog/buy.html', context, RequestContext(request))
+
+
 
 
 @login_required

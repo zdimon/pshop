@@ -168,5 +168,6 @@ DBBACKUP_FILESYSTEM_DIRECTORY = BASE_DIR+'/backup/data'
 SECRET = 'secret'
 MIRROR_ID = 1
 REGISTRATION_URL = 'http://localhost:8002/mirror/registration/'
+PAYMENT_URL = 'http://localhost:8002/mirror/payment/'
 
 

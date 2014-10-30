@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-
+{% load i18n %}
 
 {% block 'content' %}
 
-      <h1>Подтвердите покупку {{ issue.journal }} номер {{ issue.name }}</h1>
+      <h1>{% trans 'Thank you for buying' %}</h1>
 
-        <p style="text-align: center"><a href="{% url 'payment' id=issue.pk %}" class="btn btn-success">Купить за {{ issue.journal.price }} руб.</a></p>
-
-        {{ button | safe }}
+       
+        
+        <h1> <a target="blank" href="{{ link }}">Читать выпуск</a> </h1>
 
 {% endblock %}
