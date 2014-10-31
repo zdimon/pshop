@@ -33,8 +33,16 @@ TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = ['*']
 ACCOUNT_ACTIVATION_DAYS = 2
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = '/home/zarik/tmp' # change this to a proper location
+#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+#EMAIL_FILE_PATH = '/home/zarik/tmp' # change this to a proper location
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'mail.pressinfo.am'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'noreply@pressinfo.am'
+EMAIL_HOST_PASSWORD = 'amaretto.c67'
+
 
 # Application definition
 
