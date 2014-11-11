@@ -23,6 +23,7 @@
           {{ i.get_cover }}
           <p>{{ i.name }}</p>
            <p><a href="{% url 'buy' id=i.id %}">{% trans 'Купить выпуск' %}</a></p>
+            <p><a href="{% url 'payment-pay' issue_id=i.id %}">{% trans 'Купить выпуск через paymaster' %}</a></p>
         </div>
       {% endfor %}
        <div style="clear: both"></div>

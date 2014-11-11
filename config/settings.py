@@ -71,6 +71,7 @@ INSTALLED_APPS = (
     'modeltranslation',
     'redactor',
     'rosetta',
+    'paymaster',
 
 )
 

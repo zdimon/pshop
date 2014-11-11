@@ -22,6 +22,7 @@ urlpatterns = patterns('',
      url(r'^change_language/', 'main.views.change_language', name='change_language'),
      url(r'^rosetta/', include('rosetta.urls')),
      url(r'^reg/', 'catalog.views.reg'),
+     url(r'^', include('paymaster.urls')),
 
 )
 
