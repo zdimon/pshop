@@ -43,6 +43,7 @@ def pay(request, issue_id, **kwargs):
     Пример, только из обязательных полей
     https://paymaster.ru/Payment/Init?LMI_MERCHANT_ID=R191483760831&LMI_PAYMENT_AMOUNT=1488&LMI_CURRENCY=RUB&LMI_PAYMENT_NO=123123&LMI_PAYMENT_DESC=123123
     """
+    user = request.user
     issue = Issue.objects.get(pk=issue_id)
     payment = Payment.objects.create(
         owner=user,
@@ -50,7 +51,7 @@ def pay(request, issue_id, **kwargs):
         operation_amount=issue.journal.price,
         description='payment'
     )
-    user = request.user
+
     data = {
         'LMI_MERCHANT_ID': 'd7706dd6-acc2-4821-9fcf-1b58999ac2cd',
         'LMI_PAYMENT_AMOUNT': str('100'),
