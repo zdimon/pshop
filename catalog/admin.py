@@ -4,7 +4,7 @@ from mptt.admin import MPTTModelAdmin
 from django import forms
 from redactor.widgets import RedactorEditor
 from modeltranslation.admin import TranslationAdmin
-
+from paymaster.models import Payment
 
 
 class CatalogAdmin(MPTTModelAdmin,TranslationAdmin):
