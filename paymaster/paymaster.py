@@ -48,7 +48,8 @@ def pay(request, issue_id, **kwargs):
     payment = Payment.objects.create(
         owner=user,
         operation_amount=issue.journal.price,
-        description='payment'
+        description='payment',
+        ammount = issue.journal.price
     )
 
     data = {
