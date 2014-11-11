@@ -3,7 +3,7 @@
 from base64 import b64encode
 from hashlib import md5
 from urllib import urlencode
-
+import urllib2
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -168,6 +168,13 @@ def notify(request):
             pur.save()
         except:
             pass
+        from config.settings import PURCHASE_REQUEST_URL, PARTNER_SECRET_KEY, PARTNER_ID
+        md5 = make_md5(str(payment.owner.pk),str(issue.original_id),PARTNER_SECRET_KEY)
+        url = PURCHASE_REQUEST_URL+'?user=%s&price=%s&art=%s&md5=%s&mail=%s&place=%s' % (payment.owner.pk,issue.journal.price,issue.original_id,md5,request.user.email,PARTNER_ID)
+        #import pdb; pdb.set_trace()
+        print url
+        out = urllib2.urlopen(url)
+        dom = minidom.parse(out)
     else:
         payment.operation_status = Payment.STATUS_ERROR
 
@@ -208,3 +215,11 @@ def success(request):
 
 def fail(request):
     return HttpResponse('<h1>ERROR</h1>')
+
+def make_md5(user, art, key):
+    import hashlib
+    s = ":".join((user, art, key))
+    print s
+    #import pdb; pdb.set_trace()
+    digest = hashlib.md5(s).hexdigest()
+    return digest
