@@ -19,6 +19,7 @@ def reg(user):
     data = {'username': user.username, 'email': user.email, 'mirror_id': MIRROR_ID, 'sign': sign}
     #import pdb; pdb.set_trace()
     print 'ssss'+url
+    print 'username:%s;email:%s;mirror_id:%s;sign:%s' % (user.username, user.email, MIRROR_ID, sign)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     logger.info(url)
     r = requests.post(url, data=json.dumps(data), headers=headers)
