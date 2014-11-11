@@ -12,7 +12,8 @@ from django.views.decorators.csrf import csrf_exempt
 from models import Payment
 from settings import *
 from catalog.models import Issue, Purchase
-
+import requests
+import json
 
 def pay(request, issue_id, **kwargs):
     """
@@ -55,7 +56,7 @@ def pay(request, issue_id, **kwargs):
 
     data = {
         'LMI_MERCHANT_ID': 'd7706dd6-acc2-4821-9fcf-1b58999ac2cd',
-        'LMI_PAYMENT_AMOUNT': str('100'),
+        'LMI_PAYMENT_AMOUNT': str(payment.operation_amount),
         'LMI_CURRENCY': 'RUB',
         'LMI_PAYMENT_NO': payment.pk,
         'LMI_PAYMENT_DESC': 'payment',
@@ -168,13 +169,21 @@ def notify(request):
             pur.save()
         except:
             pass
-        from config.settings import PURCHASE_REQUEST_URL, PARTNER_SECRET_KEY, PARTNER_ID
-        md5 = make_md5(str(payment.owner.pk),str(issue.original_id),PARTNER_SECRET_KEY)
-        url = PURCHASE_REQUEST_URL+'?user=%s&price=%s&art=%s&md5=%s&mail=%s&place=%s' % (payment.owner.pk,issue.journal.price,issue.original_id,md5,payment.owner.email,PARTNER_ID)
+        from config.settings import PAYMENT_URL, SECRET, MIRROR_ID
+        issue_id = issue.pk
+        pr = RegistrationProfile.objects.get(user=payment.owner)
+        user_id = pr.pressa_id
+        url = PAYMENT_URL
+        sign = hashlib.md5(SECRET+str(user_id)).hexdigest()
+        data = {'user_id': user_id, 'issue_id': issue_id, 'mirror_id': MIRROR_ID, 'sign': sign}
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        oo = requests.post(url, data=json.dumps(data), headers=headers).content
+        #f = open('myfile.html','w')
+        #f.write(oo)
+        #f.close()
         #import pdb; pdb.set_trace()
-        print url
-        out = urllib2.urlopen(url)
-        dom = minidom.parse(out)
+        out = json.loads(oo)
+        print out
     else:
         payment.operation_status = Payment.STATUS_ERROR
 
