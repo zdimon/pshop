@@ -148,7 +148,7 @@ def notify(request):
     """
     data = [request.POST, request.GET][len(request.POST) == 0]
     pay_pk = int(data['PAYMENT_ID'])
-    #import pdb; pdb.set_trace()
+    import pdb; pdb.set_trace()
     payment = Payment.objects.get(pk=pay_pk)
 
     req_hash = data['LMI_HASH']
