@@ -17,6 +17,7 @@ def reg(user):
     url = REGISTRATION_URL
     sign = hashlib.md5(SECRET+user.username).hexdigest()
     data = {'username': user.username, 'email': user.email, 'mirror_id': MIRROR_ID, 'sign': sign}
+    import pdb; pdb.set_trace()
     logger.info(data)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     logger.info(url)
