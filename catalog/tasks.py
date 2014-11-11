@@ -18,7 +18,7 @@ def reg(user):
     sign = hashlib.md5(SECRET+user.username).hexdigest()
     data = {'username': user.username, 'email': user.email, 'mirror_id': MIRROR_ID, 'sign': sign}
     #import pdb; pdb.set_trace()
-    logger.info('request %s' % (url,))
+    print 'ssss'+url
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     logger.info(url)
     r = requests.post(url, data=json.dumps(data), headers=headers)
