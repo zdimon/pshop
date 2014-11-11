@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 #from accounts.models import Customer
 from models import Payment
 from settings import *
-from catalog.models import Issue
+from catalog.models import Issue, Purchase
 
 
 def pay(request, issue_id, **kwargs):
@@ -49,14 +49,15 @@ def pay(request, issue_id, **kwargs):
         owner=user,
         operation_amount=issue.journal.price,
         description='payment',
-        ammount = issue.journal.price
+        ammount = issue.journal.price,
+        payment_num = issue_id
     )
 
     data = {
         'LMI_MERCHANT_ID': 'd7706dd6-acc2-4821-9fcf-1b58999ac2cd',
         'LMI_PAYMENT_AMOUNT': str('100'),
         'LMI_CURRENCY': 'RUB',
-        'LMI_PAYMENT_NO': str('456'),
+        'LMI_PAYMENT_NO': str(issue_id),
         'LMI_PAYMENT_DESC': 'payment',
         'LMI_PAYER_PHONE_NUMBER': '',
         'LMI_PAYER_EMAIL': user.email or '',
@@ -158,6 +159,13 @@ def notify(request):
             payment.payer_identifier = data['LMI_PAYER_IDENTIFIER']
         payment.system_payment_id = data['LMI_SYS_PAYMENT_ID']
         payment.operation_status = Payment.STATUS_PAYED
+        try:
+            issue = Issue.objects.get(pk=payment.payment_num)
+            pur = Purchase()
+            pur.issue = issue
+            pur.price = issue.journal.price
+            pur.user = payment.owner
+            pur.save()
     else:
         payment.operation_status = Payment.STATUS_ERROR
 
@@ -166,6 +174,33 @@ def notify(request):
 
 
 def success(request):
+    '''
+    from config.settings import PURCHASE_REQUEST_URL, PARTNER_ID, PARTNER_SECRET_KEY, GET_FILE_URL, PARTNER_NAME
+    payment = Payment.objects.get(pk=request.GET['PAYMENT_ID'])
+    issue = get_object_or_404(Issue, pk=id)
+    md5 = make_md5(str(request.user.pk),str(issue.original_id),PARTNER_SECRET_KEY)
+    url = PURCHASE_REQUEST_URL+'?user=%s&price=%s&art=%s&md5=%s&mail=%s&place=%s' % (request.user.pk,issue.journal.price,issue.original_id,md5,request.user.email,PARTNER_ID)
+    #import pdb; pdb.set_trace()
+    out = urllib2.urlopen(url)
+    dom = minidom.parse(out)
+    item = list(dom.getElementsByTagName('response'))
+    status = item[0].getAttribute('status')
+    message = item[0].getAttribute('message')
+    if status=='0':
+        tm = int(time.time())
+        ln =  '/'.join((GET_FILE_URL,str(tm),str(request.user.id),str(issue.original_id),str(PARTNER_NAME)))
+        link = '<a href="%s" target=_blank>' % (ln,) +_(u'Link to download')+'</a>'
+    else:
+        link = ''
+    #import pdb; pdb.set_trace()
+    p = Purchase()
+    p.issue = issue
+    p.user = request.user
+    p.price = issue.journal.price
+    p.save()
+    context = {"issue": issue, "message": message , "link": link}
+    return render_to_response('catalog/payment_done.html', context, RequestContext(request))
+    '''
     return HttpResponse('<h1>SUCCESS</h1>')
 
 
