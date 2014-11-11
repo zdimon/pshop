@@ -59,7 +59,7 @@ admin.site.register(CurrencyHistory, CurrencyAdmin)
 
 
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ( 'user', 'ammount', 'operation_status', 'created' )
+    list_display = ( 'owner', 'ammount', 'operation_status', 'created' )
 
 
 admin.site.register(Payment, PaymentAdmin)
