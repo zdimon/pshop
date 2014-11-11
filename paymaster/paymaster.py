@@ -9,8 +9,9 @@ from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 
 #from accounts.models import Customer
-#from models import Payment
+from models import Payment
 from settings import *
+from catalog.models import Issue
 
 
 def pay(request, issue_id, **kwargs):
@@ -42,12 +43,13 @@ def pay(request, issue_id, **kwargs):
     Пример, только из обязательных полей
     https://paymaster.ru/Payment/Init?LMI_MERCHANT_ID=R191483760831&LMI_PAYMENT_AMOUNT=1488&LMI_CURRENCY=RUB&LMI_PAYMENT_NO=123123&LMI_PAYMENT_DESC=123123
     """
-    #payment = Payment.objects.create(
-    #    owner=user,
-    #    payment_num=payment_num,
-    #    operation_amount=amount,
-    #    description=description
-    #)
+    issue = Issue.objects.get(pk=issue_id)
+    payment = Payment.objects.create(
+        owner=user,
+        payment_num=payment_num,
+        operation_amount=issue.journal.price,
+        description='payment'
+    )
     user = request.user
     data = {
         'LMI_MERCHANT_ID': 'd7706dd6-acc2-4821-9fcf-1b58999ac2cd',
@@ -57,7 +59,7 @@ def pay(request, issue_id, **kwargs):
         'LMI_PAYMENT_DESC': 'payment',
         'LMI_PAYER_PHONE_NUMBER': '',
         'LMI_PAYER_EMAIL': user.email or '',
-        'PAYMENT_ID': str('123'),
+        'PAYMENT_ID': payment.pk,
     }
 
     #if DEBUG:
