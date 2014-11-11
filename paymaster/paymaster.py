@@ -106,7 +106,7 @@ def invoice(request):
     else:
         payment.operation_status = Payment.STATUS_ERROR
         payment.save()
-        return HttpResponse('NO')
+        return HttpResponse('YES')
 
 
 def calc_hash(data):
