@@ -148,7 +148,7 @@ def notify(request):
     """
     data = [request.POST, request.GET][len(request.POST) == 0]
     pay_pk = int(data['PAYMENT_ID'])
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
     payment = Payment.objects.get(pk=pay_pk)
 
     req_hash = data['LMI_HASH']
@@ -170,7 +170,7 @@ def notify(request):
             pass
         from config.settings import PURCHASE_REQUEST_URL, PARTNER_SECRET_KEY, PARTNER_ID
         md5 = make_md5(str(payment.owner.pk),str(issue.original_id),PARTNER_SECRET_KEY)
-        url = PURCHASE_REQUEST_URL+'?user=%s&price=%s&art=%s&md5=%s&mail=%s&place=%s' % (payment.owner.pk,issue.journal.price,issue.original_id,md5,request.user.email,PARTNER_ID)
+        url = PURCHASE_REQUEST_URL+'?user=%s&price=%s&art=%s&md5=%s&mail=%s&place=%s' % (payment.owner.pk,issue.journal.price,issue.original_id,md5,payment.owner.email,PARTNER_ID)
         #import pdb; pdb.set_trace()
         print url
         out = urllib2.urlopen(url)
