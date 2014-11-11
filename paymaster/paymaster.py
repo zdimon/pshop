@@ -112,7 +112,7 @@ def invoice(request):
 def calc_hash(data):
     in_str = ';'.join(
         [
-            LMI_MERCHANT_ID,
+            'd7706dd6-acc2-4821-9fcf-1b58999ac2cd',
             data['LMI_PAYMENT_NO'],
             data['LMI_SYS_PAYMENT_ID'],
             data['LMI_SYS_PAYMENT_DATE'],
@@ -122,7 +122,7 @@ def calc_hash(data):
             data['LMI_PAID_CURRENCY'],
             data['LMI_PAYMENT_SYSTEM'],
             data.get('LMI_SIM_MODE', ''),
-            SECRET_WORD,
+            'secret',
         ]
     )
 
