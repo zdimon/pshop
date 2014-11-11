@@ -57,11 +57,11 @@ def pay(request, issue_id, **kwargs):
         'LMI_MERCHANT_ID': 'd7706dd6-acc2-4821-9fcf-1b58999ac2cd',
         'LMI_PAYMENT_AMOUNT': str('100'),
         'LMI_CURRENCY': 'RUB',
-        'LMI_PAYMENT_NO': str(issue_id),
+        'LMI_PAYMENT_NO': payment.pk,
         'LMI_PAYMENT_DESC': 'payment',
         'LMI_PAYER_PHONE_NUMBER': '',
         'LMI_PAYER_EMAIL': user.email or '',
-        'PAYMENT_ID': payment.pk,
+        'PAYMENT_ID': payment.pk
     }
 
     #if DEBUG:
