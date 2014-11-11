@@ -166,6 +166,8 @@ def notify(request):
             pur.price = issue.journal.price
             pur.user = payment.owner
             pur.save()
+        except:
+            pass
     else:
         payment.operation_status = Payment.STATUS_ERROR
 
