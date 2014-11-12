@@ -219,8 +219,11 @@ def success(request):
     p.price = issue.journal.price
     p.save()
     '''
+    username = '%s--%s' % (request.user.username, request.user.email)
+    username = username.replace('@','--att--')
+    username = username.replace('.','--dot--')
     items = Purchase.objects.filter(user=request.user)
-    context = {"items": items}
+    context = {"items": items, "username": username}
     return render_to_response('catalog/library.html', context, RequestContext(request))
 
     #return HttpResponse('<h1>SUCCESS</h1>')

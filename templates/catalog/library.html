@@ -13,7 +13,7 @@
           {{ i.issue.get_cover }}
           <p>{{ i.issue.name }}</p>
 
-            <p><a href="http://pressa.ru/">{% trans 'Читать' %}</a></p>
+            <p><a target="_blank" href="http://pressa.ru/rlogin/{{username}}/{{i.issue.id}}">{% trans 'Читать' %}</a></p>
         </div>
       {% endfor %}
 
