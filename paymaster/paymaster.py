@@ -18,6 +18,9 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from registration.models import RegistrationProfile
 import hashlib
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def pay(request, issue_id, **kwargs):
     """
     Параметры:
