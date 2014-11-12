@@ -172,7 +172,7 @@ def notify(request):
         except:
             pass
         from config.settings import PAYMENT_URL, SECRET, MIRROR_ID
-        issue_id = issue.pk
+        issue_id = issue.original_id
         pr = RegistrationProfile.objects.get(user=payment.owner)
         user_id = pr.pressa_id
         url = PAYMENT_URL
