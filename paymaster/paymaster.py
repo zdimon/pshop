@@ -14,6 +14,8 @@ from settings import *
 from catalog.models import Issue, Purchase
 import requests
 import json
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 
 def pay(request, issue_id, **kwargs):
     """
@@ -216,10 +218,12 @@ def success(request):
     p.user = request.user
     p.price = issue.journal.price
     p.save()
-    context = {"issue": issue, "message": message , "link": link}
-    return render_to_response('catalog/payment_done.html', context, RequestContext(request))
     '''
-    return HttpResponse('<h1>SUCCESS</h1>')
+    items = Purchase.objects.filter(user=request.user)
+    context = {"items": items}
+    return render_to_response('catalog/library.html', context, RequestContext(request))
+
+    #return HttpResponse('<h1>SUCCESS</h1>')
 
 
 def fail(request):

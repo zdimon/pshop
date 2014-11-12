@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block meta_title %}{{ journal.seo_title }}{% endblock %}
+{% block meta_description %}{{ journal.seo_content }}{% endblock %}
+{% block meta_keywords %}{{ journal.seo_keywords }}{% endblock %}
+
+{% block 'content' %}
+
+      <h1>Моя библиотека</h1>
+      {% for i in items %}
+         <div class="journal_item">
+          {{ i.issue.get_cover }}
+          <p>{{ i.issue.name }}</p>
+
+            <p><a href="http://pressa.ru/">{% trans 'Читать' %}</a></p>
+        </div>
+      {% endfor %}
+
+{% endblock %}
