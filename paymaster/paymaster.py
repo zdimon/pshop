@@ -180,10 +180,10 @@ def notify(request):
         data = {'user_id': user_id, 'issue_id': issue_id, 'mirror_id': MIRROR_ID, 'sign': sign}
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         oo = requests.post(url, data=json.dumps(data), headers=headers).content
-        f = open('myfile.html','w')
-        f.write(url)
-        f.write(oo)
-        f.close()
+        #f = open('myfile.html','w')
+        #f.write(url)
+        #f.write(oo)
+        #f.close()
         #import pdb; pdb.set_trace()
         out = json.loads(oo)
         print out
