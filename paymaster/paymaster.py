@@ -16,7 +16,8 @@ import requests
 import json
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-
+from registration.models import RegistrationProfile
+import hashlib
 def pay(request, issue_id, **kwargs):
     """
     Параметры:
@@ -151,7 +152,7 @@ def notify(request):
     """
     data = [request.POST, request.GET][len(request.POST) == 0]
     pay_pk = int(data['PAYMENT_ID'])
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
     payment = Payment.objects.get(pk=pay_pk)
 
     req_hash = data['LMI_HASH']
