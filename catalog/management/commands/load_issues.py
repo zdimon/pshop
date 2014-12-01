@@ -37,8 +37,11 @@ class Command(BaseCommand):
                 iss.journal = i
                 iss.save()
                 image_url = IMPORT_COVER_DOMAIN+issue.getAttribute('cover')
-                request = requests.get(image_url, stream=True)
-                if request.status_code != requests.codes.ok:
+                try:
+                    request = requests.get(image_url, stream=True)
+                    if request.status_code != requests.codes.ok:
+                        continue
+                except:
                     continue
                 file_name = image_url.split('/')[-1]
                 lf = tempfile.NamedTemporaryFile()
