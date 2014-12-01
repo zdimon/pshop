@@ -23,7 +23,10 @@ class Command(BaseCommand):
         for i in Journal.objects.all():
             url = IMPORT_JOURNAL_ISSUE+'/'+str(i.original_id)+'/3'
             #import pdb; pdb.set_trace()
-            doc = urllib2.urlopen(url)
+            try:
+                doc = urllib2.urlopen(url)
+            except:
+                continue
             dom = minidom.parse(doc)
             items = dom.getElementsByTagName('issue')
             for issue in items:
