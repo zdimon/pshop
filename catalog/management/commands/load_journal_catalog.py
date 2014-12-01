@@ -22,7 +22,10 @@ class Command(BaseCommand):
             logger.info("category %s" % c.pk)
             import urllib2
             url = IMPORT_JOURNAL_CATALOG_URL+'/'+str(c.original_id)
-            doc = urllib2.urlopen(url)
+            try:
+                doc = urllib2.urlopen(url)
+            except:
+                import pdb; pdb.set_trace()
             dom = minidom.parse(doc)
             items=dom.getElementsByTagName('journal')
             for i in items:
