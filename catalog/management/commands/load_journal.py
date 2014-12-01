@@ -33,6 +33,8 @@ class Command(BaseCommand):
             j.description = i.getAttribute('description')
             j.price = i.getAttribute('price')
             j.journal_type = i.getAttribute('journal_type')
+            j.price_dram = 0
+            j.price_usd = 0
             j.save()
             logger.info("adding...%s" % j.name)
         logger.info("Done")
