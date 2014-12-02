@@ -80,7 +80,7 @@
 <div class="row" style="margin: 60px 10px 0 10px; ">
 
   
-    <div class="col-md-3 well">
+    <div class="col-md-2 well">
         {% if user.is_authenticated %}
           <a class="btn btn-danger pull-right" href="{% url 'logout' %}">{% trans 'Logout' %}</a>
         {% else %}
@@ -115,10 +115,11 @@
                                  </br>
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
+                                    <a href="{% url 'registration_register' %}" class="btn btn-success pull-left">{% trans "Registration" %}</a>
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <button type="submit" class="btn btn-success pull-right">{% trans "Login" %}</button>
-                                         <a href="{% url 'registration_register' %}" class="btn btn-success pull-left">{% trans "Registration" %}</a>
+                                         
                                     </div>
                                 </div>
                 </form>
@@ -134,7 +135,7 @@
         {% catalog_tag %}
     </div>
 
-    <div class="col-md-9">
+    <div class="col-md-10">
         <div class="well">
               {% block 'content' %}
 
