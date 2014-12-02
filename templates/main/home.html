@@ -5,6 +5,7 @@
 {% load in_armenian_tag %}
 {% load in_daily_tag %}
 {% load in_pressa_tag %}
+{% load new_pressa_tag %}
 {% load i18n %}
 
 
@@ -21,6 +22,10 @@
            
            <h2> {% trans 'Издания от пресса.ру' %} </h2>
            {% in_pressa_tag %}
+ 
+ 
+            <h2> {% trans 'Свежая пресса' %} </h2>
+           {% new_pressa_tag %}
            
            
        {% endblock %}

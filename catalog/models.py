@@ -64,6 +64,7 @@ class Journal(models.Model):
     price_usd = models.DecimalField( verbose_name=_('Price USD'), max_digits= 12, decimal_places= 2)
     cover = models.ImageField(upload_to='journal_cover', verbose_name=_('Journal cover'), blank=True)
     original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
+    last_issue_id = models.IntegerField(db_index=True, verbose_name=_('Last issue id'))
     category = models.ManyToManyField(Catalog,
                                       blank=True,
                                       verbose_name=_(u'Catalogs'))
