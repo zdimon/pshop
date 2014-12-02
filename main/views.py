@@ -7,13 +7,15 @@ from django.utils.translation import check_for_language
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import translation
 from page.models import Page
+from registration.forms import RegistrationForm
 # Create your views here.
 def home(request):
     try:
         page = Page.objects.get(slug='home')
     except:
         page = None
-    context = {'page': page}
+        
+    context = {'page': page, 'form': RegistrationForm()}
     return render_to_response('main/home.html', context, RequestContext(request))
     
 def change_language(request):
