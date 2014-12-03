@@ -163,14 +163,15 @@ BROKER_URL = 'redis://localhost:6379/0'
 
 from celery.schedules import crontab
 from datetime import timedelta
+'''
 CELERYBEAT_SCHEDULE = {
 
         'backup': {'task': 'backup.tasks.backup','schedule': crontab(minute=0, hour=0)},
         'loadnewissue': {'task': 'catalog.tasks.import_new','schedule': crontab(minute=0, hour="*/1")},
         #'backup': {'task': 'backup.tasks.backup','schedule': crontab()},
 
-}
-#CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+}'''
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 DBBACKUP_STORAGE = 'dbbackup.storage.filesystem_storage'
 DBBACKUP_FILESYSTEM_DIRECTORY = BASE_DIR+'/backup/data'
