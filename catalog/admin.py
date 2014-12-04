@@ -30,6 +30,7 @@ class JournalAdmin(TranslationAdmin):
     list_display = ( 'name', 'price', 'price_dram', 'price_usd', 'journal_type' )
     list_filter = ('journal_type', )
     search_fields = ['name', 'name_ru', 'name_hy', 'name_en']
+    list_editable = [ 'name', 'price', 'price_dram', 'price_usd']
     form = JournalAdminForm
 
 
