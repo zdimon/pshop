@@ -9,7 +9,7 @@ def catalog_tag(t='paper'):
     out = {}
     c = Catalog.objects.filter(category_type=t).order_by('sorting')
     out['items'] = c
-    if t == 'journal':
+    if t == 'magazine':
         out['title'] = _(u'Журналы')
     if t == 'paper':
         out['title'] = _(u'Газеты')
