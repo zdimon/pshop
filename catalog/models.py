@@ -33,6 +33,7 @@ class Catalog(MPTTModel):
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='sub_category')
     original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
+    sorting = models.PositiveIntegerField(verbose_name=_(u'сортировка'))
     def __unicode__(self):
         return self.name
 
@@ -45,6 +46,7 @@ class Catalog(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['name']
+        ordering = ('sorting',)
 
 class Journal(models.Model):
     JOURNAL_TYPE_CHOICES = (
@@ -75,7 +77,8 @@ class Journal(models.Model):
     in_everyday = models.BooleanField(verbose_name=_('In daily'), default=False)
     in_pressa = models.BooleanField(verbose_name=_('In pressa.ru'), default=False)
     def save(self, **kwargs):
-        self.name_slug = pytils.translit.slugify(self.name)
+        if not self.id:
+            self.name_slug = pytils.translit.slugify(self.name)
         return super(Journal, self).save(**kwargs)
 
     @property

@@ -9,6 +9,9 @@ from paymaster.models import Payment
 
 class CatalogAdmin(MPTTModelAdmin,TranslationAdmin):
     list_filter = ('category_type', )
+    list_display = ( 'name', 'sorting')
+    list_editable = ['sorting']
+    ordering = ('-sorting',)
 
 
 admin.site.register(Catalog, CatalogAdmin)

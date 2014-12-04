@@ -35,6 +35,12 @@ class JournalListView(ListView):
         cat = Catalog.objects.get(name_slug=category_slug)
         qs = qs.filter(category__in=(cat.pk,))
         return qs
+        
+    def get_context_data(self, **kwargs):
+        category_slug = self.kwargs['slug']
+        cat = Catalog.objects.get(name_slug=category_slug)    
+        kwargs['catalog'] = cat
+        return super(JournalListView, self).get_context_data(**kwargs)
 
 
 
