@@ -38,7 +38,8 @@ class Catalog(MPTTModel):
         return self.name
 
     def save(self, **kwargs):
-        self.name_slug = pytils.translit.slugify(self.name)
+        if not self.id:
+            self.name_slug = pytils.translit.slugify(self.name)
         return super(Catalog, self).save(**kwargs)
 
     def get_absolute_url(self):
