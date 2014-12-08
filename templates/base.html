@@ -40,33 +40,33 @@
                     {% if LANGUAGE_CODE == 'ru' %}
                         <li>
                             <a href="{% url 'main.views.change_language' %}?language=hy&next={{request.get_full_path}}">
-                               {% trans 'Armenian' %}
+                               <img src="{% static "ar.png" %}" title="{% trans 'Armenian' %}" />
                             </a>
                          </li><li>
                             <a href="{% url 'main.views.change_language' %}?language=en&next={{request.get_full_path}}">
-                               {% trans 'English' %}
+                               <img src="{% static "uk.png" %}" title="{% trans 'English' %}" />
                             </a>                           
                         </li>
                     {% endif %}
                     {% if LANGUAGE_CODE == 'hy' %}
                       <li>
                             <a href="{% url 'main.views.change_language' %}?language=ru&next={{request.get_full_path}}">
-                               {% trans 'Russian' %}
+                               <img src="{% static "ru.png" %}" title="{% trans 'Russian' %}" />
                             </a>
                        </li><li>
                             <a href="{% url 'main.views.change_language' %}?language=en&next={{request.get_full_path}}">
-                               {% trans 'English' %}
+                               <img src="{% static "ar.png" %}" title="{% trans 'English' %}" />
                             </a>
                       </li>
                     {% endif %}
                     {% if LANGUAGE_CODE == 'en' %}
                         <li>
                            <a href="{% url 'main.views.change_language' %}?language=ru&next={{request.get_full_path}}">
-                               {% trans 'Russian' %}
+                               <img src="{% static "ru.png" %}" title="{% trans 'Russian' %}" />
                            </a>
                         </li><li>
                             <a href="{% url 'main.views.change_language' %}?language=hy&next={{request.get_full_path}}">
-                               {% trans 'Armenian' %}
+                               <img src="{% static "ar.png" %}" title="{% trans 'Armenian' %}" />
                             </a>
                        </li>
                     {% endif %}                 
