@@ -6,7 +6,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib.flatpages import views
 admin.autodiscover()
-
+from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 
    
 
@@ -23,7 +23,10 @@ urlpatterns = patterns('',
      url(r'^rosetta/', include('rosetta.urls')),
      url(r'^reg/', 'catalog.views.reg'),
      url(r'^', include('paymaster.urls')),
-
+    url(r'^reset/$', password_reset,  name='reset-password'),
+    url(r'^reset/done/', password_reset_done,name="password_reset_done"),
+    url(r'^reset/complete', password_reset_complete,name="password_reset_complete"),
+    url(r'^reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm',name="password_reset_confirm"),
 )
 
 
