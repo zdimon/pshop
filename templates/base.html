@@ -30,10 +30,7 @@
                 
                 
                   <li><a href="{% url 'page' 'about' %}">{% trans 'About us' %}</a></li>
-                   <li><a href="{% url 'page' 'advertiser' %}">{% trans 'For advertiser' %}</a></li>
-                    <li><a href="{% url 'page' 'agreement' %}">{% trans 'User agreement' %}</a></li>
-                     <li><a href="{% url 'page' 'privacy' %}">{% trans 'Privacy' %}</a></li>
-                      <li><a href="{% url 'page' 'publisher' %}">{% trans 'For publisher' %}</a></li>
+                   
                        <li><a href="{% url 'page' 'help' %}">{% trans 'Help' %}</a></li>
                   <li><a href="{% url 'page' 'contact' %}">{% trans 'Contacts' %}</a></li>
                 
@@ -55,7 +52,7 @@
                             </a>
                        </li><li>
                             <a href="{% url 'main.views.change_language' %}?language=en&next={{request.get_full_path}}">
-                               <img src="{% static "ar.png" %}" title="{% trans 'English' %}" />
+                               <img src="{% static "uk.png" %}" title="{% trans 'English' %}" />
                             </a>
                       </li>
                     {% endif %}
