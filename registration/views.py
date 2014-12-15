@@ -9,6 +9,7 @@ from django.views.generic.edit import FormView
 
 from registration import signals
 from registration.forms import RegistrationForm
+from captcha.fields import ReCaptchaField
 
 
 class _RequestPassingFormView(FormView):
@@ -57,13 +58,16 @@ class _RequestPassingFormView(FormView):
         return super(_RequestPassingFormView, self).form_invalid(form)
 
 
+class RecaptchaRegistrationForm(RegistrationForm):
+    recaptcha = ReCaptchaField(label="I'm a human")
+
 class RegistrationView(_RequestPassingFormView):
     """
     Base class for user registration views.
     
     """
     disallowed_url = 'registration_disallowed'
-    form_class = RegistrationForm
+    form_class = RecaptchaRegistrationForm
     http_method_names = ['get', 'post', 'head', 'options', 'trace']
     success_url = None
     template_name = 'registration/registration_form.html'

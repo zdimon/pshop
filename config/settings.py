@@ -72,8 +72,12 @@ INSTALLED_APPS = (
     'redactor',
     'rosetta',
     'paymaster',
+    'captcha',
 
 )
+
+RECAPTCHA_PUBLIC_KEY = '6LdVS_8SAAAAAD64_-IWB41qYEbBW9Qh3XjdaLGQ'
+RECAPTCHA_PRIVATE_KEY = '6LdVS_8SAAAAANiQzpQVCY2wTQfQTjn4P1e0cXxl'
 
 MIDDLEWARE_CLASSES = (
 

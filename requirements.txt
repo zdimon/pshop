@@ -20,3 +20,4 @@ django-rosetta==0.7.4
 django-wysiwyg-redactor==0.4.0
 django-admin-langswitch
 django-compressor
+django-recaptcha
