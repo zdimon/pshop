@@ -92,6 +92,10 @@ class Journal(models.Model):
     def get_absolute_url(self):
        return reverse("journal", kwargs={"slug": self.name_slug})
 
+    @property
+    def get_last_issue(self):
+        return Issue.objects.filter(journal=self).order_by('-id')[0:1]
+
     def __unicode__(self):
         return self.name
 

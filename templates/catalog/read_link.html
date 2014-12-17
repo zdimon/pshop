@@ -1,0 +1,17 @@
+{% load i18n %}
+
+<div style="padding-top: 15px;">
+{% if username %}
+
+    {% if i.journal.price == 0  %}
+       <a class="btn btn-success pull-left" href="http://pressa.ru/rlogin/{{ request.user.username }}/{{ i.original_id }}"> {% trans 'Read for free' %}</a>
+    {% else %}
+       <a class="btn btn-success pull-left" href="{% url 'payment-pay' issue_id=i.id %}"> {% trans 'Buy this issue' %} </a> 
+    {% endif %}
+
+{% else %}
+        
+    <a class="btn btn-success pull-left" href="{% url 'registration_register' %}"> {% trans 'Only registered users can read it.' %} </a>    
+        
+{% endif %}
+</div>

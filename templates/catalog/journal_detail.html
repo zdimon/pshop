@@ -15,6 +15,7 @@
       <h3>Стоимость: {{ journal.price }} {% trans 'руб' %}</h3>
       <p>{{ journal.description | safe }}</p>
       </div>
+      <div align="center"> </div>
       <div style="clear: both"></div>
 
       <h2>Выпуски</h2>
@@ -23,7 +24,8 @@
           {{ i.get_cover }}
           <p>{{ i.name }}</p>
 
-            <p><a href="{% url 'payment-pay' issue_id=i.id %}">{% trans 'Купить выпуск через paymaster' %}</a></p>
+           
+            {% include "catalog/read_link.html" with issue=i username=username %}
         </div>
       {% endfor %}
        <div style="clear: both"></div>
