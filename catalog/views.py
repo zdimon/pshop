@@ -58,8 +58,8 @@ class JournalDetailView(DetailView):
         return obj
     def get_context_data(self, **kwargs):
         context = super(JournalDetailView, self).get_context_data(**kwargs)
-        context['issues'] = self.object.issue_set.all().order_by('-date')
-        context['issues'] = Issue.objects.filter(journal=self.object).all().order_by('-date')
+        context['issues'] = self.object.issue_set.all().order_by('-original_id')
+        #context['issues'] = Issue.objects.filter(journal=self.object).all().order_by('-date')
         if self.request.user.is_authenticated():
             username = '%s--%s' % (self.request.user.username, self.request.user.email)
             username = username.replace('@','--att--')
