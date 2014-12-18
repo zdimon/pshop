@@ -21,8 +21,9 @@ class JournalAdminForm(forms.ModelForm):
     class Meta:
         model = Journal
         widgets = {
-           'description_ar': RedactorEditor(),
+           'description_hy': RedactorEditor(),
            'description_ru': RedactorEditor(),
+           'description_en': RedactorEditor(),
         }
 
 
