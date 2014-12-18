@@ -7,6 +7,20 @@
 {% load in_pressa_tag %}
 {% load new_pressa_tag %}
 {% load i18n %}
+{% load staticfiles %}
+{% block js %}
+
+   
+    <script src="{% static "js/jquery.jcarousel.min.js" %}"></script>
+    <script src="{% static "js/jcarousel.responsive.js" %}"></script>
+{% endblock %}
+
+{% block css %}
+  
+   <link rel="stylesheet" media="all" type="text/css" href="/static/css/jcarousel.responsive.css">
+{% endblock %}
+
+
 
 
        {% block 'content' %}
@@ -14,17 +28,19 @@
            <p> 
                {{ page.content|safe }}
            </p>
+         
            <h2> {% trans 'Армянские издания' %} </h2>
-           {% in_armenian_tag %}
+            {% in_armenian_tag %}
            
            <h2> {% trans 'Ежедневные издания' %} </h2>
            {% in_daily_tag %}
            
            <h2> {% trans 'Издания от пресса.ру' %} </h2>
            {% in_pressa_tag %}
- 
+           
  
             <h2> {% trans 'Свежая пресса' %} </h2>
+            <div style="clear: both"> </div>
            {% new_pressa_tag %}
            
            

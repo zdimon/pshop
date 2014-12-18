@@ -7,6 +7,7 @@ def new_pressa_tag():
     out = {}
     c = Journal.objects.all().order_by('-last_issue_id')[0:10]
     out['items'] = c
+    out['class'] = 'new_pressa_tag'
     return out
 
 

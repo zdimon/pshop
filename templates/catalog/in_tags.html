@@ -1,10 +1,19 @@
-<div>
-    {% for i in items %}
-        <div class="journal_item">
-            <a href="{{ i.get_absolute_url }}">{{ i.get_cover }}</a>
-            <p><a href="{{ i.get_absolute_url }}">{{ i }}</a></p>
-        </div>
-    {% endfor %}
+<div class="jcarousel-wrapper">
+    <div class="jcarousel">
+            <ul>
+            {% for i in items %}
+                <li>
+                    <a href="{{ i.get_absolute_url }}">{{ i.get_cover }}</a>
+                    <p><a href="{{ i.get_absolute_url }}">{{ i }}</a></p>
+                </li>
+            {% endfor %}
+            </ul>
+   </div>
+         
+                <a href="#" class="jcarousel-control-prev">&lsaquo;</a>
+                <a href="#" class="jcarousel-control-next">&rsaquo;</a>
+
 </div>
 
-<div style="clear: both"> </div>
+
+    

@@ -7,6 +7,7 @@ def in_pressa_tag():
     out = {}
     c = Journal.objects.filter(in_pressa=True).all()
     out['items'] = c
+    out['class'] = 'in_pressa_tag'
     return out
 
 
