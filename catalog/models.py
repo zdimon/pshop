@@ -77,6 +77,7 @@ class Journal(models.Model):
     in_am = models.BooleanField(verbose_name=_('In armenian'), default=False)
     in_everyday = models.BooleanField(verbose_name=_('In daily'), default=False)
     in_pressa = models.BooleanField(verbose_name=_('In pressa.ru'), default=False)
+    count_for_pay = models.IntegerField(db_index=True, verbose_name=_('Count for pay'))
     def save(self, **kwargs):
         if not self.id:
             self.name_slug = pytils.translit.slugify(self.name)
@@ -105,6 +106,7 @@ class Issue(models.Model):
     name = models.CharField(verbose_name=_('Name'),max_length=250, blank=True)
     date = models.DateTimeField(blank=True, null=True)
     original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
+    is_empty = models.BooleanField(verbose_name=_('Without cover'), default=True)
     def __unicode__(self):
         return self.journal.name+u' номер '+self.name
     @property
