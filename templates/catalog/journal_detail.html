@@ -12,13 +12,13 @@
        {{ journal.get_cover }}
       </div>
       <div class="col-md-9">
-      <h3>Стоимость: {{ journal.price }} {% trans 'руб' %}</h3>
+      <h3>Стоимость: {{ journal.price_dram }} {% trans 'драм' %}</h3>
       <p>{{ journal.description | safe }}</p>
       </div>
       <div align="center"> </div>
       <div style="clear: both"></div>
 
-      <h2>Выпуски</h2>
+      <h2>{% trans 'Выпуски' %}</h2>
       {% for i in issues %}
         <div class="journal_item">
           {{ i.get_cover }}

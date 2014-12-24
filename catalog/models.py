@@ -99,6 +99,18 @@ class Journal(models.Model):
 
     def __unicode__(self):
         return self.name
+        
+    def set_archive(self):
+        #from catalog.models import Issue
+        Issue.objects.filter(journal=self).update(is_archive=True)
+        if self.count_for_pay ==0:
+            payment = Issue.objects.filter(journal=self).order_by('-original_id')
+        else:    
+            payment = Issue.objects.filter(journal=self).order_by('-original_id')[:self.count_for_pay]    
+        for p in payment:
+            p.is_archive = False
+            p.save()
+        
 
 class Issue(models.Model):
     journal =  models.ForeignKey(Journal, verbose_name=_('Journal'))
@@ -107,6 +119,7 @@ class Issue(models.Model):
     date = models.DateTimeField(blank=True, null=True)
     original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
     is_empty = models.BooleanField(verbose_name=_('Without cover'), default=True)
+    is_archive = models.BooleanField(verbose_name=_('Without cover'), default=False)
     def __unicode__(self):
         return self.journal.name+u' номер '+self.name
     @property

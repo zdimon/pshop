@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView
 from registration import signals
 from registration.forms import RegistrationForm
 from captcha.fields import ReCaptchaField
-
+from django.utils.translation import ugettext_lazy as _
 
 class _RequestPassingFormView(FormView):
     """
@@ -59,7 +59,7 @@ class _RequestPassingFormView(FormView):
 
 
 class RecaptchaRegistrationForm(RegistrationForm):
-    recaptcha = ReCaptchaField(label="I'm a human")
+    recaptcha = ReCaptchaField(label=_("I'm a human"))
 
 class RegistrationView(_RequestPassingFormView):
     """
