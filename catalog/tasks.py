@@ -64,6 +64,8 @@ def import_new():
             iss.original_id = issue.getAttribute('id')
             iss.date = issue.getAttribute('release_date')
             iss.journal = i
+            iss.is_empty = False
+            iss.is_archive = False
             iss.save()
             image_url = IMPORT_COVER_DOMAIN+issue.getAttribute('cover')
             try:
