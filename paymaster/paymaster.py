@@ -54,16 +54,16 @@ def pay(request, issue_id, **kwargs):
     issue = Issue.objects.get(pk=issue_id)
     payment = Payment.objects.create(
         owner=user,
-        operation_amount=issue.journal.price,
+        operation_amount=issue.journal.price_dram,
         description='payment',
-        ammount = issue.journal.price,
+        ammount = issue.journal.price_dram,
         payment_num = issue_id
     )
 
     data = {
         'LMI_MERCHANT_ID': 'd7706dd6-acc2-4821-9fcf-1b58999ac2cd',
         'LMI_PAYMENT_AMOUNT': str(payment.operation_amount),
-        'LMI_CURRENCY': 'RUB',
+        'LMI_CURRENCY': 'AMD',
         'LMI_PAYMENT_NO': payment.pk,
         'LMI_PAYMENT_DESC': 'payment',
         'LMI_PAYER_PHONE_NUMBER': '',
@@ -102,7 +102,7 @@ def invoice(request):
     # TODO: можно ли, если запрошено, например 60 рублей, заплатить 2 доллара?
     check = data['LMI_MERCHANT_ID'] == LMI_MERCHANT_ID and \
         float(data['LMI_PAYMENT_AMOUNT']) == payment.operation_amount and \
-        data['LMI_CURRENCY'] == 'RUB' and \
+        data['LMI_CURRENCY'] == 'AMD' and \
         float(data['LMI_PAID_AMOUNT']) == payment.operation_amount and \
         data['LMI_PAID_CURRENCY'] == 'RUB' and \
         data['LMI_PAYMENT_DESC'] == payment.description
