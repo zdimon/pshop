@@ -5,6 +5,8 @@
 
     {% if i.journal.price == 0  %}
        <a class="btn btn-success pull-left" href="http://pressa.ru/rlogin/{{ request.user.username }}/{{ i.original_id }}"> {% trans 'Read for free' %}</a>
+    {% elseif i.is_archive %}
+      <a class="btn btn-success pull-left" href="http://pressa.ru/rlogin/{{ request.user.username }}/{{ i.original_id }}"> {% trans 'Archive' %}</a>
     {% else %}
        <a class="btn btn-success pull-left" href="{% url 'payment-pay' issue_id=i.id %}"> {% trans 'Buy this issue' %} </a> 
     {% endif %}
