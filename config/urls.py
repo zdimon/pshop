@@ -51,7 +51,7 @@ urlpatterns += i18n_patterns(
     url(r'^about-us/$', views.flatpage, {'url': '/about/'}, name='about'),
     url(r'^contact/$', views.flatpage, {'url': '/contact/'}, name='contact'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^page/(?P<slug>\w+)$', 'page.views.show', name='page'),
+    url(r'^page/(?P<slug>[^\.]+)$', 'page.views.show', name='page'),
      url(r'^accounts/', include('registration.urls')),
      url(r'^logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}, name='logout'),
      url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
