@@ -5,7 +5,7 @@ register = template.Library()
 @register.inclusion_tag("catalog/in_tags.html")
 def in_armenian_tag():
     out = {}
-    c = Journal.objects.filter(in_am=True).all()
+    c = Journal.objects.filter(in_am=True, journal_type='paper').all()
     out['items'] = c
     out['class'] = 'in_armenian_tag'
     return out

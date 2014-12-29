@@ -74,9 +74,10 @@ class Journal(models.Model):
     seo_content = models.TextField(verbose_name=_(u'МЕТА content'), blank=True)
     seo_title =   models.TextField(verbose_name=_(u'МЕТА title'), blank=True)
     seo_keywords = models.TextField(verbose_name=_(u'МЕТА keywords'), blank=True)
-    in_am = models.BooleanField(verbose_name=_('In armenian'), default=False)
-    in_everyday = models.BooleanField(verbose_name=_('In daily'), default=False)
-    in_pressa = models.BooleanField(verbose_name=_('In pressa.ru'), default=False)
+    in_am = models.BooleanField(verbose_name=_('Армянские'), default=False)
+    in_everyday = models.BooleanField(verbose_name=_('Ежедневные издания'), default=False)
+    in_pressa = models.BooleanField(verbose_name=_('Журналы РФ'), default=False)
+    in_popular_pressa = models.BooleanField(verbose_name=_('Часто просматриваемые'), default=False)
     count_for_pay = models.IntegerField(db_index=True, verbose_name=_('Count for pay'))
     def save(self, **kwargs):
         if not self.id:
