@@ -84,6 +84,6 @@ def import_new():
             i.last_issue_id = issue.getAttribute('id')
             i.cover.save(file_name, files.File(lf))
             i.save()
-            i.journal.set_archive()
+            i.set_archive()
             logger.info("adding...%s" % iss.name) 
     logger.info("Done...")           
