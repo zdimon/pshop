@@ -29,6 +29,10 @@ class Command(BaseCommand):
             try:
                 j = Journal.objects.get(original_id=i.getAttribute('id'))
                 j.count_for_pay = i.getAttribute('free_delta')
+                if not j.description_hy:
+                    j.description_hy = j.description_ru
+                if not j.description_en:
+                    j.description_en = j.description_ru
                 if not j.seo_title_ru:
                     j.seo_title_ru = u'%s - Онлайн библиотека армянских и зарубежных печатных СМИ' % (j.name_ru)
                 if not j.seo_title_en:
