@@ -59,32 +59,35 @@ def import_new():
         try:
             jjj = Issue.objects.filter(original_id=issue.getAttribute('id')).get()
         except:
-            i = Journal.objects.filter(original_id=issue.getAttribute('journal_id')).get()
-            iss = Issue()
-            iss.name = issue.getAttribute('name')
-            iss.original_id = issue.getAttribute('id')
-            iss.date = issue.getAttribute('release_date')
-            iss.journal = i
-            iss.is_empty = False
-            iss.is_archive = False
-            iss.save()
-            image_url = IMPORT_COVER_DOMAIN+issue.getAttribute('cover')
             try:
-                request = requests.get(image_url, stream=True)
-                if request.status_code != requests.codes.ok:
+                i = Journal.objects.filter(original_id=issue.getAttribute('journal_id')).get()
+                iss = Issue()
+                iss.name = issue.getAttribute('name')
+                iss.original_id = issue.getAttribute('id')
+                iss.date = issue.getAttribute('release_date')
+                iss.journal = i
+                iss.is_empty = False
+                iss.is_archive = False
+                iss.save()
+                image_url = IMPORT_COVER_DOMAIN+issue.getAttribute('cover')
+                try:
+                    request = requests.get(image_url, stream=True)
+                    if request.status_code != requests.codes.ok:
+                        continue
+                except:
                     continue
+                file_name = image_url.split('/')[-1]
+                lf = tempfile.NamedTemporaryFile()
+                for block in request.iter_content(1024 * 8):
+                    if not block:
+                        break
+                    lf.write(block)
+                iss.cover.save(file_name, files.File(lf))
+                i.last_issue_id = issue.getAttribute('id')
+                i.cover.save(file_name, files.File(lf))
+                i.save()
+                i.set_archive()
+                logger.info("adding...%s" % iss.name) 
             except:
-                continue
-            file_name = image_url.split('/')[-1]
-            lf = tempfile.NamedTemporaryFile()
-            for block in request.iter_content(1024 * 8):
-                if not block:
-                    break
-                lf.write(block)
-            iss.cover.save(file_name, files.File(lf))
-            i.last_issue_id = issue.getAttribute('id')
-            i.cover.save(file_name, files.File(lf))
-            i.save()
-            i.set_archive()
-            logger.info("adding...%s" % iss.name) 
+                pass
     logger.info("Done...")           
