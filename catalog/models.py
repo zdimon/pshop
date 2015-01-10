@@ -78,6 +78,7 @@ class Journal(models.Model):
     in_everyday = models.BooleanField(verbose_name=_(u'Ежедневные издания'), default=False)
     in_pressa = models.BooleanField(verbose_name=_(u'Журналы РФ'), default=False)
     in_popular_pressa = models.BooleanField(verbose_name=_(u'Часто просматриваемые'), default=False)
+    recount = models.BooleanField(verbose_name=_(u'Не пересчитывать цены по курсу?'), default=False, help_text=u'Если отмечено то цены пересчитываться не будут.')
     count_for_pay = models.IntegerField(db_index=True, verbose_name=_('Count for pay'))
     def save(self, **kwargs):
         if not self.id:

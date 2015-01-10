@@ -10,10 +10,18 @@ from django.db import connection
 from catalog.tasks import import_new
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+from optparse import make_option
 
 class Command(BaseCommand):
-
+    import time
+    option_list = BaseCommand.option_list + (
+        make_option("-d", "--data",
+                    dest="date",
+                    default = str(time.strftime("%Y-%m-%d"))),
+        )
     def handle(self, *args, **options):
         logger.info("Start .....")
-        import_new.delay()
+        date = str(options['date'])
+        #import_new.delay()
+        import_new(date)
         logger.info("Done.....")

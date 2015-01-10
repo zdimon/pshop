@@ -11,6 +11,8 @@ from django.db import connection
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+# http://pressa.ru/journals_list
+
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
