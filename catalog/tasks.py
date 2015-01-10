@@ -46,6 +46,7 @@ def import_new():
     import requests
     logger.info('Start importing from %s' % IMPORT_NEW_JOURNAL_ISSUE)
     #Issue.objects.all().delete()
+    # http://pressa.ru/new_journal_issue
     try:
         doc = urllib2.urlopen(IMPORT_NEW_JOURNAL_ISSUE)
         #logger.warning('load %s' % IMPORT_NEW_JOURNAL_ISSUE)

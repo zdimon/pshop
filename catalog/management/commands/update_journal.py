@@ -14,7 +14,7 @@ import os.path
 import requests
 import tempfile
 from django.core import files
-
+# http://pressa.ru/journals_list
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
@@ -69,8 +69,9 @@ class Command(BaseCommand):
             
                 ''' 
                 logger.info("updating...%s" % j.name)
-            except:
-                pass
+            except Exception as e:
+                print e
+                raise
             
            
             
