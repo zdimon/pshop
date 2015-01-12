@@ -17,6 +17,7 @@
       {% else %}
             <h3>{% trans 'Бесплатно' %} </h3>
       {% endif %}
+      <p> {% trans 'Последний выпуск ' %} {{ journal.get_last_issue.name }} {% trans 'от' %} {{ journal.get_last_issue.date }}</p>
       <p>{{ journal.description | safe }}</p>
       </div>
       <div align="center"> </div>
