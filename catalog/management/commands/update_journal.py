@@ -79,7 +79,7 @@ class Command(BaseCommand):
                 logger.info("updating...%s" % j.name)
             except Exception as e:
                 print e
-                print 'id === %s' (str(i.getAttribute('id')),)
+                print 'id === %s' % (str(i.getAttribute('id')),)
                 raise
             
            
