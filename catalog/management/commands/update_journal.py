@@ -80,6 +80,36 @@ class Command(BaseCommand):
             except Exception as e:
                 print e
                 print 'id === %s' % (str(i.getAttribute('id')),)
+                from catalog.models import Journal
+                from config.local import  IMPORT_JOURNAL_URL
+                import urllib2
+                doc = urllib2.urlopen(IMPORT_JOURNAL_URL+'/'+i.getAttribute('id'))
+                dom = minidom.parse(doc)    
+                items=dom.getElementsByTagName('journal')   
+                for i in items:             
+                    j = Journal()
+                    j.original_id = i.getAttribute('id')
+                    j.name = i.getAttribute('name')
+                    j.description = i.getAttribute('description')
+                    j.price = i.getAttribute('price')
+                    j.journal_type = i.getAttribute('journal_type')
+                    j.price_dram = 0
+                    j.price_usd = 0
+                    j.last_issue_id = 0
+                    j.count_for_pay = i.getAttribute('free_delta')
+                    j.name_ru = i.getAttribute('name')
+                    j.name_en = i.getAttribute('name')
+                    j.name_hy = i.getAttribute('name')
+                    j.description_hy = i.getAttribute('description')
+                    j.description_ru = i.getAttribute('description')
+                    j.description_en = i.getAttribute('description')
+                    j.seo_title_en =  u'%s - on-line library of Armenian and foreign printed Mass Media | pressinfo.am' % (j.name_en) 
+                    j.seo_title_ru = u'%s - Онлайн библиотека армянских и зарубежных печатных СМИ | pressinfo.am' % (j.name_ru)
+                    j.seo_title_hy = u'%s - Հայկական և արտասահմանյան տպագիր ԶԼՄ-ների առցանց գրադարան | pressinfo.am' % (j.name_hy)
+                    logger.info("adding...%s" % j.name)                
+                
+                
+                
                 #raise
             
            
