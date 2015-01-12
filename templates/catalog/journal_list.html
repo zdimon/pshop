@@ -10,6 +10,7 @@
         <div class="journal_item">
             <a href="{{ i.get_absolute_url }}">{{ i.get_cover }}</a>
             <p><a href="{{ i.get_absolute_url }}">{{ i }}</a></p>
+            <p>{% trans 'Стоимость' %}: {{ i.price_dram }} {% trans 'драм' %}</p>
         </div>
     {% endfor %}
      <div style="clear: both"></div>
