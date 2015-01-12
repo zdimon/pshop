@@ -56,7 +56,7 @@ def pay(request, issue_id, **kwargs):
         owner=user,
         operation_amount=issue.journal.price_dram,
         description='payment',
-        ammount = issue.journal.price_dram,
+        ammount = issue.journal.price,
         payment_num = issue_id
     )
 
