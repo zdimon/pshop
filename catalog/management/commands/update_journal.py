@@ -80,9 +80,6 @@ class Command(BaseCommand):
             except Exception as e:
                 print e
                 print 'id === %s' % (str(i.getAttribute('id')),)
-                from catalog.models import Journal
-                from config.local import  IMPORT_JOURNAL_URL
-                import urllib2
                 doc = urllib2.urlopen(IMPORT_JOURNAL_URL+'/'+i.getAttribute('id'))
                 dom = minidom.parse(doc)    
                 items=dom.getElementsByTagName('journal')   
