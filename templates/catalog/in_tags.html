@@ -7,7 +7,7 @@
                     <a href="{{ i.get_absolute_url }}">{{ i.get_cover }}</a>
                     <p><a href="{{ i.get_absolute_url }}">{{ i }}</a></p>
                   {% if i.price_dram > 0 %}
-                    <h3>{% trans 'Стоимость' %}: {{ i.price_dram }} {% trans 'драм' %}</h3>
+                    <h3>{{ i.price_dram }} {% trans 'драм' %}</h3>
                   {% else %}
                         <h3>{% trans 'Бесплатно' %} </h3>
                   {% endif %}
