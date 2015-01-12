@@ -20,7 +20,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info("Start")
        
-        doc = urllib2.urlopen(IMPORT_JOURNAL_URL)
+        doc = urllib2.urlopen(IMPORT_JOURNAL_URL+'/0')
         dom = minidom.parse(doc)
 
         items=dom.getElementsByTagName('journal')
