@@ -44,11 +44,13 @@ class Command(BaseCommand):
                         j.seo_title_en = u'%s - on-line library of Armenian and foreign printed Mass Media' % (j.name_ru)
                 if not j.seo_title_hy:
                     if j.name_hy:
-                        j.seo_title_hy = u'%s - Онлайн библиотека армянских и зарубежных печатных СМИ' % (j.name_hy)
+                        j.seo_title_hy = u'%s - Հայկական և արտասահմանյան տպագիր ԶԼՄ-ների առցանց գրադարան)' % (j.name_hy)
                     else:
-                        j.seo_title_hy = u'%s - Онлайн библиотека армянских и зарубежных печатных СМИ' % (j.name_ru)                                     
+                        j.seo_title_hy = u'%s - Հայկական և արտասահմանյան տպագիր ԶԼՄ-ների առցանց գրադարան)' % (j.name_ru)                                     
                     
-                    
+                
+                j.seo_title_hy = u'%s - Հայկական և արտասահմանյան տպագիր ԶԼՄ-ների առցանց գրադարան)' % (j.name_hy)
+                j.seo_title_hy = u'%s - Հայկական և արտասահմանյան տպագիր ԶԼՄ-ների առցանց գրադարան)' % (j.name_hy)                     
                     
                     
                     
