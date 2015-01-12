@@ -12,7 +12,11 @@
        {{ journal.get_cover }}
       </div>
       <div class="col-md-9">
-      <h3>{% trans 'Стоимость' %}: {{ journal.price_dram }} {% trans 'драм' %}</h3>
+      {% if journal.price_dram>0 %}
+        <h3>{% trans 'Стоимость' %}: {{ journal.price_dram }} {% trans 'драм' %}</h3>
+      {% else %}
+            <h3>{% trans 'Бесплатно' %} </h3>
+      {% endif %}
       <p>{{ journal.description | safe }}</p>
       </div>
       <div align="center"> </div>
