@@ -97,7 +97,7 @@ class Journal(models.Model):
 
     @property
     def get_last_issue(self):
-        return Issue.objects.filter(journal=self).order_by('-id')[0:1]
+        return Issue.objects.filter(journal=self).order_by('-original_id')[0:1]
 
     def __unicode__(self):
         return self.name
