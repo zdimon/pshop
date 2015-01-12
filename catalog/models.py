@@ -98,7 +98,7 @@ class Journal(models.Model):
     @property
     def get_last_issue(self):
         li = Issue.objects.filter(journal=self).all().order_by('-original_id')[0:1]
-        import pdb; pdb.set_trace() 
+        #import pdb; pdb.set_trace() 
         return li
 
     def __unicode__(self):
