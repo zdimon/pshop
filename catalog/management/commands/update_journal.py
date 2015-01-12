@@ -80,7 +80,7 @@ class Command(BaseCommand):
             except Exception as e:
                 print e
                 print 'id === %s' % (str(i.getAttribute('id')),)
-                raise
+                #raise
             
            
             
