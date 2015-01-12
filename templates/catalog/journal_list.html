@@ -10,7 +10,7 @@
         <div class="journal_item">
             <a href="{{ i.get_absolute_url }}">{{ i.get_cover }}</a>
             <p><a href="{{ i.get_absolute_url }}">{{ i }}</a></p>
-            {% if i.price_dram>0 %}
+            {% if i.price_dram > 0 %}
             <p>{% trans 'Стоимость' %}: {{ i.price_dram }} {% trans 'драм' %}</p>
             {% else %}
               <p>{% trans 'Бесплатно' %} </p>
