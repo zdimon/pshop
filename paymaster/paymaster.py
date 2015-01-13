@@ -69,7 +69,7 @@ def pay(request, issue_id, **kwargs):
         'LMI_PAYER_PHONE_NUMBER': '',
         'LMI_PAYER_EMAIL': user.email or '',
         'PAYMENT_ID': payment.pk,
-        'LMI_PAYMENT_SYSTEM': 34,
+        'LMI_PAYMENT_SYSTEM': 30,
     }
 
     #if DEBUG:
