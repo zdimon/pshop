@@ -195,7 +195,29 @@ def reg(request):
     return HttpResponse(data, mimetype='application/json')
 
 
-
+def rss_rus(request):
+    from django.utils.translation import get_language, to_locale
+    
+    import urllib2
+    import requests
+    #import pdb; pdb.set_trace()
+    if request.LANGUAGE_CODE == 'hy':
+        url = "http://www.n-idea.am/arm/exports/yandex/"
+    else:
+        url = "http://www.n-idea.am/rus/exports/yandex/"
+    r = requests.get(url)
+    req = urllib2.Request(url, headers={'User-Agent' : "Magic Browser"}) 
+    doc = urllib2.urlopen(req)
+    #import pdb; pdb.set_trace()
+    dom = minidom.parse(doc)
+    #dom = minidom.parse(r.text)
+    items = []
+    it=dom.getElementsByTagName('item')
+    for i in it:
+        #import pdb; pdb.set_trace()
+        items.append({ 'title': i.childNodes[1].childNodes[0].nodeValue, 'image': i.childNodes[11].getAttribute('url'), 'link': i.childNodes[3].childNodes[0].nodeValue})
+    context = {"items": items}
+    return render_to_response('catalog/rss.html', context, RequestContext(request))
 
 
     

@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     # Examples:
      url(r'^$', 'main.views.home', name='home'),
      url(r'^buy/(?P<id>[^\.]+).html', 'catalog.views.buy', name="buy"),
+     url(r'^rss_rus/$', 'catalog.views.rss_rus', name="rss_rus"),
      url(r'^payment/(?P<id>[^\.]+).html', 'catalog.views.payment', name="payment"),
      url(r'^report/(?P<time>[^\.]+)/(?P<sign>[^\.]+)', 'catalog.views.report', name="report"),
      url(r'^admin/', include(admin.site.urls)),

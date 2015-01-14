@@ -14,6 +14,7 @@
    
     <script src="{% static "js/jquery.jcarousel.min.js" %}"></script>
     <script src="{% static "js/jcarousel.responsive.js" %}"></script>
+    <script src="{% static "js/rss.js" %}"></script>
 {% endblock %}
 
 {% block css %}
@@ -29,7 +30,11 @@
            <p> 
                {{ page.content|safe }}
            </p>
+
+           <h2>Новости</h2>
          
+          <div id="results_rss"></div>  
+
            <h2> {% trans 'Армянские издания' %} </h2>
             {% in_armenian_tag %}
             

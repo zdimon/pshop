@@ -1,0 +1,18 @@
+{% load i18n %}
+<h2> {% trans 'Обзор прессы Армении' %}' </h2> 
+<div class="jcarousel-wrapper">
+    <div class="jcarousel">
+		<ul>
+		    {% for i in items %}
+		      {% if i.image %}
+		       <li>
+		       
+		        <a href="{{i.link}}"> <img src="{{ i.image }}" /></a>
+		       	<a href="{{i.link}}">{{i.title}}</a> 
+
+		       </li>
+		       {% endif %}
+		    {% endfor %}
+		</ul>
+	</div>
+</div>
