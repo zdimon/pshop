@@ -31,15 +31,18 @@
                {{ page.content|safe }}
            </p>
 
-           <h2>Новости</h2>
+        
          
-          <div id="results_rss"></div>  
-
+          
            <h2> {% trans 'Армянские издания' %} </h2>
             {% in_armenian_tag %}
             
            <h2> {% trans 'Журналы Армении' %} </h2>
-            {% journal_armenian_tag %}            
+            {% journal_armenian_tag %}         
+
+            <div id="results_rss"></div>  
+
+   
            
            <h2> {% trans 'Ежедневные издания' %} </h2>
            {% in_daily_tag %}
