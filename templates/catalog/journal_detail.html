@@ -17,7 +17,7 @@
       {% else %}
             <h3>{% trans 'Бесплатно' %} </h3>
       {% endif %}
-      <p> {% trans 'Последний выпуск ' %} № {{ journal.get_last_issue.0.name }} {% trans 'от' %} {{ journal.get_last_issue.0.date }}</p>
+      <p> {% trans 'Последний выпуск ' %} № {{ journal.get_last_issue.0.name }} {% trans 'от' %} {{ journal.get_last_issue.0.date|date:"d-m-Y" }}</p>
       <p>{{ journal.description | safe }}</p>
       </div>
       <div align="center"> </div>
@@ -27,7 +27,7 @@
       {% for i in issues %}
         <div class="journal_item">
           {{ i.get_cover }}
-          <p>{{ i.name }}</p>
+          <p>{{ i.date|date:"d-m-Y"  }}</p>
 
            
             {% include "catalog/read_link.html" with issue=i username=username %}

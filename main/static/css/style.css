@@ -26,3 +26,20 @@
   padding-top: 20px;
   text-align: center;
 }
+
+
+.jcarousel ul li 
+{
+
+text-align: center;
+}
+
+.jcarousel ul li h3
+{
+  font-size: 14px;
+}
+
+.jcarousel ul li p
+{
+  font-size: 18px;
+}
