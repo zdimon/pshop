@@ -236,7 +236,7 @@ def success(request):
 
 
 def fail(request):
-    return HttpResponse('<h1>ERROR</h1>')
+    redirect('/')
 
 def make_md5(user, art, key):
     import hashlib
