@@ -2,9 +2,10 @@
 {
   float: left;
   width: 247px;
-  height: 360px;
+  height: 410px;
   border: 1px solid silver;
   margin: 2px;
+  text-align: center;
 }
 
 .journal_item p
