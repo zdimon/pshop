@@ -236,7 +236,7 @@ def success(request):
 
 
 def fail(request):
-    redirect('/')
+    return redirect('home')
 
 def make_md5(user, art, key):
     import hashlib
