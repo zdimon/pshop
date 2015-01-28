@@ -2,10 +2,9 @@
 {
   float: left;
   width: 247px;
-  height: 415px;
+  height: 360px;
   border: 1px solid silver;
   margin: 2px;
-  text-align: center;
 }
 
 .journal_item p
@@ -28,3 +27,19 @@
   text-align: center;
 }
 
+
+.jcarousel ul li 
+{
+
+text-align: center;
+}
+
+.jcarousel ul li h3
+{
+  font-size: 14px;
+}
+
+.jcarousel ul li p
+{
+  font-size: 18px;
+}
