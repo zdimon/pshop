@@ -74,6 +74,12 @@ class CurrencyAdmin(admin.ModelAdmin):
 admin.site.register(CurrencyHistory, CurrencyAdmin)
 
 
+class ImportLogAdmin(admin.ModelAdmin):
+    list_display = ( 'journal', 'issue', 'created', 'is_imported')
+
+
+admin.site.register(ImportLog, ImportLogAdmin)
+
 
 
 class PaymentAdmin(admin.ModelAdmin):
@@ -104,8 +110,3 @@ admin.site.get_urls = admin_urls
 
 
 
-class ImportLogAdmin(admin.ModelAdmin):
-    list_display = ( 'journal', 'issue', 'created', 'is_imported')
-
-
-admin.site.register(ImportLog, ImportLogAdmin)
