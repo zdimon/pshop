@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.views.generic import ListView, DetailView
-from catalog.models import Journal, Catalog, Issue, Purchase
+from catalog.models import Journal, Catalog, Issue, Purchase, ImportLog
 from django.http import Http404
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -221,4 +221,16 @@ def rss_rus(request):
 
 
     
-    
+def import_issue(request,issue_id):
+    i = Issue.objects.get(original_id=issue_id)
+    l = ImportLog()
+    l.issue = i
+    l.journal = i.journal
+    l.save()
+    some_data_to_dump = {
+        'status': 0,
+        'message': 'ok',
+    }
+    data = simplejson.dumps(some_data_to_dump)
+
+    return HttpResponse(data, mimetype='application/json')
