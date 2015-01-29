@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'banner_rotator',
     'main',
     'south',
     'catalog',
@@ -73,7 +74,7 @@ INSTALLED_APPS = (
     'rosetta',
     'paymaster',
     'captcha',
-
+    
 )
 
 RECAPTCHA_PUBLIC_KEY = '6LdVS_8SAAAAAD64_-IWB41qYEbBW9Qh3XjdaLGQ'

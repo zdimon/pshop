@@ -156,6 +156,10 @@ def register(sender, user, request, **kwarg):
 user_activated.connect(register)
 
     
-            
-    
-    
+class ImportLog(models.Model):
+    journal =  models.ForeignKey(Journal, verbose_name=_('Journal'))
+    issue =  models.ForeignKey(Issue, verbose_name=_('Issue'))
+    created = models.DateTimeField(auto_now_add=True, auto_now=True, blank=True, null=True)
+    is_imported = models.BooleanField(verbose_name=_('Is reported'), default=False)
+    class Meta:
+        ordering = ('-id', )

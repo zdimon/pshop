@@ -42,6 +42,7 @@ urlpatterns = patterns('',
     url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
                     auth_views.password_reset_confirm,
                     name='password_reset_confirm'),
+    url(r'^banner_rotator/', include('banner_rotator.urls')),
 )
 
 

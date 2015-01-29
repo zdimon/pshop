@@ -2,6 +2,7 @@
 {% load catalog_tag %}
 {% load i18n %}
 {% get_current_language as LANGUAGE_CODE %}  
+{% load banners %}
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
 <title>{% block meta_title %}{% endblock %}</title>
@@ -156,6 +157,11 @@
     
     
 </div>
+
+<div align="center">
+  {% banner place %}
+</div>
+
 
 <div align="center">
 

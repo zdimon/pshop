@@ -22,3 +22,4 @@ django-admin-langswitch
 django-compressor
 django-recaptcha
 fabric
+django_extensions

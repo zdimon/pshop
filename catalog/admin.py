@@ -1,5 +1,5 @@
 from django.contrib import admin
-from catalog.models import Catalog, Journal, Issue, Purchase, CurrencyHistory
+from catalog.models import Catalog, Journal, Issue, Purchase, CurrencyHistory, ImportLog
 from mptt.admin import MPTTModelAdmin
 from django import forms
 from redactor.widgets import RedactorEditor
@@ -104,3 +104,8 @@ admin.site.get_urls = admin_urls
 
 
 
+class ImportLogAdmin(admin.ModelAdmin):
+    list_display = ( 'journal', 'issue', 'created', 'is_imported')
+
+
+admin.site.register(ImportLog, ImportLogAdmin)
