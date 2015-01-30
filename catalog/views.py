@@ -222,11 +222,13 @@ def rss_rus(request):
 
     
 def import_issue(request,issue_id):
+    from catalog.tasks import import_now
     i = Issue.objects.get(original_id=issue_id)
     l = ImportLog()
     l.issue = i
     l.journal = i.journal
     l.save()
+    import_now.delay(issue_id)
     some_data_to_dump = {
         'status': 0,
         'message': 'ok',

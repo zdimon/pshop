@@ -36,6 +36,75 @@ def reg(user):
     pr.pressa_id = dt['user_id']
     pr.save()
     
+
+
+
+@task(name='import_now')
+def import_now(issue_id):
+    from catalog.models import Issue, Journal
+    from config.local import IMPORT_NOW_JOURNAL_ISSUE, IMPORT_COVER_DOMAIN
+    from xml.dom import minidom
+    import urllib2
+    import tempfile
+    from django.core import files
+    import requests
+    import time
+    
+    logger.info('Start importing NOW from %s' % IMPORT_NOW_JOURNAL_ISSUE)
+    #Issue.objects.all().delete()
+    # http://pressa.ru/new_journal_issue
+    url = IMPORT_NOW_JOURNAL_ISSUE+'/'+str(issue_id)
+    try:
+        doc = urllib2.urlopen(url)
+        #logger.warning('load %s' % IMPORT_NEW_JOURNAL_ISSUE)
+        dom = minidom.parse(doc)
+    except:
+        logger.error('cant load %s' % url)
+        return True
+    items = dom.getElementsByTagName('issue')
+    #import pdb; pdb.set_trace()
+    for issue in items:
+        try:
+            jjj = Issue.objects.filter(original_id=issue.getAttribute('id')).get()
+        except:
+            try:
+                i = Journal.objects.filter(original_id=issue.getAttribute('journal_id')).get()
+            except ObjectDoesNotExist:
+                i = add_new_journal(issue.getAttribute('journal_id'))               
+            iss = Issue()
+            iss.name = issue.getAttribute('name')
+            iss.original_id = issue.getAttribute('id')
+            iss.date = issue.getAttribute('release_date')
+            iss.journal = i
+            iss.is_empty = False
+            iss.is_archive = False
+            iss.save()
+            image_url = IMPORT_COVER_DOMAIN+issue.getAttribute('cover')
+            try:
+                request = requests.get(image_url, stream=True)
+                if request.status_code != requests.codes.ok:
+                    continue
+            except:
+                continue
+            file_name = image_url.split('/')[-1]
+            lf = tempfile.NamedTemporaryFile()
+            for block in request.iter_content(1024 * 8):
+                if not block:
+                    break
+                lf.write(block)
+            iss.cover.save(file_name, files.File(lf))
+            i.last_issue_id = issue.getAttribute('id')
+            i.cover.save(file_name, files.File(lf))
+            i.save()
+            i.set_archive()
+            logger.info("adding...%s" % iss.name) 
+
+    logger.info("Done...")   
+
+
+
+
+
     
 @task(name='import_new')
 def import_new(date=None):
