@@ -12,7 +12,7 @@ logger.setLevel(logging.DEBUG)
 from django.core.exceptions import ObjectDoesNotExist
 from config.local import  IMPORT_JOURNAL_URL
 from xml.dom import minidom
-from catalog.models import ImportLog
+
 
 
 @task(name='reg')
@@ -42,6 +42,7 @@ def reg(user):
 
 @task(name='import_now')
 def import_now(issue_id):
+    from catalog.models import ImportLog
     from catalog.models import Issue, Journal
     from config.local import IMPORT_NOW_JOURNAL_ISSUE, IMPORT_COVER_DOMAIN
     from xml.dom import minidom
