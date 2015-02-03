@@ -12,6 +12,7 @@ logger.setLevel(logging.DEBUG)
 from django.core.exceptions import ObjectDoesNotExist
 from config.local import  IMPORT_JOURNAL_URL
 from xml.dom import minidom
+from catalog.models import ImportLog
 
 
 @task(name='reg')
@@ -98,6 +99,10 @@ def import_now(issue_id):
             i.save()
             i.set_archive()
             logger.info("adding...%s" % iss.name) 
+            l = ImportLog()
+            l.issue = iss
+            l.journal = iss.journal
+            l.save()
 
     logger.info("Done...")   
 
