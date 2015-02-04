@@ -68,12 +68,12 @@ def import_now(issue_id):
     #import pdb; pdb.set_trace()
     for issue in items:
         try:
-            jjj = Issue.objects.filter(original_id=issue.getAttribute('id')).get()
+            jjj = Issue.objects.get(original_id=issue.getAttribute('id'))
             logger.info('I found issue %s!!!!!' % issue.getAttribute('id'))
         except:
             logger.info('Can not find issue %s' % issue.getAttribute('id'))
             try:
-                i = Journal.objects.filter(original_id=issue.getAttribute('journal_id')).get()
+                i = Journal.objects.get(original_id=issue.getAttribute('journal_id'))
                 logger.info('I found journal %s' % i.name)
             except ObjectDoesNotExist:
                 logger.info('I can not find journal %s' % issue.getAttribute('journal_id'))
