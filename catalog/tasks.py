@@ -52,10 +52,11 @@ def import_now(issue_id):
     import requests
     import time
     
-    logger.info('Start importing NOW from %s' % IMPORT_NOW_JOURNAL_ISSUE)
+    
     #Issue.objects.all().delete()
     # http://pressa.ru/new_journal_issue
     url = IMPORT_NOW_JOURNAL_ISSUE+'/'+str(issue_id)
+    logger.info('Start importing NOW from %s' % url)
     try:
         doc = urllib2.urlopen(url)
         #logger.warning('load %s' % IMPORT_NEW_JOURNAL_ISSUE)
@@ -68,11 +69,16 @@ def import_now(issue_id):
     for issue in items:
         try:
             jjj = Issue.objects.filter(original_id=issue.getAttribute('id')).get()
+            logger.info('I found issue %s!!!!!' % issue.getAttribute('id'))
         except:
+            logger.info('Can not find issue %s' % issue.getAttribute('id'))
             try:
                 i = Journal.objects.filter(original_id=issue.getAttribute('journal_id')).get()
+                logger.info('I found journal %s' % i.name)
             except ObjectDoesNotExist:
-                i = add_new_journal(issue.getAttribute('journal_id'))               
+                logger.info('I can not find journal %s' % issue.getAttribute('journal_id'))
+                i = add_new_journal(issue.getAttribute('journal_id'))         
+            logger.info('Start to create issue %s' % issue.getAttribute('name'))      
             iss = Issue()
             iss.name = issue.getAttribute('name')
             iss.original_id = issue.getAttribute('id')
@@ -82,6 +88,7 @@ def import_now(issue_id):
             iss.is_archive = False
             iss.save()
             image_url = IMPORT_COVER_DOMAIN+issue.getAttribute('cover')
+            logger.info('Dowload cover from %s' % image_url) 
             try:
                 request = requests.get(image_url, stream=True)
                 if request.status_code != requests.codes.ok:
@@ -100,11 +107,12 @@ def import_now(issue_id):
             i.save()
             i.set_archive()
             logger.info("adding...%s" % iss.name) 
+            logger.info('Create record in log about issue %s' % iss.journal.name) 
             l = ImportLog()
             l.issue = iss
             l.journal = iss.journal
             l.save()
-
+            logger.info("Finishing proccess!!") 
     logger.info("Done...")   
 
 
