@@ -100,8 +100,11 @@
         <div class="login-signup-page">
             <h2> {% trans 'Search' %} </h2>
             <form method="get" action="{% url 'search' %}" class="form_class">
-                <input name="key" type="text" class="form-control" placeholder="{% trans 'name of the magazine' %}">
-                <button type="submit" class="btn btn-success pull-right">{% trans "Go" %}</button>
+                <div class="input-group margin-bottom-20">
+                <input name="key" type="text" class="form-control" style="width: 100px" placeholder="{% trans 'name of the magazine' %}">
+                
+                <button type="submit" class="btn btn-success pull-right">{% trans "Start" %}</button>
+                </div>
             </form>
         </div>
 
