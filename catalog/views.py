@@ -232,3 +232,19 @@ def import_issue(request,issue_id):
     data = simplejson.dumps(some_data_to_dump)
 
     return HttpResponse(data, mimetype='application/json')
+
+
+
+class JournalSearchView(ListView):
+    model = Journal
+    template_name = 'catalog/journal_list.html'
+    paginate_by = 20
+    def get_queryset(self):
+        key = self.request.GET['key']
+        qs = self.model.objects.all().filter(name__contains=key)
+        return qs
+        
+    def get_context_data(self, **kwargs):
+        key = self.request.GET['key']
+        kwargs['key'] = key
+        return super(JournalSearchView, self).get_context_data(**kwargs)

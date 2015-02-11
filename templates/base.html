@@ -95,6 +95,16 @@
     
     
  <div class="col-md-2 well">
+
+
+        <div class="login-signup-page">
+            <h2> {% trans 'Search' %} </h2>
+            <form method="get" action="{% url 'search' %}" class="form_class">
+                <input name="key" type="text" class="form-control" placeholder="{% trans 'name of the magazine' %}">
+                <button type="submit" class="btn btn-success pull-right">{% trans "Go" %}</button>
+            </form>
+        </div>
+
         {% if user.is_authenticated %}
           <a class="btn btn-danger pull-right" href="{% url 'logout' %}">{% trans 'Logout' %}</a>
         {% else %}

@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from catalog.views import JournalListView, JournalDetailView
+from catalog.views import JournalListView, JournalDetailView, JournalSearchView
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.i18n import i18n_patterns
@@ -24,6 +24,7 @@ urlpatterns = patterns('',
      url(r'^rosetta/', include('rosetta.urls')),
      url(r'^reg/', 'catalog.views.reg'),
      url(r'^import/(?P<issue_id>[^\.]+)', 'catalog.views.import_issue'),
+     url(r'^search$', JournalSearchView.as_view(), name="search"),
      url(r'^', include('paymaster.urls')),
     url(r'^password/change/$',
                     auth_views.password_change,

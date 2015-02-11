@@ -7,6 +7,7 @@
 {% load in_daily_tag %}
 {% load in_pressa_tag %}
 {% load new_pressa_tag %}
+{% load book_tag %}
 {% load i18n %}
 {% load staticfiles %}
 {% block js %}
@@ -26,10 +27,7 @@
 
 
        {% block 'content' %}
-           <h1> {{ page.title }} </h1>
-           <p> 
-               {{ page.content|safe }}
-           </p>
+           
 
         
          
@@ -54,6 +52,13 @@
             <h2> {% trans 'Часто просматриваемые издания' %} </h2>
             <div style="clear: both"> </div>
            {% new_pressa_tag %}
-           
+  
+
+ 
+            <h2> {% trans 'Книги' %} </h2>
+            <div style="clear: both"> </div>
+           {% book_tag %}
+
+
            
        {% endblock %}
