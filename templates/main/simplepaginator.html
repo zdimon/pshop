@@ -1,6 +1,6 @@
 <ul class="pagination pagination-lg">
             {% if page_obj.has_previous %}
-               <li> <a href="?page={{ page_obj.previous_page_number }}">Назад</a></li>
+               <li> <a href="?page={{ page_obj.previous_page_number }}{% if key %}&key={{ key }}{% endif %}">Назад</a></li>
             {% endif %}
 
 
@@ -8,13 +8,14 @@
               {% ifequal num page_obj.number %}
                 <li class="active"><a href="#">{{ page_obj.number }}</a></li>
               {% else %}
-                <li><a href="?page={{ num }}" title="Page {{ num }}">{{ num }}</a></li>
+                <li><a href="?page={{ num }}{% if key %}&key={{ key }}{% endif %}" title="Page {{ num }}">{{ num }}</a></li>
               {% endifequal %}
             {% endfor %}
 
 
 
             {% if page_obj.has_next %}
-             <li>   <a href="?page={{ page_obj.next_page_number }}">Вперед</a></li>
+             <li>   <a href="?page={{ page_obj.next_page_number }}{% if key %}&key={{ key }}{% endif %}">Вперед</a></li>
             {% endif %}
 </ul>
+

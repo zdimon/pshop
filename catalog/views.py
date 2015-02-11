@@ -242,6 +242,7 @@ class JournalSearchView(ListView):
     def get_queryset(self):
         key = self.request.GET['key']
         qs = self.model.objects.all().filter(name__contains=key)
+        #import pdb; pdb.set_trace()
         return qs
         
     def get_context_data(self, **kwargs):
