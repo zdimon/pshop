@@ -241,7 +241,7 @@ class JournalSearchView(ListView):
     paginate_by = 20
     def get_queryset(self):
         key = self.request.GET['key']
-        qs = self.model.objects.all().filter(name__contains=key)
+        qs = self.model.objects.all().filter(name__icontains=key)
         #import pdb; pdb.set_trace()
         return qs
         
