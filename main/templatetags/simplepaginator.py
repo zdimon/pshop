@@ -8,11 +8,18 @@ def simplepaginator(context, adjacent_pages=2):
                     range(context["page_obj"].number - adjacent_pages, context["page_obj"].number + adjacent_pages + 1) \
                     if n > 0 and n <= context["paginator"].num_pages]
     #import pdb; pdb.set_trace()
-    return {
-        "page_obj": context["page_obj"],
-        "paginator" : context["paginator"],
-        "key" : context["key"],
-        "page_numbers" : page_numbers
-    }
+    try:
+        return {
+            "page_obj": context["page_obj"],
+            "paginator" : context["paginator"],
+            "key" : context["key"],
+            "page_numbers" : page_numbers
+        }
+    except:
+        return {
+            "page_obj": context["page_obj"],
+            "paginator" : context["paginator"],
+            "page_numbers" : page_numbers
+        }        
 
 register.inclusion_tag("main/simplepaginator.html", takes_context=True)(simplepaginator)
