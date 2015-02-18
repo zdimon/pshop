@@ -38,10 +38,10 @@ ACCOUNT_ACTIVATION_DAYS = 2
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'pressinfoam@yandex.ru'
-EMAIL_HOST_PASSWORD = '%life%nblitz%'
+EMAIL_HOST = 'mail.pressinfo.am'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'noreply@pressinfo.am'
+EMAIL_HOST_PASSWORD = 'amaretto.c67'
 
 
 # Application definition
