@@ -19,8 +19,8 @@ def home(request):
     return render_to_response('main/home.html', context, RequestContext(request))
     
 def change_language(request):
-    #from django.core.mail import send_mail
-    #send_mail('Subject here', 'Here is the message.', 'pressinfoam@yandex.ru', ['zdimon77@gmail.com'], fail_silently=False)
+    from django.core.mail import send_mail
+    send_mail('Subject here', 'Here is the message.', 'pressinfoam@yandex.ru', ['zdimon77@gmail.com'], fail_silently=False)
     _next = request.REQUEST.get('next', None)
     if not _next:
         _next = request.META.get('HTTP_REFERER', None)
