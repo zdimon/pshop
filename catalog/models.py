@@ -95,7 +95,7 @@ class Journal(models.Model):
     def get_absolute_url(self):
        return reverse("journal", kwargs={"slug": self.name_slug})
 
-    
+
     def get_last_issue(self):
         li = Issue.objects.filter(journal=self).all().order_by('-original_id')[0:1]
         #import pdb; pdb.set_trace() 
