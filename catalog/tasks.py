@@ -188,7 +188,9 @@ def add_new_journal(journal_id):
     #import pdb; pdb.set_trace() 
     from catalog.models import Journal
     import urllib2
-    doc = urllib2.urlopen(IMPORT_JOURNAL_URL+'/'+journal_id)
+    url_import = IMPORT_JOURNAL_URL+'/'+journal_id
+    logger.info("loading...%s" % url_import) 
+    doc = urllib2.urlopen(url_import)
     dom = minidom.parse(doc)    
     items=dom.getElementsByTagName('journal')
     #import pdb; pdb.set_trace() 

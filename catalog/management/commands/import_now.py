@@ -22,6 +22,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info("Start .....")
         date = str(options['date'])
-        import_now(66123)
+        import_now(71030)
         #import_new(date)
         logger.info("Done.....")
