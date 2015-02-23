@@ -103,7 +103,7 @@ class Journal(models.Model):
         #import pdb; pdb.set_trace() 
         return li
     def update_in_category(self):
-        if self.category:
+        if self.category.count()>0:
             self.in_category = True
         else:
             self.in_category = False
