@@ -80,6 +80,8 @@ class Journal(models.Model):
     in_popular_pressa = models.BooleanField(verbose_name=_(u'Часто просматриваемые'), default=False)
     recount = models.BooleanField(verbose_name=_(u'Не пересчитывать цены по курсу?'), default=False, help_text=u'Если отмечено то цены пересчитываться не будут.')
     count_for_pay = models.IntegerField(db_index=True, verbose_name=_('Count for pay'))
+    in_category = models.BooleanField(verbose_name=_(u'Принадлежат ли категории?'), default=False)
+    in_book = models.BooleanField(verbose_name=_(u'Принадлежат ли категории?'), default=False)
     def save(self, **kwargs):
         if not self.id:
             self.name_slug = pytils.translit.slugify(self.name)
@@ -100,6 +102,12 @@ class Journal(models.Model):
         li = Issue.objects.filter(journal=self).all().order_by('-original_id')[0:1]
         #import pdb; pdb.set_trace() 
         return li
+    def update_in_category(self):
+        if self.category:
+            self.in_category = True
+        else:
+            self.in_category = False
+        self.save()
 
     def __unicode__(self):
         return self.name

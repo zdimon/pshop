@@ -34,7 +34,7 @@ class JournalAdminForm(forms.ModelForm):
 
 
 class JournalAdmin(TranslationAdmin):
-    list_display = ( 'name', 'get_cover', 'price', 'price_dram', 'price_usd', 'recount' )
+    list_display = ( 'name', 'in_category', 'get_cover', 'price', 'price_dram', 'price_usd', 'recount' )
     list_filter = ('journal_type', )
     search_fields = ['name_ru', 'name_hy', 'name_en']
     list_editable = [ 'price', 'price_dram', 'price_usd']
