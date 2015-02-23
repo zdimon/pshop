@@ -15,7 +15,7 @@ from optparse import make_option
 class Command(BaseCommand):
     import time
     option_list = BaseCommand.option_list + (
-        make_option("-d", "--data",
+        make_option("-i", "--issue",
                     dest="i",
                     default = str(time.strftime("%Y-%m-%d"))),
         )
