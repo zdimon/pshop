@@ -86,6 +86,7 @@ class Journal(models.Model):
     def save(self, **kwargs):
         if not self.id:
             self.name_slug = pytils.translit.slugify(self.name)
+        self.update_in_category()
         return super(Journal, self).save(**kwargs)
 
     @property
