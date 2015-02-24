@@ -86,7 +86,7 @@ class Journal(models.Model):
     def save(self, **kwargs):
         if not self.id:
             self.name_slug = pytils.translit.slugify(self.name)
-        self.update_in_category()
+        self.update_in_category_ws()
         return super(Journal, self).save(**kwargs)
 
     @property
@@ -110,6 +110,12 @@ class Journal(models.Model):
         else:
             self.in_category = False
         self.save()
+    def update_in_category_ws(self):
+        if self.category.count()>0:
+            self.in_category = True
+        else:
+            self.in_category = False
+        
 
     def __unicode__(self):
         return self.name
