@@ -58,6 +58,7 @@ EMAIL_HOST_PASSWORD = 'amaretto.c67'
 
 INSTALLED_APPS = (
     'flatblocks',
+    'site',
     'page',
     'bootstrap_admin',
     'django.contrib.admin',
@@ -67,6 +68,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'banner_rotator',
+    'django.contrib.sites',
     'main',
     'south',
     'catalog',
@@ -78,12 +80,13 @@ INSTALLED_APPS = (
     'backup',
     'liqpay',
     'flatblocks',
-    'django.contrib.sites',
+    
     'modeltranslation',
     'redactor',
     'rosetta',
     'paymaster',
     'captcha',
+    
     
 )
 
