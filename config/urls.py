@@ -59,6 +59,7 @@ urlpatterns += i18n_patterns(
      url(r'^accounts/', include('registration.urls')),
      url(r'^logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}, name='logout'),
      url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+     url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', {'template_name' : 'registration/password_reset.html',  'post_reset_redirect': '/logout/' })
     )
 
 if settings.DEBUG:
