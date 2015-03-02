@@ -7,7 +7,7 @@ import hashlib
 from registration.models import RegistrationProfile
 logger = get_task_logger(__name__)
 from config.settings import SECRET, MIRROR_ID, REGISTRATION_URL
-from django.utils import simplejson
+import json
 logger.setLevel(logging.DEBUG)
 from django.core.exceptions import ObjectDoesNotExist
 from config.local import  IMPORT_JOURNAL_URL

@@ -9,7 +9,13 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'RegistrationProfile'
-        pass
+        db.create_table(u'registration_registrationprofile', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], unique=True)),
+            ('activation_key', self.gf('django.db.models.fields.CharField')(max_length=40)),
+            ('pressa_id', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
+        ))
+        db.send_create_signal(u'registration', ['RegistrationProfile'])
 
 
     def backwards(self, orm):
@@ -58,6 +64,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'RegistrationProfile'},
             'activation_key': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'pressa_id': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'unique': 'True'})
         }
     }

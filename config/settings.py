@@ -33,8 +33,7 @@ TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = ['*']
 ACCOUNT_ACTIVATION_DAYS = 2
 
-#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-#EMAIL_FILE_PATH = '/home/zarik/tmp' # change this to a proper location
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
@@ -43,6 +42,12 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'noreply@pressinfo.am'
 EMAIL_HOST_PASSWORD = 'amaretto.c67'
 DEFAULT_FROM_EMAIL = 'pressinfo.am@gmail.com'
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/home/zdimon/tmp' # change this to a proper location
+
 
 #EMAIL_USE_TLS = True
 #EMAIL_HOST = 'smtp.gmail.com'
@@ -58,6 +63,7 @@ DEFAULT_FROM_EMAIL = 'pressinfo.am@gmail.com'
 
 INSTALLED_APPS = (
     'flatblocks',
+    'registration',
     'site',
     'page',
     'bootstrap_admin',
@@ -68,7 +74,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'banner_rotator',
-    'registration',
+    
     'django.contrib.sites',
     'main',
     'south',
@@ -110,7 +116,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'compressor.finders.CompressorFinder',
-    'dajaxice.finders.DajaxiceFinder',
+
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

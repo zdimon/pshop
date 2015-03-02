@@ -111,7 +111,11 @@
         </div>
 
         {% if user.is_authenticated %}
-          <a class="btn btn-danger pull-right" href="{% url 'logout' %}">{% trans 'Logout' %}</a>
+         <div class="well">
+            <a class="btn btn-danger pull-left" href="Webmoney/success">{% trans 'My area' %}</a>
+            <a class="btn btn-danger pull-right" href="{% url 'logout' %}">{% trans 'Logout' %}</a>
+            <div style="clear: both"></div>
+          </div>
         {% else %}
         
         
@@ -157,9 +161,10 @@
                 </form>
                    
                 </div>
-                <div style="clear: both"></div>
+                
                <!-- /Login form -->
                {% endif %}
+               <div style="clear: both"></div>
             </div>        
         
         {% endif %}

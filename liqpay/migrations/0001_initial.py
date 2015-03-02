@@ -8,17 +8,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Liqpay'
-        db.create_table(u'liqpay_liqpay', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, null=True, blank=True)),
-            ('updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, null=True, blank=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('amount', self.gf('django.db.models.fields.DecimalField')(default='0.00', max_digits=20, decimal_places=2)),
-            ('issue', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalog.Issue'])),
-            ('transaction_id', self.gf('django.db.models.fields.CharField')(max_length=250, blank=True)),
-        ))
-        db.send_create_signal(u'liqpay', ['Liqpay'])
+        pass
 
 
     def backwards(self, orm):

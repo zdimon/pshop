@@ -23,3 +23,5 @@ django-compressor
 django-recaptcha
 fabric
 django_extensions
+selenium==2.44
+pyrg==0.2.6
