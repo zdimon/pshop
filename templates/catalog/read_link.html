@@ -4,9 +4,9 @@
 {% if username %}
 
     {% if i.journal.price == 0  %}
-       <a class="btn btn-success" href="http://pressa.ru/rlogin/{{ request.user.username }}/{{ i.original_id }}"> {% trans 'Read for free' %}</a>
+       <a class="btn btn-success" href="http://pressa.ru/rlogin/{{ request.user.get_alias }}/{{ i.original_id }}"> {% trans 'Read for free' %}</a>
     {% elif i.is_archive %}
-      <a class="btn btn-success" href="http://pressa.ru/rlogin/{{ request.user.username }}/{{ i.original_id }}"> {% trans 'Archive (free)' %}</a>
+      <a class="btn btn-success" href="http://pressa.ru/rlogin/{{ request.user.get_alias }}/{{ i.original_id }}"> {% trans 'Archive (free)' %}</a>
     {% else %}
        <a class="btn btn-success" href="{% url 'payment-pay' issue_id=i.id %}"> {% trans 'Buy this issue' %} </a> 
     {% endif %}

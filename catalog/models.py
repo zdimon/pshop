@@ -149,6 +149,9 @@ class Issue(models.Model):
         except:
             return ''
 
+        
+    
+
 class Purchase(models.Model):
     issue =  models.ForeignKey(Issue, verbose_name=_('Issue'))
     user =   models.ForeignKey(User, verbose_name=_('User'))
@@ -179,3 +182,14 @@ class ImportLog(models.Model):
     is_imported = models.BooleanField(verbose_name=_('Is reported'), default=False)
     class Meta:
         ordering = ('-id', )
+
+
+from django.contrib.auth.models import User 
+
+def get_alias(self):
+    username = '%s--%s' % (self.username, self.email)
+    username = username.replace('@','--att--')
+    username = username.replace('.','--dot--')
+    return username
+
+User.add_to_class("get_alias",get_alias)
