@@ -111,7 +111,7 @@ class Journal(models.Model):
             else:
                 self.in_category = False
             self.save()
-        except
+        except:
             pass
     def update_in_category_ws(self):
         try:
@@ -119,7 +119,7 @@ class Journal(models.Model):
                 self.in_category = True
             else:
                 self.in_category = False
-        except
+        except:
             pass        
 
     def __unicode__(self):
