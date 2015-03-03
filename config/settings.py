@@ -35,13 +35,20 @@ ACCOUNT_ACTIVATION_DAYS = 2
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'mail.pressinfo.am'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'noreply@pressinfo.am'
-EMAIL_HOST_PASSWORD = 'amaretto.c67'
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_USE_TLS = True
+#EMAIL_HOST = 'mail.pressinfo.am'
+#EMAIL_PORT = 587
+#EMAIL_HOST_USER = 'noreply@pressinfo.am'
+#EMAIL_HOST_PASSWORD = 'amaretto.c67'
 DEFAULT_FROM_EMAIL = 'pressinfo.am@gmail.com'
+
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+
 
 
 
