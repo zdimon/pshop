@@ -52,8 +52,8 @@ EMAIL_USE_TLS = False
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = '/home/zdimon/tmp' # change this to a proper location
+#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+#EMAIL_FILE_PATH = '/home/zdimon/tmp' # change this to a proper location
 
 
 #EMAIL_USE_TLS = True
