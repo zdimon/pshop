@@ -105,17 +105,22 @@ class Journal(models.Model):
         #import pdb; pdb.set_trace() 
         return li
     def update_in_category(self):
-        if self.category.count()>0:
-            self.in_category = True
-        else:
-            self.in_category = False
-        self.save()
+        try:
+            if self.category.count()>0:
+                self.in_category = True
+            else:
+                self.in_category = False
+            self.save()
+        except
+            pass
     def update_in_category_ws(self):
-        if self.category.count()>0:
-            self.in_category = True
-        else:
-            self.in_category = False
-        
+        try:
+            if self.category.count()>0:
+                self.in_category = True
+            else:
+                self.in_category = False
+        except
+            pass        
 
     def __unicode__(self):
         return self.name
