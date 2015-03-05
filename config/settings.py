@@ -199,7 +199,7 @@ from datetime import timedelta
 CELERYBEAT_SCHEDULE = {
 
         'backup': {'task': 'backup.tasks.backup','schedule': crontab(minute=0, hour=0)},
-        'loadnewissue': {'task': 'catalog.tasks.import_new','schedule': crontab(minute=0, hour="*/1")},
+        'loadnewissue': {'task': 'catalog.tasks.import_new','schedule': crontab(minute='*/15')},
         #'backup': {'task': 'backup.tasks.backup','schedule': crontab()},
 
 }'''
