@@ -81,7 +81,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'banner_rotator',
-    
+    'djcelery',
     'django.contrib.sites',
     'main',
     'south',
@@ -90,7 +90,7 @@ INSTALLED_APPS = (
     
     'dbbackup',
     'djsupervisor',
-    'djcelery',
+    
     'backup',
     'liqpay',
     'flatblocks',
