@@ -12,7 +12,7 @@ def main():
         application = django.core.handlers.wsgi.WSGIHandler()
         container = tornado.wsgi.WSGIContainer(application)
         http_server = tornado.httpserver.HTTPServer(container)
-        http_server.listen(8080)
+        http_server.listen(8000)
         tornado.ioloop.IOLoop.instance().start()
 if __name__ == "__main__":
                 main()
