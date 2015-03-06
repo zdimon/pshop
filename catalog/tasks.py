@@ -23,7 +23,7 @@ def reg(user):
     import json
     url = REGISTRATION_URL
     sign = hashlib.md5(SECRET+user.username).hexdigest()
-    data = {'username': user.username, 'email': user.email, 'mirror_id': MIRROR_ID, 'sign': sign}
+    data = {'username': user.username, 'email': user.email, 'mirror_id': MIRROR_ID, 'sign': sign, 'user_id': user.id}
     #import pdb; pdb.set_trace()
     print 'ssss'+url
     print 'username:%s;email:%s;mirror_id:%s;sign:%s' % (user.username, user.email, MIRROR_ID, sign)
