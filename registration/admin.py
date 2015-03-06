@@ -11,6 +11,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('user', 'activation_key_expired', 'pressa_id')
     raw_id_fields = ['user']
     search_fields = ('user__username', 'user__first_name', 'user__last_name')
+    
 
     def activate_users(self, request, queryset):
         """

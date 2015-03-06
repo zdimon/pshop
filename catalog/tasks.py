@@ -30,7 +30,7 @@ def reg(user):
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     logger.info(url)
     r = requests.post(url, data=json.dumps(data), headers=headers)
-    dt = simplejson.loads(r.content)
+    dt = json.loads(r.content)
     #import pdb; pdb.set_trace()
     print dt
     pr = RegistrationProfile.objects.get(user=user)
