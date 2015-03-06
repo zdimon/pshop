@@ -192,9 +192,10 @@ class ImportLog(models.Model):
 from django.contrib.auth.models import User 
 
 def get_alias(self):
-    username = '%s--%s' % (self.username, self.email)
-    username = username.replace('@','--att--')
-    username = username.replace('.','--dot--')
+    import md5
+    string = '%s%s%s' % ('mirror',self.id,1)
+    sign = md5.new(string).hexdigest()
+    username = '%s-#%%#-%s-#%%#-%s' % (self.id, string, 1)
     return username
 
 User.add_to_class("get_alias",get_alias)
