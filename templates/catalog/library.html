@@ -10,7 +10,7 @@
       <h1>Моя библиотека</h1>
       {% for i in items %}
          <div class="journal_item">
-          <a target="_blank" href="http://pressa.ru/rlogin/{{username}}/{{i.issue.original_id}}">{{ i.issue.get_cover }}</a>
+          <a target="_blank" href="http://pressa.ru/rlogin/{{ request.user.get_alias }}/{{i.issue.original_id}}">{{ i.issue.get_cover }}</a>
           <p>{{ i.issue.name }}</p>
 
             <p><a target="_blank" href="http://pressa.ru/rlogin/{{ request.user.get_alias }}/{{i.issue.original_id}}">{% trans 'Читать' %}</a></p>
