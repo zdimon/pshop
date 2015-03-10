@@ -26,6 +26,24 @@ urlpatterns = patterns('',
      url(r'^import/(?P<issue_id>[^\.]+)', 'catalog.views.import_issue'),
      url(r'^search$', JournalSearchView.as_view(), name="search"),
      url(r'^', include('paymaster.urls')),
+
+    url(r'^banner_rotator/', include('banner_rotator.urls')),
+)
+
+
+urlpatterns += i18n_patterns(
+    '',
+    url(r'^catalog/(?P<slug>[^\.]+).html', JournalListView.as_view(), name="catalog"),
+    url(r'^journal/(?P<slug>[^\.]+).html', JournalDetailView.as_view(), name="journal"),
+    url(r'^about-us/$', views.flatpage, {'url': '/about/'}, name='about'),
+    url(r'^contact/$', views.flatpage, {'url': '/contact/'}, name='contact'),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^page/(?P<slug>[^\.]+)$', 'page.views.show', name='page'),
+     url(r'^accounts/', include('registration.urls')),
+     url(r'^logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}, name='logout'),
+     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+     url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', {'template_name' : 'registration/password_reset.html',  'post_reset_redirect': '/logout/' }),
+
     url(r'^password/change/$',
                     auth_views.password_change,
                     name='password-reset'),
@@ -42,22 +60,7 @@ urlpatterns = patterns('',
                     auth_views.password_reset_complete,
                     name='password_reset_complete'),
     url(r'^reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm',name="password_reset_confirm"), 
-    url(r'^banner_rotator/', include('banner_rotator.urls')),
-)
 
-
-urlpatterns += i18n_patterns(
-    '',
-    url(r'^catalog/(?P<slug>[^\.]+).html', JournalListView.as_view(), name="catalog"),
-    url(r'^journal/(?P<slug>[^\.]+).html', JournalDetailView.as_view(), name="journal"),
-    url(r'^about-us/$', views.flatpage, {'url': '/about/'}, name='about'),
-    url(r'^contact/$', views.flatpage, {'url': '/contact/'}, name='contact'),
-    url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^page/(?P<slug>[^\.]+)$', 'page.views.show', name='page'),
-     url(r'^accounts/', include('registration.urls')),
-     url(r'^logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}, name='logout'),
-     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
-     url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', {'template_name' : 'registration/password_reset.html',  'post_reset_redirect': '/logout/' })
     )
 
 if settings.DEBUG:
