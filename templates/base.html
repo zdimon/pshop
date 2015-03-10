@@ -113,8 +113,14 @@
         {% if user.is_authenticated %}
          <div class="well">
              <div class="well" align="center">{{ user.username }}</div>
-            <a class="btn btn-danger pull-left" href="/Webmoney/success">{% trans 'My area' %}</a>
-            <a class="btn btn-danger pull-right" href="{% url 'logout' %}">{% trans 'Logout' %}</a>
+             <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <a class="btn btn-danger pull-left" href="/Webmoney/success">{% trans 'My area' %}</a>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <a class="btn btn-danger pull-right" href="{% url 'logout' %}">{% trans 'Logout' %}</a>
+                </div>
+            </div>
             <div style="clear: both"></div>
           </div>
         {% else %}
