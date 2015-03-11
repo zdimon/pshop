@@ -48,7 +48,7 @@ admin.site.register(Journal, JournalAdmin)
 class IssueAdmin(admin.ModelAdmin):
     list_display = ( 'name', 'get_cover',  'journal', 'date' )
     list_filter = ('date',)
-    search_fields = ['name']
+    search_fields = ['name', 'journal__name']
 
 
 admin.site.register(Issue, IssueAdmin)
