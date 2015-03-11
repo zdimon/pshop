@@ -141,7 +141,7 @@ class Issue(models.Model):
     journal =  models.ForeignKey(Journal, verbose_name=_('Journal'))
     cover = models.ImageField(upload_to='issue_cover', verbose_name=_('Issue cover'), blank=True)
     name = models.CharField(verbose_name=_('Name'),max_length=250, blank=True)
-    date = models.DateTimeField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
     original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
     is_empty = models.BooleanField(verbose_name=_('Without cover'), default=True)
     is_archive = models.BooleanField(verbose_name=_('Without cover'), default=False)
