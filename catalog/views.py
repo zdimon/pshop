@@ -205,7 +205,8 @@ def rss_rus(request):
         #url = "http://www.n-idea.am/arm/exports/yandex/"
         url = "http://newsarmenia.ru/export/rss2/full.xml"    
     else:
-        url = "http://www.n-idea.am/rus/exports/yandex/"
+        #url = "http://www.n-idea.am/rus/exports/yandex/"
+        url = "http://newsarmenia.ru/export/rss2/full.xml"
     
     r = requests.get(url)
     req = urllib2.Request(url, headers={'User-Agent' : "Magic Browser"}) 
