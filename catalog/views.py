@@ -201,12 +201,14 @@ def rss_rus(request):
     import urllib2
     import requests
     #import pdb; pdb.set_trace()
-    if request.LANGUAGE_CODE == 'hy':
+    if request.LANGUAGE_CODE == 'hy' or request.LANGUAGE_CODE == 'en':
         #url = "http://www.n-idea.am/arm/exports/yandex/"
-        url = "http://newsarmenia.ru/export/rss2/full.xml"    
+        url = "http://newsarmenia.am/export/rss2/full.xml"    
     else:
         #url = "http://www.n-idea.am/rus/exports/yandex/"
         url = "http://newsarmenia.ru/export/rss2/full.xml"
+
+
     
     r = requests.get(url)
     req = urllib2.Request(url, headers={'User-Agent' : "Magic Browser"}) 
