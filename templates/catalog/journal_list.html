@@ -4,6 +4,10 @@
 
 {% block meta_title %}{{ catalog.name }} | {% trans 'Онлайн библиотека армянских и зарубежных печатных СМИ | Pressinfo.am' %} {% endblock %}
 
+
+{% block meta_description %}{{ catalog.seo_content }}{% endblock %}
+{% block meta_keywords %}{{ catalog.seo_keywords }}{% endblock %}
+
 {% block 'content' %}
 
     {% for i in object_list %}

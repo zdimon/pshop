@@ -34,6 +34,8 @@ class Catalog(MPTTModel):
                             related_name='sub_category')
     original_id = models.IntegerField(db_index=True, verbose_name=_('Original id'))
     sorting = models.PositiveIntegerField(verbose_name=_(u'сортировка'))
+    seo_content = models.TextField(verbose_name=_(u'МЕТА content'), blank=True)
+    seo_keywords = models.TextField(verbose_name=_(u'МЕТА keywords'), blank=True)
     def __unicode__(self):
         return self.name
 

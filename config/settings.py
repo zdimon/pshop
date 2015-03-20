@@ -94,7 +94,7 @@ INSTALLED_APPS = (
     'backup',
     'liqpay',
     'flatblocks',
-    
+    'ckeditor',
     'modeltranslation',
     'redactor',
     'rosetta',
@@ -210,8 +210,26 @@ DBBACKUP_FILESYSTEM_DIRECTORY = BASE_DIR+'/backup/data'
 
 SECRET = 'secret'
 MIRROR_ID = 1
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
+CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
+CKEDITOR_CONFIGS = {
 
+    'small': {
+    'toolbar': 'Basic',
+    },
 
+    'default': {
+    'toolbar': 'Full',
+    'height': 300,
+    'width': 700,
+    },
+    'advanced': {
+    'toolbar': 'Uni',
+    'height': 300,
+    'width': 700,
+    },
+
+}
 
 

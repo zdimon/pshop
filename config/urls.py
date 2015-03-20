@@ -26,7 +26,7 @@ urlpatterns = patterns('',
      url(r'^import/(?P<issue_id>[^\.]+)', 'catalog.views.import_issue'),
      url(r'^search$', JournalSearchView.as_view(), name="search"),
      url(r'^', include('paymaster.urls')),
-
+     url(r'^ckeditor/', include('ckeditor.urls')),
     url(r'^banner_rotator/', include('banner_rotator.urls')),
 )
 

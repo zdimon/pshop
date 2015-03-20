@@ -25,3 +25,4 @@ fabric
 django_extensions
 selenium==2.44
 pyrg==0.2.6
+django-ckeditor-updated==4.4.4
