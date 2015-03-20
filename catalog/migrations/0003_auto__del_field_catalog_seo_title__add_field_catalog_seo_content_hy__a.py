@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Deleting field 'Catalog.seo_title'
-        db.delete_column(u'catalog_catalog', 'seo_title')
+   
 
         # Adding field 'Catalog.seo_content_hy'
         db.add_column(u'catalog_catalog', 'seo_content_hy',
