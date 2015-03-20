@@ -4,7 +4,7 @@ from modeltranslation.translator import translator, TranslationOptions
 
 
 class CatalogTranslationOptions(TranslationOptions):
-    fields = ('name',)
+    fields = ('name', 'seo_keywords', 'seo_content')
 translator.register(Catalog, CatalogTranslationOptions)
 
 class JournalTranslationOptions(TranslationOptions):
