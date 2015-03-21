@@ -1,0 +1,3914 @@
+commit 64ad3cbaf893173c9b656a290bcdc4bcd7dce5ae
+Author: zdimon <zdimon77@gmail.com>
+Date:   Thu Jan 29 17:46:02 2015 +0200
+
+    auto commit
+
+diff --git a/banner_rotator/__init__.py b/banner_rotator/__init__.py
+new file mode 100644
+index 0000000..c7a7c00
+--- /dev/null
++++ b/banner_rotator/__init__.py
+@@ -0,0 +1,19 @@
++#-*- coding:utf-8 -*-
++
++__all__ = ['get_version']
++
++VERSION = (0, 2, 2, 'final')
++
++
++def get_version():
++    version = '%s.%s' % (VERSION[0], VERSION[1])
++    if VERSION[2]:
++        version = '%s.%s' % (version, VERSION[2])
++    if VERSION[3:] == ('alpha', 0):
++        version = '%s pre-alpha' % version
++    else:
++        if VERSION[3] != 'final':
++            version = "%s %s" % (version, VERSION[3])
++            if VERSION[4] != 0:
++                version = '%s %s' % (version, VERSION[4])
++    return version
+\ No newline at end of file
+diff --git a/banner_rotator/admin.py b/banner_rotator/admin.py
+new file mode 100644
+index 0000000..2ab8d40
+--- /dev/null
++++ b/banner_rotator/admin.py
+@@ -0,0 +1,104 @@
++#-*- coding:utf-8 -*-
++from __future__ import unicode_literals
++import logging
++from functools import update_wrapper
++
++from django import forms, template
++from django.contrib import admin
++from django.contrib.admin.util import unquote
++from django.db import models
++from django.shortcuts import get_object_or_404, render_to_response
++from django.utils.text import capfirst
++from django.utils.translation import ugettext_lazy as _
++
++from banner_rotator.models import Campaign, Place, Banner, Click
++
++
++class PlaceAdmin(admin.ModelAdmin):
++    list_display = ('name', 'slug', 'size_str')
++    prepopulated_fields = {'slug': ('name',)}
++
++
++class CampaignBannerInline(admin.StackedInline):
++    model = Banner
++    extra = 0
++    readonly_fields = ['views', 'clicks']
++    fields = ['is_active', 'places', 'name', 'url', 'file', 'weight', 'views', 'clicks']
++    formfield_overrides = {
++        models.ManyToManyField: {'widget': forms.CheckboxSelectMultiple},
++    }
++
++
++class CampaignAdmin(admin.ModelAdmin):
++    list_display = ('name', 'created_at', 'updated_at')
++    fields = ('name',)
++    inlines = [CampaignBannerInline]
++
++
++class BannerAdmin(admin.ModelAdmin):
++    list_display = ('name', 'campaign', 'weight', 'url', 'views', 'is_active')
++    list_filter = ('campaign', 'places', 'is_active')
++    date_hierarchy = 'created_at'
++    fieldsets = (
++        (_('Main'), {
++            'fields': ('campaign', 'places', 'name', 'url', 'url_target', 'file', 'alt'),
++        }),
++        (_('Show'), {
++            'fields': ('weight', 'views', 'max_views', 'clicks', 'max_clicks', 'start_at', 'finish_at', 'is_active'),
++        })
++    )
++
++    filter_horizontal = ('places',)
++    readonly_fields = ('views', 'clicks',)
++
++    object_log_clicks_template = None
++
++    def get_urls(self):
++        try:
++            # Django 1.4
++            from django.conf.urls import patterns, url
++        except ImportError:
++            from django.conf.urls.defaults import patterns, url
++
++        def wrap(view):
++            def wrapper(*args, **kwargs):
++                return self.admin_site.admin_view(view)(*args, **kwargs)
++            return update_wrapper(wrapper, view)
++
++        info = self.model._meta.app_label, self.model._meta.module_name
++
++        urlpatterns = patterns('',
++            url(r'^$', wrap(self.changelist_view), name='%s_%s_changelist' % info),
++            url(r'^add/$', wrap(self.add_view), name='%s_%s_add' % info),
++            url(r'^(.+)/history/$', wrap(self.history_view), name='%s_%s_history' % info),
++            url(r'^(.+)/delete/$', wrap(self.delete_view), name='%s_%s_delete' % info),
++            url(r'^(.+)/log/clicks/$', wrap(self.log_clicks_view), name='%s_%s_log_clicks' % info),
++            url(r'^(.+)/$', wrap(self.change_view), name='%s_%s_change' % info),
++        )
++        return urlpatterns
++
++    def log_clicks_view(self, request, object_id, extra_context=None):
++        model = self.model
++        opts = model._meta
++        app_label = opts.app_label
++
++        obj = get_object_or_404(model, pk=unquote(object_id))
++
++        context = {
++            'title': _('Log clicks'),
++            'module_name': capfirst(opts.verbose_name_plural),
++            'object': obj,
++            'app_label': app_label,
++            'log_clicks': Click.objects.filter(banner=obj).order_by('-datetime')
++        }
++        context.update(extra_context or {})
++        context_instance = template.RequestContext(request, current_app=self.admin_site.name)
++        return render_to_response(self.object_log_clicks_template or [
++            "admin/%s/%s/object_log_clicks.html" % (app_label, opts.object_name.lower()),
++            "admin/%s/object_log_clicks.html" % app_label,
++        ], context, context_instance=context_instance)
++
++
++admin.site.register(Banner, BannerAdmin)
++admin.site.register(Campaign, CampaignAdmin)
++admin.site.register(Place, PlaceAdmin)
+diff --git a/banner_rotator/fixtures/test_data.json b/banner_rotator/fixtures/test_data.json
+new file mode 100644
+index 0000000..efd5cbe
+--- /dev/null
++++ b/banner_rotator/fixtures/test_data.json
+@@ -0,0 +1 @@
++[{"pk": 10, "model": "contenttypes.contenttype", "fields": {"model": "banner", "name": "banner", "app_label": "banner_rotator"}}, {"pk": 8, "model": "contenttypes.contenttype", "fields": {"model": "campaign", "name": "campaign", "app_label": "banner_rotator"}}, {"pk": 11, "model": "contenttypes.contenttype", "fields": {"model": "click", "name": "click", "app_label": "banner_rotator"}}, {"pk": 4, "model": "contenttypes.contenttype", "fields": {"model": "contenttype", "name": "content type", "app_label": "contenttypes"}}, {"pk": 2, "model": "contenttypes.contenttype", "fields": {"model": "group", "name": "group", "app_label": "auth"}}, {"pk": 7, "model": "contenttypes.contenttype", "fields": {"model": "migrationhistory", "name": "migration history", "app_label": "south"}}, {"pk": 1, "model": "contenttypes.contenttype", "fields": {"model": "permission", "name": "permission", "app_label": "auth"}}, {"pk": 9, "model": "contenttypes.contenttype", "fields": {"model": "place", "name": "place", "app_label": "banner_rotator"}}, {"pk": 5, "model": "contenttypes.contenttype", "fields": {"model": "session", "name": "session", "app_label": "sessions"}}, {"pk": 6, "model": "contenttypes.contenttype", "fields": {"model": "site", "name": "site", "app_label": "sites"}}, {"pk": 3, "model": "contenttypes.contenttype", "fields": {"model": "user", "name": "user", "app_label": "auth"}}, {"pk": 1, "model": "sites.site", "fields": {"domain": "example.com", "name": "example.com"}}, {"pk": 1, "model": "south.migrationhistory", "fields": {"applied": "2012-11-18T19:21:52.700Z", "app_name": "banner_rotator", "migration": "0001_initial"}}, {"pk": 2, "model": "south.migrationhistory", "fields": {"applied": "2012-11-18T19:21:52.725Z", "app_name": "banner_rotator", "migration": "0002_auto__add_field_banner_views"}}, {"pk": 3, "model": "south.migrationhistory", "fields": {"applied": "2012-11-18T19:21:52.743Z", "app_name": "banner_rotator", "migration": "0003_banner_impressions_copy_to_views"}}, {"pk": 4, "model": "south.migrationhistory", "fields": {"applied": "2012-11-18T19:21:52.767Z", "app_name": "banner_rotator", "migration": "0004_auto__del_field_banner_impressions"}}, {"pk": 5, "model": "south.migrationhistory", "fields": {"applied": "2012-11-18T19:21:52.837Z", "app_name": "banner_rotator", "migration": "0005_auto__add_field_campaign_slug"}}, {"pk": 6, "model": "south.migrationhistory", "fields": {"applied": "2012-11-18T19:21:52.859Z", "app_name": "banner_rotator", "migration": "0006_campaign_populate_slug"}}, {"pk": 7, "model": "south.migrationhistory", "fields": {"applied": "2012-11-18T19:23:33.645Z", "app_name": "banner_rotator", "migration": "0007_places_new_params"}}, {"pk": 8, "model": "south.migrationhistory", "fields": {"applied": "2012-11-18T19:23:33.685Z", "app_name": "banner_rotator", "migration": "0008_auto__del_field_banner_place"}}, {"pk": 9, "model": "south.migrationhistory", "fields": {"applied": "2012-11-18T19:23:33.715Z", "app_name": "banner_rotator", "migration": "0010_auto__add_field_click_place"}}, {"pk": 1, "model": "banner_rotator.campaign", "fields": {"created_at": "2012-11-18T19:27:38.927Z", "name": "Test Campaign", "updated_at": "2012-11-18T19:27:38.927Z"}}, {"pk": 1, "model": "banner_rotator.banner", "fields": {"url_target": "", "start_at": null, "name": "", "campaign": 1, "views": 0, "url": "", "is_active": true, "created_at": "2012-11-18T19:27:57.876Z", "max_clicks": 0, "updated_at": "2012-11-18T19:27:57.876Z", "weight": 5, "places": [], "finish_at": null, "file": "", "alt": "", "max_views": 0}}, {"pk": 2, "model": "banner_rotator.banner", "fields": {"url_target": "", "start_at": null, "name": "", "campaign": 1, "views": 0, "url": "", "is_active": true, "created_at": "2012-11-18T19:28:52.094Z", "max_clicks": 0, "updated_at": "2012-11-18T19:28:52.094Z", "weight": 0, "places": [], "finish_at": null, "file": "", "alt": "", "max_views": 0}}, {"pk": 3, "model": "banner_rotator.banner", "fields": {"url_target": "", "start_at": null, "name": "", "campaign": 1, "views": 0, "url": "", "is_active": true, "created_at": "2012-11-18T19:28:53.925Z", "max_clicks": 0, "updated_at": "2012-11-18T19:28:53.925Z", "weight": 0, "places": [], "finish_at": null, "file": "", "alt": "", "max_views": 0}}, {"pk": 4, "model": "banner_rotator.banner", "fields": {"url_target": "", "start_at": null, "name": "", "campaign": 1, "views": 0, "url": "", "is_active": true, "created_at": "2012-11-18T19:28:55.876Z", "max_clicks": 0, "updated_at": "2012-11-18T19:28:55.876Z", "weight": 0, "places": [], "finish_at": null, "file": "", "alt": "", "max_views": 0}}, {"pk": 1, "model": "auth.permission", "fields": {"codename": "add_group", "name": "Can add group", "content_type": 2}}, {"pk": 4, "model": "auth.permission", "fields": {"codename": "change_group", "name": "Can change group", "content_type": 2}}, {"pk": 7, "model": "auth.permission", "fields": {"codename": "delete_group", "name": "Can delete group", "content_type": 2}}, {"pk": 2, "model": "auth.permission", "fields": {"codename": "add_permission", "name": "Can add permission", "content_type": 1}}, {"pk": 5, "model": "auth.permission", "fields": {"codename": "change_permission", "name": "Can change permission", "content_type": 1}}, {"pk": 8, "model": "auth.permission", "fields": {"codename": "delete_permission", "name": "Can delete permission", "content_type": 1}}, {"pk": 3, "model": "auth.permission", "fields": {"codename": "add_user", "name": "Can add user", "content_type": 3}}, {"pk": 6, "model": "auth.permission", "fields": {"codename": "change_user", "name": "Can change user", "content_type": 3}}, {"pk": 9, "model": "auth.permission", "fields": {"codename": "delete_user", "name": "Can delete user", "content_type": 3}}, {"pk": 22, "model": "auth.permission", "fields": {"codename": "add_banner", "name": "Can add banner", "content_type": 10}}, {"pk": 26, "model": "auth.permission", "fields": {"codename": "change_banner", "name": "Can change banner", "content_type": 10}}, {"pk": 30, "model": "auth.permission", "fields": {"codename": "delete_banner", "name": "Can delete banner", "content_type": 10}}, {"pk": 23, "model": "auth.permission", "fields": {"codename": "add_campaign", "name": "Can add campaign", "content_type": 8}}, {"pk": 27, "model": "auth.permission", "fields": {"codename": "change_campaign", "name": "Can change campaign", "content_type": 8}}, {"pk": 31, "model": "auth.permission", "fields": {"codename": "delete_campaign", "name": "Can delete campaign", "content_type": 8}}, {"pk": 24, "model": "auth.permission", "fields": {"codename": "add_click", "name": "Can add click", "content_type": 11}}, {"pk": 28, "model": "auth.permission", "fields": {"codename": "change_click", "name": "Can change click", "content_type": 11}}, {"pk": 32, "model": "auth.permission", "fields": {"codename": "delete_click", "name": "Can delete click", "content_type": 11}}, {"pk": 25, "model": "auth.permission", "fields": {"codename": "add_place", "name": "Can add place", "content_type": 9}}, {"pk": 29, "model": "auth.permission", "fields": {"codename": "change_place", "name": "Can change place", "content_type": 9}}, {"pk": 33, "model": "auth.permission", "fields": {"codename": "delete_place", "name": "Can delete place", "content_type": 9}}, {"pk": 10, "model": "auth.permission", "fields": {"codename": "add_contenttype", "name": "Can add content type", "content_type": 4}}, {"pk": 11, "model": "auth.permission", "fields": {"codename": "change_contenttype", "name": "Can change content type", "content_type": 4}}, {"pk": 12, "model": "auth.permission", "fields": {"codename": "delete_contenttype", "name": "Can delete content type", "content_type": 4}}, {"pk": 13, "model": "auth.permission", "fields": {"codename": "add_session", "name": "Can add session", "content_type": 5}}, {"pk": 14, "model": "auth.permission", "fields": {"codename": "change_session", "name": "Can change session", "content_type": 5}}, {"pk": 15, "model": "auth.permission", "fields": {"codename": "delete_session", "name": "Can delete session", "content_type": 5}}, {"pk": 16, "model": "auth.permission", "fields": {"codename": "add_site", "name": "Can add site", "content_type": 6}}, {"pk": 17, "model": "auth.permission", "fields": {"codename": "change_site", "name": "Can change site", "content_type": 6}}, {"pk": 18, "model": "auth.permission", "fields": {"codename": "delete_site", "name": "Can delete site", "content_type": 6}}, {"pk": 19, "model": "auth.permission", "fields": {"codename": "add_migrationhistory", "name": "Can add migration history", "content_type": 7}}, {"pk": 20, "model": "auth.permission", "fields": {"codename": "change_migrationhistory", "name": "Can change migration history", "content_type": 7}}, {"pk": 21, "model": "auth.permission", "fields": {"codename": "delete_migrationhistory", "name": "Can delete migration history", "content_type": 7}}, {"pk": 1, "model": "auth.user", "fields": {"username": "admin", "first_name": "", "last_name": "", "is_active": true, "is_superuser": true, "is_staff": true, "last_login": "2012-11-18T19:21:52.372Z", "groups": [], "user_permissions": [], "password": "pbkdf2_sha256$10000$vbfGXbX3a6cg$UOLQpRmlN7YHyvRvmdbD341iv4mSvB6s9Vtw48c6Y8g=", "email": "1@2.com", "date_joined": "2012-11-18T19:21:52.372Z"}}]
+\ No newline at end of file
+diff --git a/banner_rotator/locale/en/LC_MESSAGES/django.mo b/banner_rotator/locale/en/LC_MESSAGES/django.mo
+new file mode 100644
+index 0000000..134f93f
+Binary files /dev/null and b/banner_rotator/locale/en/LC_MESSAGES/django.mo differ
+diff --git a/banner_rotator/locale/en/LC_MESSAGES/django.po b/banner_rotator/locale/en/LC_MESSAGES/django.po
+new file mode 100644
+index 0000000..51858a7
+--- /dev/null
++++ b/banner_rotator/locale/en/LC_MESSAGES/django.po
+@@ -0,0 +1,190 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2012-06-16 15:17+0400\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"Language: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: admin.py:43
++msgid "Main"
++msgstr ""
++
++#: admin.py:46
++msgid "Show"
++msgstr ""
++
++#: admin.py:88 templates/admin/banner_rotator/banner/change_form.html:7
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:11
++msgid "Log clicks"
++msgstr ""
++
++#: models.py:11 models.py:24 models.py:59
++msgid "Name"
++msgstr ""
++
++#: models.py:12
++msgid "Create at"
++msgstr ""
++
++#: models.py:13
++msgid "Update at"
++msgstr ""
++
++#: models.py:16
++msgid "campaign"
++msgstr ""
++
++#: models.py:17
++msgid "campaigns"
++msgstr ""
++
++#: models.py:25
++msgid "Slug"
++msgstr ""
++
++#: models.py:26
++msgid "Width"
++msgstr ""
++
++#: models.py:27
++msgid "Height"
++msgstr ""
++
++#: models.py:31
++msgid "place"
++msgstr ""
++
++#: models.py:32
++msgid "places"
++msgstr ""
++
++#: models.py:47
++msgid "Size"
++msgstr ""
++
++#: models.py:52
++msgid "Current page"
++msgstr ""
++
++#: models.py:53
++msgid "Blank page"
++msgstr ""
++
++#: models.py:56
++msgid "Campaign"
++msgstr ""
++
++#: models.py:60
++msgid "Image alt"
++msgstr ""
++
++#: models.py:62
++msgid "URL"
++msgstr ""
++
++#: models.py:63
++msgid "Target"
++msgstr ""
++
++#: models.py:65 models.py:148
++msgid "Views"
++msgstr ""
++
++#: models.py:66 models.py:142
++msgid "Clicks"
++msgstr ""
++
++#: models.py:67
++msgid "Max views"
++msgstr ""
++
++#: models.py:68
++msgid "Max clicks"
++msgstr ""
++
++#: models.py:70
++msgid "Weight"
++msgstr ""
++
++#: models.py:70
++msgid "A ten will display 10 times more often that a one."
++msgstr ""
++
++#: models.py:73
++msgid "File"
++msgstr ""
++
++#: models.py:78
++msgid "Start at"
++msgstr ""
++
++#: models.py:79
++msgid "Finish at"
++msgstr ""
++
++#: models.py:81
++msgid "Is active"
++msgstr ""
++
++#: models.py:83
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:24
++msgid "Place"
++msgstr ""
++
++#: models.py:88
++msgid "banner"
++msgstr ""
++
++#: models.py:89
++msgid "banners"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/change_form.html:6
++msgid "History"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:7
++msgid "Home"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:23
++msgid "Date/time"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:25
++msgid "User"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:26
++msgid "IP"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:27
++msgid "User Agent"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:28
++msgid "Referrer"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:45
++msgid ""
++"This object doesn't have a clicks log. It probably wasn't added via this "
++"admin site."
++msgstr ""
++
++#: templatetags/banners.py:58
++msgid "banner tag takes three of four arguments"
++msgstr ""
+diff --git a/banner_rotator/locale/it/LC_MESSAGES/django.mo b/banner_rotator/locale/it/LC_MESSAGES/django.mo
+new file mode 100644
+index 0000000..e3a1d4c
+Binary files /dev/null and b/banner_rotator/locale/it/LC_MESSAGES/django.mo differ
+diff --git a/banner_rotator/locale/it/LC_MESSAGES/django.po b/banner_rotator/locale/it/LC_MESSAGES/django.po
+new file mode 100644
+index 0000000..8f958de
+--- /dev/null
++++ b/banner_rotator/locale/it/LC_MESSAGES/django.po
+@@ -0,0 +1,192 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2012-06-16 15:17+0400\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"Language: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: admin.py:43
++msgid "Main"
++msgstr "Principale"
++
++#: admin.py:46
++msgid "Show"
++msgstr "Mostra"
++
++#: admin.py:88 templates/admin/banner_rotator/banner/change_form.html:7
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:11
++msgid "Log clicks"
++msgstr "Storico click"
++
++#: models.py:11 models.py:24 models.py:59
++msgid "Name"
++msgstr "Nome"
++
++#: models.py:12
++msgid "Create at"
++msgstr "Creato il"
++
++#: models.py:13
++msgid "Update at"
++msgstr "Aggiornato il"
++
++#: models.py:16
++msgid "campaign"
++msgstr "campagna"
++
++#: models.py:17
++msgid "campaigns"
++msgstr "campagne"
++
++#: models.py:25
++msgid "Slug"
++msgstr "Slug"
++
++#: models.py:26
++msgid "Width"
++msgstr "Larghezza"
++
++#: models.py:27
++msgid "Height"
++msgstr "Altezza"
++
++#: models.py:31
++msgid "place"
++msgstr "posizione"
++
++#: models.py:32
++msgid "places"
++msgstr "posizioni"
++
++#: models.py:47
++msgid "Size"
++msgstr "Dimensione"
++
++#: models.py:52
++msgid "Current page"
++msgstr "Pagina corrente"
++
++#: models.py:53
++msgid "Blank page"
++msgstr "Pagina vuota"
++
++#: models.py:56
++msgid "Campaign"
++msgstr "Campagna"
++
++#: models.py:60
++msgid "Image alt"
++msgstr "Testo alt per immagine"
++
++#: models.py:62
++msgid "URL"
++msgstr "URL"
++
++#: models.py:63
++msgid "Target"
++msgstr "Obiettivo"
++
++#: models.py:65 models.py:148
++msgid "Views"
++msgstr "Visualizzazioni"
++
++#: models.py:66 models.py:142
++msgid "Clicks"
++msgstr "Click"
++
++#: models.py:67
++msgid "Max views"
++msgstr "Max visualizzazioni"
++
++#: models.py:68
++msgid "Max clicks"
++msgstr "Max click"
++
++#: models.py:70
++msgid "Weight"
++msgstr "Peso"
++
++#: models.py:70
++msgid "A ten will display 10 times more often that a one."
++msgstr "10 verrà visualizzato dieci volte più spesso di 1"
++
++#: models.py:73
++msgid "File"
++msgstr "File"
++
++#: models.py:78
++msgid "Start at"
++msgstr "Inizia il"
++
++#: models.py:79
++msgid "Finish at"
++msgstr "Termina il"
++
++#: models.py:81
++msgid "Is active"
++msgstr "Attivo"
++
++#: models.py:83
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:24
++msgid "Place"
++msgstr "Posizione"
++
++#: models.py:88
++msgid "banner"
++msgstr "banner"
++
++#: models.py:89
++msgid "banners"
++msgstr "banner"
++
++#: templates/admin/banner_rotator/banner/change_form.html:6
++msgid "History"
++msgstr "Storico"
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:7
++msgid "Home"
++msgstr "Home"
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:23
++msgid "Date/time"
++msgstr "Data"
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:25
++msgid "User"
++msgstr "Utente"
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:26
++msgid "IP"
++msgstr "IP"
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:27
++msgid "User Agent"
++msgstr "User Agent"
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:28
++msgid "Referrer"
++msgstr "Referrer"
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:45
++msgid ""
++"This object doesn't have a clicks log. It probably wasn't added via this "
++"admin site."
++msgstr ""
++"Questo oggetto non ha uno storico dei click. Probabilmente non è stato "
++"aggiunto tramite questo pannello di amministrazione."
++
++#: templatetags/banners.py:58
++msgid "banner tag takes three of four arguments"
++msgstr "il tag banner prende te di quattro argomenti"
+diff --git a/banner_rotator/locale/ru/LC_MESSAGES/django.mo b/banner_rotator/locale/ru/LC_MESSAGES/django.mo
+new file mode 100644
+index 0000000..5d80fa2
+Binary files /dev/null and b/banner_rotator/locale/ru/LC_MESSAGES/django.mo differ
+diff --git a/banner_rotator/locale/ru/LC_MESSAGES/django.po b/banner_rotator/locale/ru/LC_MESSAGES/django.po
+new file mode 100644
+index 0000000..6bc33f6
+--- /dev/null
++++ b/banner_rotator/locale/ru/LC_MESSAGES/django.po
+@@ -0,0 +1,193 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2012-06-16 15:17+0400\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"Language: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
++"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
++
++#: admin.py:43
++msgid "Main"
++msgstr "Основные"
++
++#: admin.py:46
++msgid "Show"
++msgstr "Показ"
++
++#: admin.py:88 templates/admin/banner_rotator/banner/change_form.html:7
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:11
++#, fuzzy
++msgid "Log clicks"
++msgstr "История кликов"
++
++#: models.py:11 models.py:24 models.py:59
++msgid "Name"
++msgstr "Имя"
++
++#: models.py:12
++msgid "Create at"
++msgstr "Создана"
++
++#: models.py:13
++msgid "Update at"
++msgstr "Обновлена"
++
++#: models.py:16
++msgid "campaign"
++msgstr "компания"
++
++#: models.py:17
++msgid "campaigns"
++msgstr "компании"
++
++#: models.py:25
++msgid "Slug"
++msgstr "Слот"
++
++#: models.py:26
++msgid "Width"
++msgstr "Ширина"
++
++#: models.py:27
++msgid "Height"
++msgstr "Высота"
++
++#: models.py:31
++msgid "place"
++msgstr "место"
++
++#: models.py:32
++msgid "places"
++msgstr "места"
++
++#: models.py:47
++msgid "Size"
++msgstr "Размер"
++
++#: models.py:52
++msgid "Current page"
++msgstr "Текущая страница"
++
++#: models.py:53
++msgid "Blank page"
++msgstr "Новая страница"
++
++#: models.py:56
++msgid "Campaign"
++msgstr "Компания"
++
++#: models.py:60
++msgid "Image alt"
++msgstr "Альт. текст"
++
++#: models.py:62
++msgid "URL"
++msgstr ""
++
++#: models.py:63
++msgid "Target"
++msgstr "Открывать на"
++
++#: models.py:65 models.py:148
++msgid "Views"
++msgstr "Просмотры"
++
++#: models.py:66 models.py:142
++msgid "Clicks"
++msgstr "Переходы"
++
++#: models.py:67
++msgid "Max views"
++msgstr "Максимальное число показов"
++
++#: models.py:68
++msgid "Max clicks"
++msgstr "Максимальное число кликов"
++
++#: models.py:70
++msgid "Weight"
++msgstr "Вес"
++
++#: models.py:70
++msgid "A ten will display 10 times more often that a one."
++msgstr "Баннер со значением \"10\" будет показываться в 10 раз чаще, с \"1\"."
++
++#: models.py:73
++msgid "File"
++msgstr "Файл"
++
++#: models.py:78
++msgid "Start at"
++msgstr "Начать с"
++
++#: models.py:79
++msgid "Finish at"
++msgstr "Прекратить с"
++
++#: models.py:81
++msgid "Is active"
++msgstr "Активен"
++
++#: models.py:83
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:24
++msgid "Place"
++msgstr "Место"
++
++#: models.py:88
++msgid "banner"
++msgstr "баннер"
++
++#: models.py:89
++msgid "banners"
++msgstr "баннеры"
++
++#: templates/admin/banner_rotator/banner/change_form.html:6
++msgid "History"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:7
++msgid "Home"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:23
++msgid "Date/time"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:25
++msgid "User"
++msgstr "Пользователь"
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:26
++msgid "IP"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:27
++msgid "User Agent"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:28
++msgid "Referrer"
++msgstr ""
++
++#: templates/admin/banner_rotator/banner/object_log_clicks.html:45
++msgid ""
++"This object doesn't have a clicks log. It probably wasn't added via this "
++"admin site."
++msgstr ""
++
++#: templatetags/banners.py:58
++msgid "banner tag takes three of four arguments"
++msgstr ""
+diff --git a/banner_rotator/managers.py b/banner_rotator/managers.py
+new file mode 100644
+index 0000000..9724da7
+--- /dev/null
++++ b/banner_rotator/managers.py
+@@ -0,0 +1,41 @@
++#-*- coding:utf-8 -*-
++
++from random import random
++
++from django.db import models
++
++
++def pick(bias_list):
++    """ Takes a list of 2-tuples [(item, weight)] using weight as the
++        probability when calculating an item to choose
++    """
++    try:
++        # First, normalize weights to ensure we
++        # have a valid probability distribution
++        assert sum([w for i, w in bias_list]) == 1
++    except AssertionError:
++        norm_const = float(sum([w for i, w in bias_list]))
++        distribution = [(i, w / norm_const) for i, w in bias_list]
++    else:
++        distribution = bias_list
++
++    number = random()
++    current = 0.0
++
++    # @link http://fr.w3support.net/index.php?db=so&id=479236
++    for choice, probability in distribution:
++        current += probability
++        if number <= current:
++            return choice
++
++
++class BannerManager(models.Manager):
++
++    def biased_choice(self, place):
++        queryset = self.filter(is_active=True, places=place)
++
++        if not queryset.count():
++            raise self.model.DoesNotExist
++
++        normalizer = queryset.aggregate(normalizer=models.Sum('weight'))['normalizer']
++        return pick([(i, i.weight / float(normalizer)) for i in queryset])
+diff --git a/banner_rotator/migrations/0001_initial.py b/banner_rotator/migrations/0001_initial.py
+new file mode 100644
+index 0000000..ab83b5a
+--- /dev/null
++++ b/banner_rotator/migrations/0001_initial.py
+@@ -0,0 +1,129 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Adding model 'Campaign'
++        db.create_table('banner_rotator_campaign', (
++            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
++            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
++            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
++            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
++        ))
++        db.send_create_signal('banner_rotator', ['Campaign'])
++
++        # Adding model 'Banner'
++        db.create_table('banner_rotator_banner', (
++            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
++            ('campaign', self.gf('django.db.models.fields.related.ForeignKey')(related_name='banners', to=orm['banner_rotator.Campaign'])),
++            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
++            ('url', self.gf('django.db.models.fields.URLField')(max_length=200)),
++            ('impressions', self.gf('django.db.models.fields.IntegerField')(default=0)),
++            ('weight', self.gf('django.db.models.fields.IntegerField')()),
++            ('file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
++            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
++            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
++            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
++        ))
++        db.send_create_signal('banner_rotator', ['Banner'])
++
++        # Adding model 'Click'
++        db.create_table('banner_rotator_click', (
++            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
++            ('banner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='clicks', to=orm['banner_rotator.Banner'])),
++            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='clicks', blank=True, null=True, to=orm['auth.User'])),
++            ('datetime', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
++            ('ip', self.gf('django.db.models.fields.IPAddressField')(max_length=15, null=True, blank=True)),
++            ('user_agent', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
++            ('referrer', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
++        ))
++        db.send_create_signal('banner_rotator', ['Click'])
++
++
++    def backwards(self, orm):
++        
++        # Deleting model 'Campaign'
++        db.delete_table('banner_rotator_campaign')
++
++        # Deleting model 'Banner'
++        db.delete_table('banner_rotator_banner')
++
++        # Deleting model 'Click'
++        db.delete_table('banner_rotator_click')
++
++
++    models = {
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '80', 'unique': 'True'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
++        },
++        'banner_rotator.banner': {
++            'Meta': {'object_name': 'Banner'},
++            'campaign': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'banners'", 'to': "orm['banner_rotator.Campaign']"}),
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'impressions': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
++            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
++            'weight': ('django.db.models.fields.IntegerField', [], {})
++        },
++        'banner_rotator.campaign': {
++            'Meta': {'object_name': 'Campaign'},
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.click': {
++            'Meta': {'object_name': 'Click'},
++            'banner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'to': "orm['banner_rotator.Banner']"}),
++            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
++            'referrer': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
++            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'blank': 'True', 'null': 'True', 'to': "orm['auth.User']"}),
++            'user_agent': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['banner_rotator']
+diff --git a/banner_rotator/migrations/0002_auto__add_field_banner_views.py b/banner_rotator/migrations/0002_auto__add_field_banner_views.py
+new file mode 100644
+index 0000000..f6cda95
+--- /dev/null
++++ b/banner_rotator/migrations/0002_auto__add_field_banner_views.py
+@@ -0,0 +1,91 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Adding field 'Banner.views'
++        db.add_column('banner_rotator_banner', 'views', self.gf('django.db.models.fields.IntegerField')(default=0), keep_default=False)
++
++
++    def backwards(self, orm):
++        
++        # Deleting field 'Banner.views'
++        db.delete_column('banner_rotator_banner', 'views')
++
++
++    models = {
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '80', 'unique': 'True'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
++        },
++        'banner_rotator.banner': {
++            'Meta': {'object_name': 'Banner'},
++            'campaign': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'banners'", 'to': "orm['banner_rotator.Campaign']"}),
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'impressions': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
++            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
++            'views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'weight': ('django.db.models.fields.IntegerField', [], {})
++        },
++        'banner_rotator.campaign': {
++            'Meta': {'object_name': 'Campaign'},
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.click': {
++            'Meta': {'object_name': 'Click'},
++            'banner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'to': "orm['banner_rotator.Banner']"}),
++            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
++            'referrer': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
++            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'blank': 'True', 'null': 'True', 'to': "orm['auth.User']"}),
++            'user_agent': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['banner_rotator']
+diff --git a/banner_rotator/migrations/0003_banner_impressions_copy_to_views.py b/banner_rotator/migrations/0003_banner_impressions_copy_to_views.py
+new file mode 100644
+index 0000000..5cc378e
+--- /dev/null
++++ b/banner_rotator/migrations/0003_banner_impressions_copy_to_views.py
+@@ -0,0 +1,92 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import DataMigration
++from django.db import models
++
++class Migration(DataMigration):
++
++    def forwards(self, orm):
++        "Write your forwards methods here."
++        for i in orm.Banner.objects.all():
++            i.views = i.impressions
++            i.save()
++
++    def backwards(self, orm):
++        "Write your backwards methods here."
++        for i in orm.Banner.objects.all():
++            i.impressions = i.views
++            i.save()
++
++    models = {
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '80', 'unique': 'True'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
++        },
++        'banner_rotator.banner': {
++            'Meta': {'object_name': 'Banner'},
++            'campaign': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'banners'", 'to': "orm['banner_rotator.Campaign']"}),
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'impressions': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
++            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
++            'views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'weight': ('django.db.models.fields.IntegerField', [], {})
++        },
++        'banner_rotator.campaign': {
++            'Meta': {'object_name': 'Campaign'},
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.click': {
++            'Meta': {'object_name': 'Click'},
++            'banner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'to': "orm['banner_rotator.Banner']"}),
++            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
++            'referrer': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
++            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'blank': 'True', 'null': 'True', 'to': "orm['auth.User']"}),
++            'user_agent': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['banner_rotator']
++
+diff --git a/banner_rotator/migrations/0004_auto__del_field_banner_impressions.py b/banner_rotator/migrations/0004_auto__del_field_banner_impressions.py
+new file mode 100644
+index 0000000..12ccd07
+--- /dev/null
++++ b/banner_rotator/migrations/0004_auto__del_field_banner_impressions.py
+@@ -0,0 +1,90 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Deleting field 'Banner.impressions'
++        db.delete_column('banner_rotator_banner', 'impressions')
++
++
++    def backwards(self, orm):
++        
++        # Adding field 'Banner.impressions'
++        db.add_column('banner_rotator_banner', 'impressions', self.gf('django.db.models.fields.IntegerField')(default=0), keep_default=False)
++
++
++    models = {
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '80', 'unique': 'True'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
++        },
++        'banner_rotator.banner': {
++            'Meta': {'object_name': 'Banner'},
++            'campaign': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'banners'", 'to': "orm['banner_rotator.Campaign']"}),
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
++            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
++            'views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'weight': ('django.db.models.fields.IntegerField', [], {})
++        },
++        'banner_rotator.campaign': {
++            'Meta': {'object_name': 'Campaign'},
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.click': {
++            'Meta': {'object_name': 'Click'},
++            'banner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'to': "orm['banner_rotator.Banner']"}),
++            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
++            'referrer': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
++            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'blank': 'True', 'null': 'True', 'to': "orm['auth.User']"}),
++            'user_agent': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['banner_rotator']
+diff --git a/banner_rotator/migrations/0005_auto__add_field_campaign_slug.py b/banner_rotator/migrations/0005_auto__add_field_campaign_slug.py
+new file mode 100644
+index 0000000..8e43f5b
+--- /dev/null
++++ b/banner_rotator/migrations/0005_auto__add_field_campaign_slug.py
+@@ -0,0 +1,92 @@
++# encoding: utf-8
++from __future__ import unicode_literals
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Adding field 'Campaign.slug'
++        db.add_column('banner_rotator_campaign', 'slug', self.gf('django_extensions.db.fields.AutoSlugField')(allow_duplicates=False, max_length=50, separator='-', blank=True, default='', populate_from='name', overwrite=False, db_index=True), keep_default=False)
++
++
++    def backwards(self, orm):
++        
++        # Deleting field 'Campaign.slug'
++        db.delete_column('banner_rotator_campaign', 'slug')
++
++
++    models = {
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '80', 'unique': 'True'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
++        },
++        'banner_rotator.banner': {
++            'Meta': {'object_name': 'Banner'},
++            'campaign': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'banners'", 'to': "orm['banner_rotator.Campaign']"}),
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
++            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
++            'views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'weight': ('django.db.models.fields.IntegerField', [], {})
++        },
++        'banner_rotator.campaign': {
++            'Meta': {'object_name': 'Campaign'},
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'slug': ('django_extensions.db.fields.AutoSlugField', [], {'allow_duplicates': 'False', 'max_length': '50', 'separator': "u'-'", 'blank': 'True', 'populate_from': "'name'", 'overwrite': 'False', 'db_index': 'True'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.click': {
++            'Meta': {'object_name': 'Click'},
++            'banner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'to': "orm['banner_rotator.Banner']"}),
++            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
++            'referrer': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
++            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'blank': 'True', 'null': 'True', 'to': "orm['auth.User']"}),
++            'user_agent': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['banner_rotator']
+diff --git a/banner_rotator/migrations/0006_campaign_populate_slug.py b/banner_rotator/migrations/0006_campaign_populate_slug.py
+new file mode 100644
+index 0000000..f50f8aa
+--- /dev/null
++++ b/banner_rotator/migrations/0006_campaign_populate_slug.py
+@@ -0,0 +1,89 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import DataMigration
++from django.db import models
++
++class Migration(DataMigration):
++
++    def forwards(self, orm):
++        "Write your forwards methods here."
++        for i in orm.Campaign.objects.all():
++            i.save()
++
++    def backwards(self, orm):
++        "Write your backwards methods here."
++        pass
++
++    models = {
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '80', 'unique': 'True'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
++        },
++        'banner_rotator.banner': {
++            'Meta': {'object_name': 'Banner'},
++            'campaign': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'banners'", 'to': "orm['banner_rotator.Campaign']"}),
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
++            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
++            'views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'weight': ('django.db.models.fields.IntegerField', [], {})
++        },
++        'banner_rotator.campaign': {
++            'Meta': {'object_name': 'Campaign'},
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'slug': ('django_extensions.db.fields.AutoSlugField', [], {'allow_duplicates': 'False', 'max_length': '50', 'separator': "u'-'", 'blank': 'True', 'populate_from': "'name'", 'overwrite': 'False', 'db_index': 'True'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.click': {
++            'Meta': {'object_name': 'Click'},
++            'banner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'to': "orm['banner_rotator.Banner']"}),
++            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
++            'referrer': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
++            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'blank': 'True', 'null': 'True', 'to': "orm['auth.User']"}),
++            'user_agent': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['banner_rotator']
++
+diff --git a/banner_rotator/migrations/0007_places_new_params.py b/banner_rotator/migrations/0007_places_new_params.py
+new file mode 100644
+index 0000000..414d5cf
+--- /dev/null
++++ b/banner_rotator/migrations/0007_places_new_params.py
+@@ -0,0 +1,173 @@
++# encoding: utf-8
++from __future__ import unicode_literals
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Adding model 'Place'
++        db.create_table('banner_rotator_place', (
++            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
++            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
++            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
++            ('width', self.gf('django.db.models.fields.SmallIntegerField')(default=None, null=True, blank=True)),
++            ('height', self.gf('django.db.models.fields.SmallIntegerField')(default=None, null=True, blank=True)),
++        ))
++        db.send_create_signal('banner_rotator', ['Place'])
++
++        # Adding unique constraint on 'Place', fields ['slug']
++        db.create_unique('banner_rotator_place', ['slug'])
++
++        # Adding field 'Banner.place'
++        db.add_column('banner_rotator_banner', 'place', self.gf('django.db.models.fields.related.ForeignKey')(default=1, related_name='banners', to=orm['banner_rotator.Place']), keep_default=False)
++
++        # Adding field 'Banner.alt'
++        db.add_column('banner_rotator_banner', 'alt', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True), keep_default=False)
++
++        # Adding field 'Banner.url_target'
++        db.add_column('banner_rotator_banner', 'url_target', self.gf('django.db.models.fields.CharField')(default='', max_length=10, blank=True), keep_default=False)
++
++        # Adding field 'Banner.max_views'
++        db.add_column('banner_rotator_banner', 'max_views', self.gf('django.db.models.fields.IntegerField')(default=0), keep_default=False)
++
++        # Adding field 'Banner.max_clicks'
++        db.add_column('banner_rotator_banner', 'max_clicks', self.gf('django.db.models.fields.IntegerField')(default=0), keep_default=False)
++
++        # Adding field 'Banner.start_at'
++        db.add_column('banner_rotator_banner', 'start_at', self.gf('django.db.models.fields.DateTimeField')(default=None, null=True, blank=True), keep_default=False)
++
++        # Adding field 'Banner.finish_at'
++        db.add_column('banner_rotator_banner', 'finish_at', self.gf('django.db.models.fields.DateTimeField')(default=None, null=True, blank=True), keep_default=False)
++
++        # Changing field 'Banner.campaign'
++        db.alter_column('banner_rotator_banner', 'campaign_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['banner_rotator.Campaign']))
++
++        # Deleting field 'Campaign.slug'
++        db.delete_column('banner_rotator_campaign', 'slug')
++
++
++    def backwards(self, orm):
++        
++        # Removing unique constraint on 'Place', fields ['slug']
++        db.delete_unique('banner_rotator_place', ['slug'])
++
++        # Deleting model 'Place'
++        db.delete_table('banner_rotator_place')
++
++        # Deleting field 'Banner.place'
++        db.delete_column('banner_rotator_banner', 'place_id')
++
++        # Deleting field 'Banner.alt'
++        db.delete_column('banner_rotator_banner', 'alt')
++
++        # Deleting field 'Banner.url_target'
++        db.delete_column('banner_rotator_banner', 'url_target')
++
++        # Deleting field 'Banner.max_views'
++        db.delete_column('banner_rotator_banner', 'max_views')
++
++        # Deleting field 'Banner.max_clicks'
++        db.delete_column('banner_rotator_banner', 'max_clicks')
++
++        # Deleting field 'Banner.start_at'
++        db.delete_column('banner_rotator_banner', 'start_at')
++
++        # Deleting field 'Banner.finish_at'
++        db.delete_column('banner_rotator_banner', 'finish_at')
++
++        # Changing field 'Banner.campaign'
++        db.alter_column('banner_rotator_banner', 'campaign_id', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['banner_rotator.Campaign']))
++
++        # Adding field 'Campaign.slug'
++        db.add_column('banner_rotator_campaign', 'slug', self.gf('django_extensions.db.fields.AutoSlugField')(default='', populate_from='name', allow_duplicates=False, max_length=50, separator='-', blank=True, overwrite=False, db_index=True), keep_default=False)
++
++
++    models = {
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
++        },
++        'banner_rotator.banner': {
++            'Meta': {'object_name': 'Banner'},
++            'alt': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
++            'campaign': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'banners'", 'null': 'True', 'blank': 'True', 'to': "orm['banner_rotator.Campaign']"}),
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
++            'finish_at': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'max_clicks': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'max_views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'place': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'banners'", 'to': "orm['banner_rotator.Place']"}),
++            'start_at': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
++            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
++            'url_target': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10', 'blank': 'True'}),
++            'views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'weight': ('django.db.models.fields.IntegerField', [], {})
++        },
++        'banner_rotator.campaign': {
++            'Meta': {'object_name': 'Campaign'},
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.click': {
++            'Meta': {'object_name': 'Click'},
++            'banner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'to': "orm['banner_rotator.Banner']"}),
++            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
++            'referrer': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
++            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'banner_clicks'", 'null': 'True', 'to': "orm['auth.User']"}),
++            'user_agent': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.place': {
++            'Meta': {'unique_together': "(('slug',),)", 'object_name': 'Place'},
++            'height': ('django.db.models.fields.SmallIntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
++            'width': ('django.db.models.fields.SmallIntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['banner_rotator']
+diff --git a/banner_rotator/migrations/0008_auto__del_field_banner_place.py b/banner_rotator/migrations/0008_auto__del_field_banner_place.py
+new file mode 100644
+index 0000000..d5024fc
+--- /dev/null
++++ b/banner_rotator/migrations/0008_auto__del_field_banner_place.py
+@@ -0,0 +1,116 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Deleting field 'Banner.place'
++        db.delete_column('banner_rotator_banner', 'place_id')
++
++        # Adding M2M table for field places on 'Banner'
++        db.create_table('banner_rotator_banner_places', (
++            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
++            ('banner', models.ForeignKey(orm['banner_rotator.banner'], null=False)),
++            ('place', models.ForeignKey(orm['banner_rotator.place'], null=False))
++        ))
++        db.create_unique('banner_rotator_banner_places', ['banner_id', 'place_id'])
++
++
++    def backwards(self, orm):
++        
++        # User chose to not deal with backwards NULL issues for 'Banner.place'
++        raise RuntimeError("Cannot reverse this migration. 'Banner.place' and its values cannot be restored.")
++
++        # Removing M2M table for field places on 'Banner'
++        db.delete_table('banner_rotator_banner_places')
++
++
++    models = {
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
++        },
++        'banner_rotator.banner': {
++            'Meta': {'object_name': 'Banner'},
++            'alt': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
++            'campaign': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'banners'", 'null': 'True', 'blank': 'True', 'to': "orm['banner_rotator.Campaign']"}),
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
++            'finish_at': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'max_clicks': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'max_views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'places': ('django.db.models.fields.related.ManyToManyField', [], {'db_index': 'True', 'related_name': "'banners'", 'symmetrical': 'False', 'to': "orm['banner_rotator.Place']"}),
++            'start_at': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
++            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
++            'url_target': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10', 'blank': 'True'}),
++            'views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'weight': ('django.db.models.fields.IntegerField', [], {})
++        },
++        'banner_rotator.campaign': {
++            'Meta': {'object_name': 'Campaign'},
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.click': {
++            'Meta': {'object_name': 'Click'},
++            'banner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks'", 'to': "orm['banner_rotator.Banner']"}),
++            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
++            'referrer': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
++            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'banner_clicks'", 'null': 'True', 'to': "orm['auth.User']"}),
++            'user_agent': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.place': {
++            'Meta': {'unique_together': "(('slug',),)", 'object_name': 'Place'},
++            'height': ('django.db.models.fields.SmallIntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
++            'width': ('django.db.models.fields.SmallIntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['banner_rotator']
+diff --git a/banner_rotator/migrations/0010_auto__add_field_click_place.py b/banner_rotator/migrations/0010_auto__add_field_click_place.py
+new file mode 100644
+index 0000000..ecf5cc7
+--- /dev/null
++++ b/banner_rotator/migrations/0010_auto__add_field_click_place.py
+@@ -0,0 +1,107 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Adding field 'Click.place'
++        db.add_column('banner_rotator_click', 'place', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='clicks_list', null=True, to=orm['banner_rotator.Place']), keep_default=False)
++
++
++    def backwards(self, orm):
++        
++        # Deleting field 'Click.place'
++        db.delete_column('banner_rotator_click', 'place_id')
++
++
++    models = {
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
++        },
++        'banner_rotator.banner': {
++            'Meta': {'object_name': 'Banner'},
++            'alt': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
++            'campaign': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'banners'", 'null': 'True', 'blank': 'True', 'to': "orm['banner_rotator.Campaign']"}),
++            'clicks': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
++            'finish_at': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'max_clicks': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'max_views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'places': ('django.db.models.fields.related.ManyToManyField', [], {'db_index': 'True', 'related_name': "'banners'", 'symmetrical': 'False', 'to': "orm['banner_rotator.Place']"}),
++            'start_at': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
++            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
++            'url_target': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10'}),
++            'views': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
++            'weight': ('django.db.models.fields.IntegerField', [], {})
++        },
++        'banner_rotator.campaign': {
++            'Meta': {'object_name': 'Campaign'},
++            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.click': {
++            'Meta': {'object_name': 'Click'},
++            'banner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'clicks_list'", 'to': "orm['banner_rotator.Banner']"}),
++            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
++            'place': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'clicks_list'", 'null': 'True', 'to': "orm['banner_rotator.Place']"}),
++            'referrer': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
++            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'banner_clicks'", 'null': 'True', 'to': "orm['auth.User']"}),
++            'user_agent': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'banner_rotator.place': {
++            'Meta': {'unique_together': "(('slug',),)", 'object_name': 'Place'},
++            'height': ('django.db.models.fields.SmallIntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
++            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
++            'width': ('django.db.models.fields.SmallIntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['banner_rotator']
+diff --git a/banner_rotator/migrations/__init__.py b/banner_rotator/migrations/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/banner_rotator/models.py b/banner_rotator/models.py
+new file mode 100644
+index 0000000..40daf19
+--- /dev/null
++++ b/banner_rotator/models.py
+@@ -0,0 +1,156 @@
++#-*- coding:utf-8 -*-
++
++from __future__ import unicode_literals
++try:
++    from hashlib import md5
++except ImportError:
++    from md5 import md5
++from time import time
++
++from django.contrib.auth.models import User
++from django.db import models
++from django.core.validators import MaxLengthValidator
++from django.utils.translation import ugettext_lazy as _
++
++from banner_rotator.managers import BannerManager
++
++
++def get_banner_upload_to(instance, filename):
++    """
++    Формирует путь для загрузки файлов
++    """
++    filename_parts = filename.split('.')
++    ext = '.%s' % filename_parts[-1] if len(filename_parts) > 1 else ''
++    new_filename = md5(('%s-%s' % (filename, time())).encode('utf-8')).hexdigest()
++    return 'banner/%s%s' % (new_filename, ext)
++
++
++class Campaign(models.Model):
++    name = models.CharField(_('Name'), max_length=255)
++    created_at = models.DateTimeField(_('Create at'), auto_now_add=True)
++    updated_at = models.DateTimeField(_('Update at'), auto_now=True)
++
++    class Meta:
++        verbose_name = _('campaign')
++        verbose_name_plural = _('campaigns')
++
++    def __unicode__(self):
++        return self.name
++
++
++class Place(models.Model):
++    name = models.CharField(_('Name'), max_length=255)
++    slug = models.SlugField(_('Slug'))
++    width = models.SmallIntegerField(_('Width'), blank=True, null=True, default=None)
++    height = models.SmallIntegerField(_('Height'), blank=True, null=True, default=None)
++
++    class Meta:
++        unique_together = ('slug',)
++        verbose_name = _('place')
++        verbose_name_plural = _('places')
++
++    def __unicode__(self):
++        size_str = self.size_str()
++        return '%s (%s)' % (self.name, size_str) if size_str else self.name
++
++    def size_str(self):
++        if self.width and self.height:
++            return '%sx%s' % (self.width, self.height)
++        elif self.width:
++            return '%sxX' % self.width
++        elif self.height:
++            return 'Xx%s' % self.height
++        else:
++            return ''
++    size_str.short_description = _('Size')
++
++
++class Banner(models.Model):
++    URL_TARGET_CHOICES = (
++        ('_self', _('Current page')),
++        ('_blank', _('Blank page')),
++    )
++
++    campaign = models.ForeignKey(Campaign, verbose_name=_('Campaign'), blank=True, null=True, default=None,
++        related_name="banners", db_index=True)
++
++    name = models.CharField(_('Name'), max_length=255)
++    alt = models.CharField(_('Image alt'), max_length=255, blank=True, default='')
++
++    url = models.URLField(_('URL'))
++    url_target = models.CharField(_('Target'), max_length=10, choices=URL_TARGET_CHOICES, default='')
++
++    views = models.IntegerField(_('Views'), default=0)
++    max_views = models.IntegerField(_('Max views'), default=0)
++    max_clicks = models.IntegerField(_('Max clicks'), default=0)
++
++    weight = models.IntegerField(_('Weight'), help_text=_("A ten will display 10 times more often that a one."),
++        choices=[[i, i] for i in range(1, 11)], default=5)
++
++    file = models.FileField(_('File'), upload_to=get_banner_upload_to)
++
++    created_at = models.DateTimeField(auto_now_add=True)
++    updated_at = models.DateTimeField(auto_now=True)
++
++    start_at = models.DateTimeField(_('Start at'), blank=True, null=True, default=None)
++    finish_at = models.DateTimeField(_('Finish at'), blank=True, null=True, default=None)
++
++    is_active = models.BooleanField(_('Is active'), default=True)
++
++    places = models.ManyToManyField(Place, verbose_name=_('Place'), related_name="banners", db_index=True)
++
++    objects = BannerManager()
++
++    class Meta:
++        verbose_name = _('banner')
++        verbose_name_plural = _('banners')
++
++    def __unicode__(self):
++        return self.name
++
++    def is_swf(self):
++        return self.file.name.lower().endswith("swf")
++
++    def view(self):
++        self.views = models.F('views') + 1
++        self.save()
++        return ''
++
++    def click(self, request, place_slug):
++        click = {
++            'banner': self,
++            #'place': place_slug,
++            'ip': request.META.get('REMOTE_ADDR'),
++            'user_agent': request.META.get('HTTP_USER_AGENT'),
++            'referrer': request.META.get('HTTP_REFERER'),
++        }
++
++        if request.user.is_authenticated():
++            click['user'] = request.user
++
++        return Click.objects.create(**click)
++
++    @models.permalink
++    def get_absolute_url(self):
++        return 'banner_click', (), {'banner_id': self.pk}
++
++    def admin_clicks_str(self):
++        if self.max_clicks:
++            return '%s / %s' % (self.clicks, self.max_clicks)
++        return '%s' % self.clicks
++    admin_clicks_str.short_description = _('Clicks')
++
++    def admin_views_str(self):
++        if self.max_views:
++            return '%s / %s' % (self.views, self.max_views)
++        return '%s' % self.views
++    admin_views_str.short_description = _('Views')
++
++
++class Click(models.Model):
++    banner = models.ForeignKey(Banner, related_name="clicks")
++    user = models.ForeignKey(User, null=True, blank=True, related_name="banner_clicks")
++    datetime = models.DateTimeField("Clicked at", auto_now_add=True)
++    ip = models.IPAddressField(null=True, blank=True)
++    user_agent = models.TextField(validators=[MaxLengthValidator(1000)], null=True, blank=True)
++    referrer = models.URLField(null=True, blank=True)
+diff --git a/banner_rotator/templates/admin/banner_rotator/banner/change_form.html b/banner_rotator/templates/admin/banner_rotator/banner/change_form.html
+new file mode 100644
+index 0000000..5c30426
+--- /dev/null
++++ b/banner_rotator/templates/admin/banner_rotator/banner/change_form.html
+@@ -0,0 +1,8 @@
++{% extends "admin/change_form.html" %}
++
++{% load i18n %}
++
++{% block object-tools-items %}
++    <li><a href="history/" class="historylink">{% trans "History" %}</a></li>
++    <li><a href="log/clicks/" class="historylink">{% trans "Log clicks" %}</a></li>
++{% endblock %}
+\ No newline at end of file
+diff --git a/banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html b/banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html
+new file mode 100644
+index 0000000..5866ec6
+--- /dev/null
++++ b/banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html
+@@ -0,0 +1,50 @@
++{% extends "admin/base_site.html" %}
++
++{% load i18n %}
++
++{% block breadcrumbs %}
++    <div class="breadcrumbs">
++        <a href="../../../../../">{% trans 'Home' %}</a> &rsaquo;
++        <a href="../../../../">{{ app_label|capfirst }}</a> &rsaquo;
++        <a href="../../../">{{ module_name }}</a> &rsaquo;
++        <a href="../../">{{ object|truncatewords:"18" }}</a> &rsaquo;
++        {% trans 'Log clicks' %}
++    </div>
++{% endblock %}
++
++{% block content %}
++    <div id="content-main">
++        <div class="module">
++
++            {% if log_clicks %}
++                <table id="change-history">
++                    <thead>
++                    <tr>
++                        <th scope="col">{% trans 'Date/time' %}</th>
++                        <th scope="col">{% trans 'Place' %}</th>
++                        <th scope="col">{% trans 'User' %}</th>
++                        <th scope="col">{% trans 'IP' %}</th>
++                        <th scope="col">{% trans 'User Agent' %}</th>
++                        <th scope="col">{% trans 'Referrer' %}</th>
++                    </tr>
++                    </thead>
++                    <tbody>
++                    {% for click in log_clicks %}
++                        <tr>
++                            <th scope="row">{{ click.datetime|date:"Y.m.d H:i" }}</th>
++                            <td>{{ click.place }}</td>
++                            <td>{{ click.user.username }}{% if click.user.get_full_name %} ({{ click.user.get_full_name }}){% endif %}</td>
++                            <td>{{ click.ip }}</td>
++                            <td>{{ click.user_agent }}</td>
++                            <td>{{ click.referrer }}</td>
++                        </tr>
++                    {% endfor %}
++                    </tbody>
++                </table>
++            {% else %}
++                <p>{% trans "This object doesn't have a clicks log. It probably wasn't added via this admin site." %}</p>
++            {% endif %}
++
++        </div>
++    </div>
++{% endblock %}
+\ No newline at end of file
+diff --git a/banner_rotator/templates/banner_rotator/place.html b/banner_rotator/templates/banner_rotator/place.html
+new file mode 100644
+index 0000000..c717d0b
+--- /dev/null
++++ b/banner_rotator/templates/banner_rotator/place.html
+@@ -0,0 +1,37 @@
++{% if banner %}
++    {% if banner.is_swf %}
++        <object
++                classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
++                codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0"
++                {% if banner_place.width %}width="{{ banner_place.width }}"{% endif %}
++                {% if banner_place.height %}height="{{ banner_place.height }}"{% endif %}>
++            <param name="allowScriptAccess" value="Always">
++            <param name="menu" value="false">
++            <param name="quality" value="high">
++            <param name="wmode" value="opaque">
++            <param name="movie" value="{{ banner.file.url }}">
++            <param name="flashvars" value="url={% url banner_click banner.id %}?place={{ banner_place.id }}">
++
++            <embed
++                    src="{{ banner.file.url }}"
++                    flashvars="url={% url banner_click banner.id %}?place={{ banner_place.id }}"
++                    quality="high"
++                    allowscriptaccess="Always"
++                    wmode="opaque"
++                    menu="false"
++                    swliveconnect="FALSE"
++                    type="application/x-shockwave-flash"
++                    pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"
++                    {% if banner_place.width %}width="{{ banner_place.width }}"{% endif %}
++                    {% if banner_place.height %}height="{{ banner_place.height }}"{% endif %}>
++        </object>
++    {% else %}
++        <a href="{% url 'banner_click' banner.id banner_place.slug %}" target="{{ banner.url_target }}">
++            <img
++                    src="{{ banner.file.url }}"
++                    alt="{{ banner.alt }}"
++                    {% if banner_place.width %}width="{{ banner_place.width }}"{% endif %}
++                    {% if banner_place.height %}height="{{ banner_place.height }}"{% endif %} />
++        </a>
++    {% endif %}
++{% endif %}
+\ No newline at end of file
+diff --git a/banner_rotator/templatetags/__init__.py b/banner_rotator/templatetags/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/banner_rotator/templatetags/banners.py b/banner_rotator/templatetags/banners.py
+new file mode 100644
+index 0000000..806d20d
+--- /dev/null
++++ b/banner_rotator/templatetags/banners.py
+@@ -0,0 +1,67 @@
++#-*- coding:utf-8 -*-
++
++import logging
++
++from django import template
++from django.template.loader import render_to_string
++from django.utils.translation import ugettext_lazy as _
++
++from banner_rotator.models import Banner, Place
++
++
++logger = logging.getLogger('banner_rotator')
++
++register = template.Library()
++
++
++class BannerNode(template.Node):
++    def __init__(self, place_slug, varname=None):
++        self.varname, self.place_slug = varname, place_slug
++
++    def render(self, context):
++        try:
++            self.place = Place.objects.get(slug=self.place_slug)
++        except Place.DoesNotExist:
++            return ''
++
++        try:
++            banner_obj = Banner.objects.biased_choice(self.place)
++            banner_obj.view()
++        except Banner.DoesNotExist:
++            banner_obj = None
++
++        if self.varname:
++            context.update({
++                self.varname: banner_obj,
++                '%s_place' % self.varname: self.place
++            })
++            return ''
++        else:
++            templates = [
++                #'banner_rotator/place_%s.html' % place.slug,
++                'banner_rotator/place.html'
++            ]
++            return render_to_string(templates, {
++                'banner': banner_obj,
++                'banner_place': self.place
++            })
++
++
++@register.tag
++def banner(parser, token):
++    """
++    Use: {% banner place-slug as banner %} or {% banner place-slug %}
++    """
++    bits = token.contents.split()
++
++    if len(bits) not in [2, 4]:
++        raise template.TemplateSyntaxError(_("banner tag takes three of four arguments"))
++
++    if 4 == len(bits) and 'as' == bits[2]:
++        place_slug = bits[1]
++        varname = bits[3]
++    else:
++        place_slug = bits[1]
++        varname = None
++
++    return BannerNode(place_slug, varname)
+diff --git a/banner_rotator/tests.py b/banner_rotator/tests.py
+new file mode 100644
+index 0000000..048560d
+--- /dev/null
++++ b/banner_rotator/tests.py
+@@ -0,0 +1,33 @@
++from django.test import TestCase
++from .managers import pick
++
++
++class BaseBannerTest(TestCase):
++    fixtures = ['test_data']
++
++
++class BannerManagerTest(BaseBannerTest):
++
++    def test_pick(self):
++        # check with a item of probability 1
++        choices = [
++            (True, 1),
++            (False, 0),
++            (False, 0),
++            (False, 0),
++            (False, 0),
++        ]
++        result = pick(choices)
++        self.assertTrue(result)
++
++        # Ensure nothing funky happens if we have an
++        # invalid probability distribution
++        choices = [
++            (True, 1),
++            (True, 1),
++            (False, 0),
++            (False, 0),
++            (False, 0),
++        ]
++        result = pick(choices)
++        self.assertTrue(result)
+diff --git a/banner_rotator/urls.py b/banner_rotator/urls.py
+new file mode 100644
+index 0000000..05b5f2c
+--- /dev/null
++++ b/banner_rotator/urls.py
+@@ -0,0 +1,12 @@
++#-*- coding:utf-8 -*-
++
++try:
++    # Django 1.4
++    from django.conf.urls import patterns, url
++except ImportError:
++    from django.conf.urls.defaults import patterns, url
++
++
++urlpatterns = patterns('banner_rotator.views',
++    url(r'^click/(?P<banner_id>\d{1,4})/(?P<place_slug>[^\.]+)$', 'click', name='banner_click'),
++)
+diff --git a/banner_rotator/views.py b/banner_rotator/views.py
+new file mode 100644
+index 0000000..8e25fb1
+--- /dev/null
++++ b/banner_rotator/views.py
+@@ -0,0 +1,12 @@
++#-*- coding:utf-8 -*-
++
++from django.shortcuts import redirect, get_object_or_404
++
++from banner_rotator.models import Banner
++
++
++def click(request, banner_id, place_slug):
++    banner = get_object_or_404(Banner, pk=banner_id)
++    banner.click(request, place_slug)
++
++    return redirect(banner.url)
+diff --git a/catalog/admin.py b/catalog/admin.py
+index 29ac926..fbec511 100644
+--- a/catalog/admin.py
++++ b/catalog/admin.py
+@@ -1,5 +1,5 @@
+ from django.contrib import admin
+-from catalog.models import Catalog, Journal, Issue, Purchase, CurrencyHistory
++from catalog.models import Catalog, Journal, Issue, Purchase, CurrencyHistory, ImportLog
+ from mptt.admin import MPTTModelAdmin
+ from django import forms
+ from redactor.widgets import RedactorEditor
+@@ -104,3 +104,8 @@ admin.site.get_urls = admin_urls
+ 
+ 
+ 
++class ImportLogAdmin(admin.ModelAdmin):
++    list_display = ( 'journal', 'issue', 'created', 'is_imported')
++
++
++admin.site.register(ImportLog, ImportLogAdmin)
+\ No newline at end of file
+diff --git a/catalog/models.py b/catalog/models.py
+index 3d25d3c..7db7273 100644
+--- a/catalog/models.py
++++ b/catalog/models.py
+@@ -156,6 +156,10 @@ def register(sender, user, request, **kwarg):
+ user_activated.connect(register)
+ 
+     
+-            
+-    
+-    
++class ImportLog(models.Model):
++    journal =  models.ForeignKey(Journal, verbose_name=_('Journal'))
++    issue =  models.ForeignKey(Issue, verbose_name=_('Issue'))
++    created = models.DateTimeField(auto_now_add=True, auto_now=True, blank=True, null=True)
++    is_imported = models.BooleanField(verbose_name=_('Is reported'), default=False)
++    class Meta:
++        ordering = ('-id', )
+\ No newline at end of file
+diff --git a/config/settings.py b/config/settings.py
+index e199d78..6e574f3 100644
+--- a/config/settings.py
++++ b/config/settings.py
+@@ -56,6 +56,7 @@ INSTALLED_APPS = (
+     'django.contrib.sessions',
+     'django.contrib.messages',
+     'django.contrib.staticfiles',
++    'banner_rotator',
+     'main',
+     'south',
+     'catalog',
+@@ -73,7 +74,7 @@ INSTALLED_APPS = (
+     'rosetta',
+     'paymaster',
+     'captcha',
+-
++    
+ )
+ 
+ RECAPTCHA_PUBLIC_KEY = '6LdVS_8SAAAAAD64_-IWB41qYEbBW9Qh3XjdaLGQ'
+diff --git a/config/urls.py b/config/urls.py
+index a9707eb..8aa5737 100644
+--- a/config/urls.py
++++ b/config/urls.py
+@@ -42,6 +42,7 @@ urlpatterns = patterns('',
+     url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+                     auth_views.password_reset_confirm,
+                     name='password_reset_confirm'),
++    url(r'^banner_rotator/', include('banner_rotator.urls')),
+ )
+ 
+ 
+diff --git a/main/static/css/style.css b/main/static/css/style.css
+index e1ebf1a..2016b73 100644
+--- a/main/static/css/style.css
++++ b/main/static/css/style.css
+@@ -1,46 +1,1486 @@
+-.journal_item
+-{
+-  float: left;
+-  width: 247px;
+-  height: 410px;
+-  border: 1px solid silver;
+-  margin: 2px;
+-  text-align: center;
+-}
+-
+-.journal_item p
+-{
+-  text-align: center;
+-  padding-top: 5px;
+-}
+-
+-.journal_item a img
+-{
+-  padding-left: 20px;
+-  padding-top: 20px;
+-  text-align: center;
+-}
+-
+-.journal_item img
+-{
+-  padding-left: 20px;
+-  padding-top: 20px;
+-  text-align: center;
+-}
+-
+-
+-.jcarousel ul li 
+-{
+-
+-text-align: center;
+-}
+-
+-.jcarousel ul li h3
+-{
+-  font-size: 14px;
+-}
+-
+-.jcarousel ul li p
+-{
+-  font-size: 18px;
+-}
++@charset "utf-8";
++
++.sticker {
++  position: fixed;
++  top: 0;
++  left: 1062px;
++  z-index: 100;
++  background: #2C2724;
++}
++.basket_sticker {
++  width: 237px;
++  background: #2C2724; 
++  padding: 5px;
++}
++
++#div_basket
++{
++  background: #2C2724;
++}
++
++
++.cat-title a 
++{    font-family: Georgia;
++    color: #614231;
++    src: url("fonts/Georgia.eot");
++    src: url("fonts/Georgia.eot?#iefix") format("embedded-opentype"),
++    url("fonts/Georgia.woff") format("woff"),
++    url("fonts/Georgia.ttf") format("truetype");
++    font-weight: normal;
++    font-style: normal;
++
++  
++}
++
++.thumbnails li
++{
++ list-style: none;
++ display: inline-block;
++ width: 240px;
++ height: 180px;
++}
++
++
++.thumbnails a
++{
++ border: 1px solid #773F1E;
++width: 190px;
++height: 150px;
++display: inline-block;
++ padding: 2px;
++}
++
++.logo-link
++{
++  display: block;
++  bottom: 22px;
++  position: relative;
++}
++
++
++ul li.message
++{
++    color: red;
++    list-style: none;
++    display: inline-block;
++    font-family: Georgia;
++    font-size: 20px;
++
++}
++
++.errorlist li
++{
++    list-style: none;
++    display: inline-block;
++    color: red;
++}
++
++h2 a, .category_name{
++    color: #743B10
++}
++
++@font-face {
++    font-family: Georgia;
++    src: url("fonts/Georgia.eot");
++    src: url("fonts/Georgia.eot?#iefix") format("embedded-opentype"),
++    url("fonts/Georgia.woff") format("woff"),
++    url("fonts/Georgia.ttf") format("truetype");
++    font-weight: normal;
++    font-style: normal;
++}
++
++@font-face {
++    font-family: GeorgiaItalic;
++    src: url("fonts/GeorgiaItalic.eot");
++    src: url("fonts/GeorgiaItalic.eot?#iefix") format("embedded-opentype"),
++    url("fonts/GeorgiaItalic.woff") format("woff"),
++    url("fonts/GeorgiaItalic.ttf") format("truetype");
++    font-weight: normal;
++    font-style: normal;
++}
++
++@font-face {
++    font-family: GeorgiaBold;
++    src: url("fonts/GeorgiaBold.eot");
++    src: url("fonts/GeorgiaBold.eot?#iefix") format("embedded-opentype"),
++    url("fonts/GeorgiaBold.woff") format("woff"),
++    url("fonts/GeorgiaBold.ttf") format("truetype");
++    font-weight: normal;
++    font-style: normal;
++}
++
++html {
++    width: 100%;
++    height: 100%;
++}
++
++body {
++    margin: 0;
++    padding: 0;
++    height: 100%;
++    font: 16px Georgia;
++}
++
++.wrapper {
++    width: 100%;
++    min-height: 100%;
++    position: relative;
++}
++
++/*header*/
++.header-wrapper {
++    height: 147px;
++    background: url(../img/bg-heder-wrapper.jpg) repeat-x top center;
++    position: relative;
++    z-index: 900;
++    -webkit-box-shadow: 0px 8px 8px 0px rgba(8, 8, 8, 0.75);
++    -moz-box-shadow:    0px 8px 8px 0px rgba(8, 8, 8, 0.75);
++    box-shadow:         0px 8px 8px 0px rgba(8, 8, 8, 0.75);
++}
++
++.header {
++    max-width: 1183px;
++    height: 147px;
++    margin: 0 auto;
++    position: relative;
++}
++
++.logo {
++    display: block;
++    position: absolute;
++    width: 393px;
++    height: 147px;
++
++    left: 0;
++    top: 18px;
++    z-index: 1000;
++}
++
++.header-phone {
++    position: absolute;
++    width: 427px;
++    height: 25px;
++    background: url(../img/bg-header-phone.png) no-repeat center;
++    bottom: -25px;
++    left: -25px;
++    z-index: 51;
++}
++
++.header-phone-shadow {
++    width: 395px;
++    height: 15px;
++    position: absolute;
++    left: 15px;
++    bottom: 0;
++    -webkit-box-shadow: 0px 8px 8px 0px rgba(8, 8, 8, 0.75);
++    -moz-box-shadow:    0px 8px 8px 0px rgba(8, 8, 8, 0.75);
++    box-shadow:         0px 8px 8px 0px rgba(8, 8, 8, 0.75);
++}
++
++.header-mail {
++    display: inline-block;
++//display: inline;
++//zoom: 1;
++    position: absolute;
++    font: 18px Georgia;
++    color: #ecd3af;
++    right: 36px;
++    bottom: 10px;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++    text-shadow: 1px 1px 1px rgba(0, 0, 0, 1);
++}
++
++.header-mail:hover {
++    text-decoration: none;
++    color: #FEE4BD;
++}
++
++.header-right {
++    width: 390px;
++    height: 147px;
++    float: right;
++}
++
++.top-menu {
++    height: 35px;
++    width: 389px;
++    border: solid 1px #f7f4e9;
++    background: #eee8d2;
++    -webkit-border-bottom-right-radius: 5px;
++    -webkit-border-bottom-left-radius: 5px;
++    -moz-border-radius-bottomright: 5px;
++    -moz-border-radius-bottomleft: 5px;
++    border-bottom-right-radius: 5px;
++    border-bottom-left-radius: 5px;
++    -webkit-box-shadow: 0px 5px 3px 0px rgba(0, 0, 0, 0.5);
++    -moz-box-shadow:    0px 5px 3px 0px rgba(0, 0, 0, 0.5);
++    box-shadow:         0px 5px 3px 0px rgba(0, 0, 0, 0.5);
++}
++
++.top-menu ul {
++    display: block;
++    list-style: none;
++    padding: 0;
++    margin: 0;
++    text-align: center;
++    font-size: 0;
++}
++
++.top-menu ul li {
++    display: inline-block;
++//display: inline;
++//zoom: 1;
++    margin: 0 0 0 24px;
++    vertical-align: top;
++}
++
++.top-menu ul li a {
++    color: #1d7e30;
++    text-decoration: none;
++    font: 14px Georgia;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.top-menu ul li a:hover {
++    color: #2AC44A;
++}
++
++.shop-menu {
++    display: block;
++    list-style: none;
++    height: 20px;
++    padding: 0;
++    margin: 28px 0 0;
++    font-size: 0;
++    text-align: center;
++}
++
++.shop-menu li {
++    display: inline-block;
++//display: inline;
++//zoom: 1;
++    vertical-align: top;
++}
++
++.shop-menu li.sep {
++    width: 1px;
++    height: 20px;
++    background: #e4cfa9;
++    margin: 0 14px;
++}
++
++.shop-menu li a {
++    color: #f5ddb8;
++    text-decoration: none;
++    font: 15px/20px Georgia;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.shop-menu li a:hover {
++    color: #fff;
++}
++
++.search-wrap {
++    height: 28px;
++    margin: 14px 0 0;
++}
++
++.input-wrap {
++    width: 200px;
++    height: 28px;
++    float: left;
++    position: relative;
++    float: left;
++}
++
++.input-wrap input[type=text] {
++    display: block;
++    width: 157px;
++    height: 26px;
++    padding: 0 30px 0 12px;
++    border: solid 1px #6f3413;
++    color: #1d7e30;
++    font: 13px/26px Georgia;
++    -webkit-border-radius: 5px;
++    -moz-border-radius: 5px;
++    border-radius: 5px;
++}
++
++.input-wrap input[type=submit] {
++    display: block;
++    position: absolute;
++    width: 26px;
++    height: 26px;
++    border: 0;
++    padding: 0;
++    margin: 0;
++    right: 0;
++    top: 0;
++    cursor: pointer;
++    background: url(../img/bg-search-submit.png) no-repeat center;
++}
++
++.input-wrap input[type=submit]:hover {
++    background: url(../img/bg-search-submit-hover.png) no-repeat center;
++}
++
++.logout {
++    display: block;
++    position: relative;
++    float: right;
++    color: #f5ddb8;
++    text-decoration: none;
++    font: 13px Georgia;
++    border-bottom: dotted 1px;
++    margin: 7px 0 0;
++    height: 17px;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++.login {
++    display: block;
++    position: relative;
++    float: right;
++    color: #f5ddb8;
++    text-decoration: none;
++    font: 13px Georgia;
++    border-bottom: dotted 1px;
++    margin: 7px 0 0;
++    height: 17px;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.login .pic {
++    display: block;
++    position: absolute;
++    width: 20px;
++    height: 18px;
++    bottom: 0;
++    left: -25px;
++    background: url(../img/bg-login.png) no-repeat center;
++}
++
++.login:hover, .registration:hover {
++    border-bottom: 0;
++    color: #fff7c1;
++}
++
++.registration {
++    display: block;
++    position: relative;
++    float: right;
++    color: #f5ddb8;
++    text-decoration: none;
++    font: 13px Georgia;
++    border-bottom: dotted 1px;
++    margin: 7px 45px 0 0;
++    height: 17px;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++/*end header*/
++
++/*content*/
++.content-wrapper {
++    padding-bottom: 217px;
++    position: relative;
++}
++
++.main-slider-wrapper {
++    height: 521px;
++    position: relative;
++    overflow: hidden;
++}
++
++.main-slider-prev, .main-slider-next {
++    position: absolute;
++    width: 52px;
++    height: 69px;
++    top: 215px;
++    cursor: pointer;
++    z-index: 200;
++}
++
++.main-slider-prev {
++    background: url(../img/bg-main-slider-prev.png) 0 0 no-repeat;
++    left: 42px;
++}
++
++.main-slider-next {
++    background: url(../img/bg-main-slider-next.png) 0 0 no-repeat;
++    right: 42px;
++}
++
++.main-slider-prev:hover, .main-slider-next:hover {
++    background-position: -51px;
++}
++
++.main-slider {
++    position: absolute;
++    height: 521px;
++    width: 1920px;
++    top: 0;
++    left: 50%;
++    margin: 0 0 0 -960px;
++    font-size: 0;
++}
++
++.main-slider-item {
++    display: inline-block;
++//display: inline;
++    width: 1920px;
++    height: 521px;
++    text-align: center;
++    position: relative;
++}
++
++.main-slider-item-text {
++    position: absolute;
++    width: 598px;
++    right: 361px;
++    bottom: 40px;
++    z-index: 200;
++    color: #fff;
++    text-align: left;
++}
++
++.main-slider-item-text-head {
++    font: 65px/65px Georgia;
++    padding: 0 0 15px;
++    text-shadow: 2px 2px 2px rgba(30, 30, 30, 1);
++}
++
++.main-slider-item-text-content {
++    font: 18px GeorgiaItalic;
++    padding: 0 0 15px;
++    text-shadow: 2px 2px 2px rgba(30, 30, 30, 1);
++}
++
++.more {
++    display: block;
++    width: 186px;
++    height: 46px;
++    background: url(../img/bg-more.png) no-repeat 0 0;
++    color: #fff;
++    text-decoration: none;
++    text-align: center;
++    font: 16px/46px GeorgiaItalic;
++}
++
++.more:hover {
++    background-position: -186px;
++}
++
++.items-menu-wrap {
++    height: 40px;
++    background: #2c2724;
++}
++
++.items-menu {
++    max-width: 1183px;
++    height: 40px;
++    margin: 0 auto;
++    position: relative;
++    z-index: 200;
++}
++
++.items-menu ul {
++    display: block;
++    float: left;
++    height: 40px;
++    padding: 0;
++    margin: 0;
++    font-size: 0;
++}
++
++.items-menu ul li {
++    display: inline-block;
++//display: inline;
++//zoom: 1;
++    height: 40px;
++    vertical-align: top;
++}
++
++.items-menu ul li a {
++    display: block;
++    position: relative;
++    height: 40px;
++    font: 15px/40px Georgia;
++    color: #fff;
++    text-decoration: none;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++    padding: 0 14px;
++}
++
++.items-menu ul li a .triangle {
++    display: block;
++    opacity: 0;
++    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
++    filter: alpha(opacity=0);
++    position: absolute;
++    left: 0;
++    bottom: -8px;
++    width: 100%;
++    height: 8px;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.items-menu ul li a .triangle img {
++    display: block;
++    width: 100%;
++    height: 8px;
++    border: 0;
++}
++
++.items-menu ul li a:hover, .items-menu ul li a.active {
++    background: #f0791a;
++}
++
++.items-menu ul li a:hover .triangle, .items-menu ul li a.active .triangle {
++    opacity: 1;
++    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
++    filter: alpha(opacity=100);
++}
++
++.min-order {
++    float: right;
++    height: 40px;
++    line-height: 40px;
++    font: 15px/40px Georgia;
++    padding: 0 0 0 35px;
++    color: #f0791a;
++    background: url(../img/red-basket.png) no-repeat left center;
++}
++
++.order-sum {
++    color: #fff;
++    border-bottom: dotted 1px;
++}
++/*end content*/
++
++/*footer*/
++.footer-wrap {
++    position: absolute;
++    width: 100%;
++    height: 217px;
++    bottom: 0;
++    left: 0;
++}
++
++.footer-top-wrap {
++    height: 176px;
++    background: #eee8d2;
++    border-bottom: solid 1px #a2a2a2;
++    position: relative;
++}
++
++.footer-top {
++    max-width: 1183px;
++    height: 176px;
++    margin: 0 auto;
++    position: relative;
++}
++
++.food-left {
++    position: absolute;
++    bottom: 0;
++    width: 328px;
++    height: 174px;
++    background: url(../img/bg-food-left.png) no-repeat center;
++    left: 0;
++}
++
++.food-right {
++    position: absolute;
++    bottom: 0;
++    width: 329px;
++    height: 176px;
++    background: url(../img/bg-food-right.png) no-repeat center;
++    right: 0;
++}
++
++.pluso-wrap {
++    width: 215px;
++    float: left;
++    padding: 28px 0 0;
++}
++
++.footer-bot-wrap {
++    height: 40px;
++}
++
++.footer-bot {
++    max-width: 1183px;
++    height: 40px;
++    margin: 0 auto;
++    font: 12px GeorgiaItalic;
++    color: #808080;
++    line-height: 40px;
++}
++
++.footer-cols {
++    float: left;
++    font-size: 0;
++    padding: 28px 0 0;
++}
++
++.footer-col {
++    display: inline-block;
++//display: inline;
++//zoom: 1;
++    width: 167px;
++    vertical-align: top;
++    font: 12px Georgia;
++    color: #1d7e30;
++    margin: 0 0 0 34px;
++}
++
++.footer-col:first-child {
++    margin: 0;
++}
++
++.footer-col-h a {
++    display: block;
++    font: 16px Georgia;
++    color: #2c2725;
++    padding: 0 0 10px;
++}
++
++.footer-col-h.text {
++    width: 150px;
++}
++
++.footer-links {
++    float: right;
++}
++
++.footer-link {
++    display: block;
++    position: relative;
++    float: left;
++    width: 154px;
++    height: 133px;
++    padding: 28px 22px 0;
++    color: #fff;
++    text-decoration: none;
++    font: 28px Georgia;
++    margin: 0 0 0 2px;
++}
++
++.footer-link-img {
++    display: block;
++    position: absolute;
++    width: 100%;
++    height: 80px;
++    left: 0;
++    bottom: -9px;
++    text-align: center;
++}
++
++.footer-link.catalog {
++    background: url(../img/bg-catalog.png) no-repeat 0 0;
++}
++
++.footer-link.catalog .footer-link-img {
++    background: url(../img/color-basket.png) no-repeat bottom center;
++}
++
++.footer-link.actions {
++    background: url(../img/bg-actions.png) no-repeat 0 0;
++}
++
++.footer-link.actions .footer-link-img {
++    background: url(../img/percent.png) no-repeat bottom center;
++}
++
++.footer-link.cook {
++    background: url(../img/bg-cook.png) no-repeat 0 0;
++}
++
++.footer-link.cook .footer-link-img {
++    background: url(../img/cook.png) no-repeat bottom center;
++}
++
++.footer-link.catalog:hover, .footer-link.actions:hover, .footer-link.cook:hover {
++    background-position: -198px 0;
++}
++/*end footer*/
++
++.v {
++    vertical-align: middle !important;
++    display: inline-block !important;
++//display: inline !important;
++//zoom: 1;
++    max-width: 98%;
++}
++
++/*common*/
++.v-helper {
++    display: -moz-inline-box;
++    display: inline-block;
++    height: 100%;
++    width: 0;
++    vertical-align: middle;
++    zoom: 1;
++//display: inline;
++    font-size: 0;
++}
++
++.clear {
++    width: 100%;
++    height: 0;
++    clear: both;
++}
++
++.left {
++    float: left;
++}
++
++.right {
++    float: right;
++}
++/*end common*/
++
++/*catalog*/
++.top-pic {
++    height: 117px;
++    background: url(../img/bg-top-pic.jpg) repeat-x center;
++}
++
++.breadcrumbs-wrap {
++    max-width: 1183px;
++    height: 117px;
++    margin: 0 auto;
++}
++
++.breadcrumbs {
++    position: relative;
++    height: 28px;
++    float: left;
++    background: url(../img/bg-breadcrumbs.png) repeat;
++    margin: 56px 0 0;
++}
++
++.breadcrumbs-icon {
++    width: 28px;
++    height: 28px;
++    background: url(../img/bg-breadcrumbs-icon.png) no-repeat center;
++    float: left;
++}
++
++.breadcrumbs ul {
++    list-style: none;
++    margin: 0 0 0 7px;
++    padding: 0;
++    display: block;
++    height: 28px;
++    float: left;
++    font-size: 0;
++}
++
++.breadcrumbs ul li {
++    display: inline-block;
++//display: inline;
++//zoom: 1;
++    height: 28px;
++    margin: 0 10px;
++    vertical-align: top;
++}
++
++.breadcrumbs ul li.sep {
++    margin: 0;
++    font: 12px/28px Georgia;
++    color: #fff;
++}
++
++.breadcrumbs ul li a {
++    display: block;
++    height: 28px;
++    font: 12px/28px Georgia;
++    text-decoration: none;
++    color: #fff;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.breadcrumbs ul li a:hover, .breadcrumbs ul li a.active {
++    color: #d68000;
++}
++
++.breadcrumbs-arrow {
++    position: absolute;
++    width: 17px;
++    height: 28px;
++    top: 0;
++    right: -17px;
++    background: url(../img/bg-breadcrumbs-arrow.png) no-repeat center;
++}
++
++.catalog-wrap {
++    position: relative;
++}
++
++.catalog-content {
++    max-width: 1183px;
++    margin: 0 auto;
++    padding: 0 0 45px;
++    position: relative;
++    z-index: 100;
++}
++
++.catalog-content h1 {
++    margin: 0;
++    padding: 36px 0;
++    color: #2c2725;
++    font: 41px Georgia;
++}
++
++.catalog-left-col {
++    float: left;
++    width: 221px;
++}
++
++.catalog-menu {
++    background: #e7dfc9;
++    width: 219px;
++    border: solid 1px #fff;
++    -webkit-border-radius: 5px;
++    -moz-border-radius: 5px;
++    border-radius: 5px;
++}
++
++.catalog-menu-content {
++    padding: 17px 15px;
++}
++
++.catalog-menu-content a {
++    display: block;
++    color: #2c2725;
++    text-decoration: none;
++    font: 15px Georgia;
++    padding: 10px 0 10px 7px;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.catalog-menu-content a:hover {
++    color: #777;
++}
++
++.catalog-menu-sep {
++    height: 1px;
++    background: url(../img/bg-catalog-menu-sep.png) repeat-x;
++}
++
++.catalog-news {
++    padding: 12px 0 0;
++}
++
++.catalog-news h1 {
++    color: #848382;
++    margin: 0;
++    font: 24px Georgia;
++    padding: 19px 0;
++    border-bottom: solid 1px #e0d8c2;
++}
++
++.catalog-novelty {
++    display: block;
++    padding: 16px 0;
++    text-decoration: none;
++}
++
++.catalog-novelty:hover .catalog-novelty-title,
++.catalog-novelty:hover .catalog-novelty-short {
++    color: #4faf6c;
++}
++
++.catalog-novelty img {
++    border: 0;
++}
++
++.catalog-novelty-title {
++    display: block;
++    color: #2c2725;
++    font: 16px Georgia;
++    padding: 10px 0;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.catalog-novelty-short {
++    display: block;
++    color: #298043;
++    font: 12px Georgia;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.catalog-novelty-pic, .catalog-novelty-pic img {
++    height: 101px;
++}
++
++.catalog-right-col {
++    width: 875px;
++    float: right;
++}
++
++.cat-title {
++    width: 816px;
++    padding: 0 0 18px;
++    color: #ac3d00;
++    font: 24px Georgia;
++    border-bottom: solid 1px #dfd7c2;
++}
++
++.items-wrap {
++    font-size: 0;
++    padding: 0 0 60px;
++}
++
++.item {
++    display: inline-block;
++//display: inline;
++//zoom: 1;
++    width: 161px;
++    margin: 26px 55px 0 0;
++    vertical-align: top;
++}
++
++.item-link {
++    display: block;
++    text-decoration: none;
++    text-align: center;
++}
++
++.item-link:hover .item-title {
++    text-decoration: underline;
++}
++
++.item-link:hover .item-pic-border {
++    opacity: 1;
++    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
++    filter: alpha(opacity=100);
++}
++
++.item-top {
++    display: block;
++    width: 101px;
++    height: 24px;
++    margin: 0 auto;
++    background: #e7dfc9 url(../img/bg-item-top.jpg) no-repeat bottom center;
++    -webkit-border-top-left-radius: 5px;
++    -webkit-border-top-right-radius: 5px;
++    -moz-border-radius-topleft: 5px;
++    -moz-border-radius-topright: 5px;
++    border-top-left-radius: 5px;
++    border-top-right-radius: 5px;
++}
++
++.item-pic-wrap {
++    display: block;
++    -webkit-border-radius: 12px;
++    -moz-border-radius: 12px;
++    border-radius: 12px;
++    width: 151px;
++    height: 151px;
++    border: solid 5px #e7dfc9;
++    overflow: hidden;
++    position: relative;
++}
++
++.item-pic-border {
++    display: block;
++    position: absolute;
++    z-index: 10;
++    opacity: 0;
++    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
++    filter: alpha(opacity=0);
++    left: 0;
++    top: 0;
++    width: 151px;
++    height: 151px;
++    background: url(../img/bg-item-pic-border.png) no-repeat center;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.item-pic {
++    display: block;
++    width: 250px;
++    height: 250px;
++    position: absolute;
++    left: 50%;
++    top: 0;
++    margin: 0 0 0 -125px;
++    text-align: center;
++}
++
++.item-pic img {
++    max-width: 250px;
++    border: 0;
++}
++
++.item-title {
++    display: block;
++    font: 15px Georgia;
++    color: #2c2725;
++    padding: 15px 0;
++    text-decoration: none;
++}
++
++.item-price {
++    display: block;
++    color: #d67d00;
++    font: 15px GeorgiaBold;
++    padding: 0 0 10px 0;
++}
++
++.add-to-basket {
++    display: block;
++    margin: 0 auto; 
++   width: 106px;
++    height: 32px;
++    padding: 0 0 0 14px;
++    background: url(../img/bg-add-to-basket.png) no-repeat 0 0;
++    color: #fff;
++    text-decoration: none;
++    text-align: center;
++    font: 12px/29px GeorgiaItalic;
++}
++
++.add-to-basket:hover {
++    background-position: -120px;
++}
++
++.add-to-basket.added {
++    background: url(../img/bg-add-to-basket.png) no-repeat -240px 0;
++}
++
++.num-switcher {
++    position: relative;
++    float: right;
++    width: 32px;
++    height: 20px;
++    background: #fff;
++    margin: 5px 0 0;
++}
++
++.num-switcher .plus, .num-switcher .minus {
++    position: absolute;
++    width: 32px;
++    height: 12px;
++    background: #777;
++    left: 0;
++    cursor: pointer;
++    color: #fff;
++    font: 10px/10px Georgia;
++    text-align: center;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.num-switcher .plus {
++    top: -10px;
++}
++
++.num-switcher .minus {
++    bottom: -10px;
++}
++
++.num-switcher .plus:hover, .num-switcher .minus:hover {
++    background: #000;
++}
++
++.num-switcher .num {
++    display: block;
++    padding: 0;
++    margin: 0;
++    position: relative;
++    float: left;
++    width: 30px;
++    height: 18px;
++    border: solid 1px #777;
++    text-align: center;
++    font: 12px/18px Arial, Helvetica, sans-serif;
++}
++
++.top-grad {
++    position: absolute;
++    width: 100%;
++    left: 0;
++    top: 0;
++    height: 297px;
++    background: url(../img/bg-top-grad.jpg) repeat-x;
++}
++
++.top-grad-food-left {
++    position: absolute;
++    width: 328px;
++    height: 152px;
++    background: url(../img/bg-top-grad-food-left.png) no-repeat left top;
++    top: 0;
++    left: 0;
++}
++
++.top-grad-food-right {
++    position: absolute;
++    width: 329px;
++    height: 152px;
++    background: url(../img/bg-top-grad-food-right.png) no-repeat right top;
++    top: 0;
++    right: 0;
++}
++/*end catalog*/
++
++/*forms*/
++.overlay {
++    position: fixed;
++    left: 0;
++    top: 0;
++    width: 100%;
++    height: 100%;
++    background: #000;
++    opacity: 0.4;
++    z-index: 999;
++    cursor: pointer;
++    display: none;
++    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
++    filter: Alpha(opacity=40);
++}
++
++.form-wrapper {
++    width: 350px;
++    height: 246px;
++    background: #eee8d2;
++    display: none;
++    position: absolute;
++    left: 50%;
++    margin: 0 0 0 -175px;
++    z-index: 1000;
++    -webkit-border-radius: 5px;
++    -moz-border-radius: 5px;
++    border-radius: 5px;
++    -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 1);
++    -moz-box-shadow:    0px 0px 5px 0px rgba(0, 0, 0, 1);
++    box-shadow:         0px 0px 5px 0px rgba(0, 0, 0, 1);
++}
++
++.form-wrapper.reg {
++    width: 400px;
++    margin: 0 0 0 -200px;
++    height: 334px;
++}
++
++.form-wrapper.reg > .form-content > h1 {
++    padding: 0 0 10px 0;
++    text-align: center;
++}
++
++.form-content {
++    padding: 40px;
++    font: 14px Georgia;
++}
++
++.form-content h1 {
++    font: 24px/24px Georgia;
++    color: #ac3d00;
++    margin: 0;
++    padding: 0 0 10px 68px;
++}
++
++.form-content label {
++    display: block;
++    float: left;
++    height: 30px;
++    line-height: 30px;
++    cursor: pointer;
++}
++
++.form-content .row {
++    height: 30px;
++    padding: 7px 0;
++}
++
++.form-content .controls {
++    float: right;
++    width: 200px;
++    height: 30px;
++    position: relative;
++}
++
++.form-content .controls input[type=text],
++.form-content .controls input[type=password] {
++    border: solid 1px #777;
++    font: 14px/30px Georgia;
++    height: 28px;
++    padding: 0 5px;
++    width: 180px;
++    -webkit-border-radius: 5px;
++    -moz-border-radius: 5px;
++    border-radius: 5px;
++}
++
++.form-content .controls input[type=submit] {
++    border: 0;
++    cursor: pointer;
++    height: 30px;
++    font: 14px/30px Georgia;
++    background: #d64f06;
++    color: #fff;
++    width: 120px;
++    cursor: pointer;
++    -webkit-border-radius: 5px;
++    -moz-border-radius: 5px;
++    border-radius: 5px;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.form-content .controls input[type=submit]:hover {
++    background: #f1761c;
++}
++
++.form-content .controls input[type=submit]:active {
++    background: #FE791C;
++}
++
++.form-content .controls .wrong.indicator {
++    border: solid 1px #ff0000 !important;
++}
++
++.form-close {
++    position: absolute;
++    margin: 15px;
++    color: #ac3d00;
++    font: 15px Arial, Helvetica, sans-serif;
++    font-weight: bold;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++    top: 0;
++    right: 0;
++    cursor: pointer;
++}
++
++.form-close:hover {
++    color: #f05200;
++}
++/*end forms*/
++
++/*contacts*/
++.form-container {
++    width: 400px;
++    padding: 60px 0 20px;
++    margin: 0 auto;
++}
++
++.form-container h1 {
++    color: #AC3D00;
++    font: 24px/24px Georgia;
++    margin: 0;
++    padding: 0 0 10px 0;
++}
++
++.form-container .row {
++    padding: 10px 0;
++}
++
++.form-container .row label {
++    cursor: pointer;
++    display: block;
++    height: 30px;
++    line-height: 30px;
++}
++
++.form-container input[type=email] {
++    border: 1px solid #777777;
++    -webkit-border-radius: 5px;
++    -moz-border-radius: 5px;
++    border-radius: 5px;
++    font: 14px/30px georgia;
++    height: 28px;
++    padding: 0 5px;
++    display: block;
++    width: 100%;
++}
++.form-container input[type=password] {
++    border: 1px solid #777777;
++    -webkit-border-radius: 5px;
++    -moz-border-radius: 5px;
++    border-radius: 5px;
++    font: 14px/30px georgia;
++    height: 28px;
++    padding: 0 5px;
++    display: block;
++    width: 100%;
++}
++.form-container input[type=text] {
++    border: 1px solid #777777;
++    -webkit-border-radius: 5px;
++    -moz-border-radius: 5px;
++    border-radius: 5px;
++    font: 14px/30px Georgia;
++    height: 28px;
++    padding: 0 5px;
++    display: block;
++    width: 100%;
++}
++
++.form-container textarea {
++    border: 1px solid #777777;
++    -webkit-border-radius: 5px;
++    -moz-border-radius: 5px;
++    border-radius: 5px;
++    width: 100%;
++    padding: 5px;
++    font: 14px/16px Georgia;
++    overflow: auto;
++    resize: none;
++    height: 100px;
++}
++
++.form-container input[type=submit] {
++    background: none repeat scroll 0 0 #D64F06;
++    border: 0 none;
++    -webkit-border-radius: 5px;
++    -moz-border-radius: 5px;
++    border-radius: 5px;
++    color: #FFFFFF;
++    cursor: pointer;
++    font: 14px/30px Georgia;
++    height: 30px;
++    width: 120px;
++    transition: all 0.2s ease;
++    -moz-transition: all 0.2s ease;
++    -webkit-transition: all 0.2s ease;
++    -ms-transition: all 0.2s ease;
++}
++
++.form-container input[type=submit]:hover {
++    background: #f1761c;
++}
++
++.form-container input[type=submit]:active {
++    background: #FE791C;
++}
++
++.form-container .wrong.indicator {
++    border: solid 1px #ff0000 !important;
++}
++/*end contacts*/
++
++/*table*/
++.table-container {
++    width: 700px;
++    margin: 0 auto;
++    padding: 60px 0 20px;
++}
++
++.table-container h1 {
++    color: #AC3D00;
++    font: 24px/24px Georgia;
++    margin: 0;
++    padding: 0 0 10px 0;
++}
++
++table {
++    font: 14px Georgia;
++    margin: 10px 0;
++    border-collapse: collapse;
++    width: 100%;
++}
++
++tr {
++    padding: 0;
++}
++
++tbody tr:nth-child(even) {
++    background: #fbf9f5;
++}
++
++td {
++    padding: 10px;
++    font: 16px Georgia;
++}
++
++th {
++    background: #582C13;
++    color: #fff;
++    height: 40px;
++    font: 20px/20px Georgia;
++    text-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
++}
++/*end table*/
++
++@media screen and (max-width: 1024px) {
++    .catalog-right-col {
++        width: 700px;
++    }
++    .cat-title {
++        width: 650px;
++    }
++    .footer-link {
++        padding: 10px 10px 0;
++        font: 15px Georgia;
++        width: 100px;
++    }
++    .footer-link.catalog, .footer-link.actions, .footer-link.cook {
++        background: #008200 !important;
++    }
++    .footer-link.catalog:hover, .footer-link.actions:hover, .footer-link.cook:hover {
++        background: #009B00 !important;
++    }
++}
++
++
++.add_icon {
++    background-color: #8dcdfd;
++    border-radius: 14px;
++    color: #ffffff;
++    display: block;
++    float: left;
++    font-size: 30px;
++    height: 28px;
++    line-height: 25px;
++    text-align: center;
++    text-indent: 0;
++    width: 28px;
++}
+diff --git a/requirements.txt b/requirements.txt
+index 1351859..ccaa03d 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -21,4 +21,5 @@ django-wysiwyg-redactor==0.4.0
+ django-admin-langswitch
+ django-compressor
+ django-recaptcha
+-fabric
+\ No newline at end of file
++fabric
++django_extensions
+\ No newline at end of file
+diff --git a/templates/base.html b/templates/base.html
+index d8d072e..e5c3abd 100644
+--- a/templates/base.html
++++ b/templates/base.html
+@@ -2,6 +2,7 @@
+ {% load catalog_tag %}
+ {% load i18n %}
+ {% get_current_language as LANGUAGE_CODE %}  
++{% load banners %}
+ <html lang="en" xmlns="http://www.w3.org/1999/html">
+ <head>
+ <title>{% block meta_title %}{% endblock %}</title>
+@@ -158,6 +159,11 @@
+ </div>
+ 
+ <div align="center">
++  {% banner place %}
++</div>
++
++
++<div align="center">
+ 
+ <a href="{% url 'page' 'about' %}">{% trans 'About us' %}</a> &nbsp;|&nbsp;
+                  <a href="{% url 'page' 'advertiser' %}">{% trans 'For advertiser' %}</a>&nbsp;|&nbsp;
