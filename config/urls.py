@@ -7,8 +7,9 @@ from django.conf.urls.i18n import i18n_patterns
 from django.contrib.flatpages import views
 admin.autodiscover()
 from django.contrib.auth import views as auth_views
-
+from main.sitemap import CatalogSitemap
    
+sitemaps = { 'sitemap': CatalogSitemap }
 
 urlpatterns = patterns('',
     # Examples:
@@ -27,7 +28,8 @@ urlpatterns = patterns('',
      url(r'^search$', JournalSearchView.as_view(), name="search"),
      url(r'^', include('paymaster.urls')),
      url(r'^ckeditor/', include('ckeditor.urls')),
-    url(r'^banner_rotator/', include('banner_rotator.urls')),
+     url(r'^banner_rotator/', include('banner_rotator.urls')),
+     url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps})
 )
 
 

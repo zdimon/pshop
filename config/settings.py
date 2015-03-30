@@ -100,6 +100,8 @@ INSTALLED_APPS = (
     'rosetta',
     'paymaster',
     'captcha',
+
+    'django.contrib.sitemaps',
     
     
 )
