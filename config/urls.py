@@ -8,6 +8,7 @@ from django.contrib.flatpages import views
 admin.autodiscover()
 from django.contrib.auth import views as auth_views
 from main.sitemap import CatalogSitemap
+from django.http import HttpResponse
    
 sitemaps = { 'sitemap': CatalogSitemap }
 
@@ -29,7 +30,9 @@ urlpatterns = patterns('',
      url(r'^', include('paymaster.urls')),
      url(r'^ckeditor/', include('ckeditor.urls')),
      url(r'^banner_rotator/', include('banner_rotator.urls')),
-     url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps})
+     url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
+     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")) 
+
 )
 
 
