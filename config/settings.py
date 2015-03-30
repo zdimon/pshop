@@ -163,7 +163,7 @@ SITE_ID = 1
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'hy'
 
 TIME_ZONE = 'UTC'
 
