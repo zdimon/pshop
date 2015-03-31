@@ -30,7 +30,7 @@ urlpatterns = patterns('',
      url(r'^', include('paymaster.urls')),
      url(r'^ckeditor/', include('ckeditor.urls')),
      url(r'^banner_rotator/', include('banner_rotator.urls')),
-     url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
+     
      url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")) 
 
 )
@@ -38,6 +38,7 @@ urlpatterns = patterns('',
 
 urlpatterns += i18n_patterns(
     '',
+    url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     url(r'^catalog/(?P<slug>[^\.]+).html', JournalListView.as_view(), name="catalog"),
     url(r'^journal/(?P<slug>[^\.]+).html', JournalDetailView.as_view(), name="journal"),
     url(r'^about-us/$', views.flatpage, {'url': '/about/'}, name='about'),
