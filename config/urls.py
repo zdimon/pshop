@@ -31,8 +31,9 @@ urlpatterns = patterns('',
      url(r'^ckeditor/', include('ckeditor.urls')),
      url(r'^banner_rotator/', include('banner_rotator.urls')),
      
-     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")), 
+     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /admin/\n Host: pressinfo.am \n User-agent: Yandex \n Disallow: /admin/ \n Host: pressinfo.am", mimetype="text/plain")), 
      url(r'^googlef24707a0415e97f2.html$', lambda r: HttpResponse('''google-site-verification: googlef24707a0415e97f2.html''', mimetype="text/plain")) 
+     url(r'^yandex_587bfad4374c0ce6.html$', lambda r: HttpResponse('''<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>Verification: 587bfad4374c0ce6</body></html>''', mimetype="text/plain")) 
 
 )
 
