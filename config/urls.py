@@ -35,10 +35,9 @@ urlpatterns = patterns('',
      url(r'^googlef24707a0415e97f2.html$', lambda r: HttpResponse('''google-site-verification: googlef24707a0415e97f2.html''', mimetype="text/plain")), 
      url(r'^yandex_587bfad4374c0ce6.html$', lambda r: HttpResponse('''<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>Verification: 587bfad4374c0ce6</body></html>''', mimetype="text/html")), 
 
-     url(r'^yandex_593cb83ea862bb9e.html$', lambda r: HttpResponse('''<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>Verification: 593cb83ea862bb9e</body></html>''', mimetype="text/html")) 
+     url(r'^yandex_593cb83ea862bb9e.html$', lambda r: HttpResponse('''<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>Verification: 593cb83ea862bb9e</body></html>''', mimetype="text/html")), 
 
-
-
+     url(r'^yandex_56ce303d1d94d8a7.html$', lambda r: HttpResponse('''<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>Verification: 56ce303d1d94d8a7</body></html>''', mimetype="text/html")) 
 )
 
 
