@@ -220,7 +220,10 @@ def rss_rus(request):
     it=dom.getElementsByTagName('item')
     for i in it:
         #import pdb; pdb.set_trace()
-        items.append({ 'title': i.childNodes[1].childNodes[0].nodeValue, 'image': i.childNodes[11].getAttribute('url'), 'link': i.childNodes[3].childNodes[0].nodeValue})
+        try:
+            items.append({ 'title': i.childNodes[1].childNodes[0].nodeValue, 'image': i.childNodes[11].getAttribute('url'), 'link': i.childNodes[3].childNodes[0].nodeValue})
+        except:
+            pass
     context = {"items": items}
     return render_to_response('catalog/rss.html', context, RequestContext(request))
 
