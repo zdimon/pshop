@@ -203,10 +203,10 @@ def rss_rus(request):
     #import pdb; pdb.set_trace()
     if request.LANGUAGE_CODE == 'hy' or request.LANGUAGE_CODE == 'en':
         #url = "http://www.n-idea.am/arm/exports/yandex/"
-        url = "http://newsarmenia.am/export/rss2/full.xml"    
+        url = "http://newsarmenia.am/rss_news/?lang=am"    
     else:
         #url = "http://www.n-idea.am/rus/exports/yandex/"
-        url = "http://newsarmenia.ru/export/rss2/full.xml"
+        url = "http://newsarmenia.am/rss_news/?lang=ru"
 
 
     
