@@ -8,126 +8,580 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-22 07:55+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2015-03-16 08:36+0000\n"
+"PO-Revision-Date: 2015-02-05 17:09+0000\n"
+"Last-Translator:   <qqq@qqq.qq>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Translated-Using: django-rosetta 0.7.4\n"
 
-#: catalog/models.py:13 catalog/models.py:45 catalog/models.py:80
-msgid "Journal"
+#: banner_rotator/admin.py:43
+msgid "Main"
 msgstr ""
 
-#: catalog/models.py:14 catalog/models.py:46
-msgid "Paper"
+#: banner_rotator/admin.py:46
+msgid "Show"
 msgstr ""
 
-#: catalog/models.py:15 catalog/models.py:47
-msgid "Book"
+#: banner_rotator/admin.py:88
+#: banner_rotator/templates/admin/banner_rotator/banner/change_form.html:7
+#: banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html:11
+msgid "Log clicks"
 msgstr ""
 
-#: catalog/models.py:17
-msgid "Is published?"
-msgstr ""
-
-#: catalog/models.py:18 catalog/models.py:49 catalog/models.py:82
+#: banner_rotator/models.py:29 banner_rotator/models.py:42
+#: banner_rotator/models.py:77 catalog/models.py:24 catalog/models.py:58
+#: catalog/models.py:143
 msgid "Name"
 msgstr ""
 
-#: catalog/models.py:19 catalog/models.py:50
-msgid "Name slug"
+#: banner_rotator/models.py:30
+msgid "Create at"
 msgstr ""
 
-#: catalog/models.py:20
-msgid "type of the publication"
+#: banner_rotator/models.py:31
+msgid "Update at"
 msgstr ""
 
-#: catalog/models.py:24
-msgid "image of the category"
+#: banner_rotator/models.py:34
+msgid "campaign"
 msgstr ""
 
-#: catalog/models.py:29 catalog/models.py:58 catalog/models.py:84
-msgid "Original id"
+#: banner_rotator/models.py:35
+msgid "campaigns"
 msgstr ""
 
-#: catalog/models.py:51
-msgid "Description"
+#: banner_rotator/models.py:43 page/models.py:11
+msgid "Slug"
 msgstr ""
 
-#: catalog/models.py:52
-msgid "type of journal (magazine, paper or book)"
+#: banner_rotator/models.py:44
+msgid "Width"
 msgstr ""
 
-#: catalog/models.py:56 catalog/models.py:97
-msgid "Price"
+#: banner_rotator/models.py:45
+msgid "Height"
 msgstr ""
 
-#: catalog/models.py:57
-msgid "Journal cover"
+#: banner_rotator/models.py:49
+msgid "place"
 msgstr ""
 
-#: catalog/models.py:61
-msgid "Catalogs"
+#: banner_rotator/models.py:50
+msgid "places"
 msgstr ""
 
-#: catalog/models.py:81
-msgid "Issue cover"
+#: banner_rotator/models.py:65
+msgid "Size"
 msgstr ""
 
-#: catalog/models.py:95
-msgid "Issue"
+#: banner_rotator/models.py:70
+msgid "Current page"
 msgstr ""
 
-#: catalog/models.py:96
+#: banner_rotator/models.py:71
+msgid "Blank page"
+msgstr ""
+
+#: banner_rotator/models.py:74
+msgid "Campaign"
+msgstr ""
+
+#: banner_rotator/models.py:78
+msgid "Image alt"
+msgstr ""
+
+#: banner_rotator/models.py:80
+msgid "URL"
+msgstr ""
+
+#: banner_rotator/models.py:81
+msgid "Target"
+msgstr ""
+
+#: banner_rotator/models.py:83 banner_rotator/models.py:147
+msgid "Views"
+msgstr ""
+
+#: banner_rotator/models.py:84
+msgid "Max views"
+msgstr ""
+
+#: banner_rotator/models.py:85
+msgid "Max clicks"
+msgstr ""
+
+#: banner_rotator/models.py:87
+msgid "Weight"
+msgstr ""
+
+#: banner_rotator/models.py:87
+msgid "A ten will display 10 times more often that a one."
+msgstr ""
+
+#: banner_rotator/models.py:90
+msgid "File"
+msgstr ""
+
+#: banner_rotator/models.py:95
+msgid "Start at"
+msgstr ""
+
+#: banner_rotator/models.py:96
+msgid "Finish at"
+msgstr ""
+
+#: banner_rotator/models.py:98
+msgid "Is active"
+msgstr ""
+
+#: banner_rotator/models.py:100
+#: banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html:24
+msgid "Place"
+msgstr ""
+
+#: banner_rotator/models.py:105
+msgid "banner"
+msgstr ""
+
+#: banner_rotator/models.py:106
+msgid "banners"
+msgstr ""
+
+#: banner_rotator/models.py:141
+msgid "Clicks"
+msgstr ""
+
+#: banner_rotator/templates/admin/banner_rotator/banner/change_form.html:6
+msgid "History"
+msgstr ""
+
+#: banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html:7
+#: templates/admin/base.html:119
+#: templates/admin/templates/auth/user/change_password.html:13
+#: templates/registration/password_reset_form.html:6
+msgid "Home"
+msgstr ""
+
+#: banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html:23
+msgid "Date/time"
+msgstr ""
+
+#: banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html:25
+#: catalog/models.py:162
 msgid "User"
 msgstr ""
 
-#: catalog/views.py:66
+#: banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html:26
+msgid "IP"
+msgstr ""
+
+#: banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html:27
+msgid "User Agent"
+msgstr ""
+
+#: banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html:28
+msgid "Referrer"
+msgstr ""
+
+#: banner_rotator/templates/admin/banner_rotator/banner/object_log_clicks.html:45
+msgid ""
+"This object doesn't have a clicks log. It probably wasn't added via this "
+"admin site."
+msgstr ""
+
+#: banner_rotator/templatetags/banners.py:58
+msgid "banner tag takes three of four arguments"
+msgstr ""
+
+#: catalog/models.py:19 catalog/models.py:54 catalog/models.py:141
+#: catalog/models.py:184
+msgid "Journal"
+msgstr ""
+
+#: catalog/models.py:20 catalog/models.py:55
+msgid "Paper"
+msgstr ""
+
+#: catalog/models.py:21 catalog/models.py:56
+msgid "Book"
+msgstr ""
+
+#: catalog/models.py:23
+msgid "Is published?"
+msgstr ""
+
+#: catalog/models.py:25 catalog/models.py:59
+msgid "Name slug"
+msgstr ""
+
+#: catalog/models.py:26
+msgid "type of the publication"
+msgstr ""
+
+#: catalog/models.py:30
+msgid "image of the category"
+msgstr ""
+
+#: catalog/models.py:35 catalog/models.py:69 catalog/models.py:145
+msgid "Original id"
+msgstr ""
+
+#: catalog/models.py:36
+msgid "сортировка"
+msgstr ""
+
+#: catalog/models.py:60
+msgid "Description"
+msgstr ""
+
+#: catalog/models.py:61
+msgid "type of journal (magazine, paper or book)"
+msgstr ""
+
+#: catalog/models.py:65
+msgid "Price RUB"
+msgstr ""
+
+#: catalog/models.py:66
+msgid "Price DRAM"
+msgstr ""
+
+#: catalog/models.py:67
+msgid "Price USD"
+msgstr ""
+
+#: catalog/models.py:68
+msgid "Journal cover"
+msgstr ""
+
+#: catalog/models.py:70
+msgid "Last issue id"
+msgstr ""
+
+#: catalog/models.py:73
+msgid "Catalogs"
+msgstr ""
+
+#: catalog/models.py:74 page/models.py:8
+msgid "МЕТА content"
+msgstr ""
+
+#: catalog/models.py:75 page/models.py:9
+msgid "МЕТА title"
+msgstr ""
+
+#: catalog/models.py:76 page/models.py:10
+msgid "МЕТА keywords"
+msgstr ""
+
+#: catalog/models.py:77
+#, fuzzy
+msgid "Армянские"
+msgstr "Armenian newspapers"
+
+#: catalog/models.py:78 templates/main/home.html:45
+msgid "Ежедневные издания"
+msgstr ""
+
+#: catalog/models.py:79 templates/main/home.html:48
+#, fuzzy
+msgid "Журналы РФ"
+msgstr "Magazines"
+
+#: catalog/models.py:80
+msgid "Часто просматриваемые"
+msgstr ""
+
+#: catalog/models.py:81
+msgid "Отображать в книгах?"
+msgstr ""
+
+#: catalog/models.py:82
+msgid "Не пересчитывать цены по курсу?"
+msgstr ""
+
+#: catalog/models.py:83
+msgid "Count for pay"
+msgstr ""
+
+#: catalog/models.py:84
+msgid "Принадлежат ли категории?"
+msgstr ""
+
+#: catalog/models.py:142
+msgid "Issue cover"
+msgstr ""
+
+#: catalog/models.py:146 catalog/models.py:147
+msgid "Without cover"
+msgstr ""
+
+#: catalog/models.py:161 catalog/models.py:185
+msgid "Issue"
+msgstr ""
+
+#: catalog/models.py:163
+msgid "Price"
+msgstr ""
+
+#: catalog/models.py:168
+msgid "RUB to DRAM"
+msgstr ""
+
+#: catalog/models.py:169
+msgid "DRAM to USD"
+msgstr ""
+
+#: catalog/models.py:187
+msgid "Is reported"
+msgstr ""
+
+#: catalog/views.py:105
 msgid "Payment for magazine"
 msgstr ""
 
-#: catalog/views.py:91
+#: catalog/views.py:132
 msgid "Link to download"
 msgstr ""
 
-#: config/settings.py:102 templates/base.html:39
+#: catalog/templatetags/catalog_tag.py:13
+msgid "Журналы"
+msgstr "Magazines"
+
+#: catalog/templatetags/catalog_tag.py:15
+msgid "Газеты"
+msgstr "Newspapers"
+
+#: catalog/templatetags/catalog_tag.py:17 templates/main/home.html:58
+msgid "Книги"
+msgstr "Books"
+
+#: config/settings.py:144 templates/base.html:45 templates/base.html.py:71
 msgid "Armenian"
 msgstr ""
 
-#: config/settings.py:103 templates/base.html:45
+#: config/settings.py:145 templates/base.html:56 templates/base.html.py:67
 msgid "Russian"
 msgstr ""
 
-#: config/settings.py:104
+#: config/settings.py:146 templates/base.html:49 templates/base.html.py:60
 msgid "English"
 msgstr ""
 
-#: templates/base.html:20
-msgid "pressinfo.am"
+#: page/models.py:6
+msgid "Title"
 msgstr ""
 
-#: templates/base.html:28
+#: paymaster/models.py:17
+msgid "Создан"
+msgstr ""
+
+#: paymaster/models.py:18
+msgid "Платежная система выбрана"
+msgstr ""
+
+#: paymaster/models.py:19
+msgid "Успешно оплачен"
+msgstr ""
+
+#: paymaster/models.py:20
+msgid "Ошибка оплаты"
+msgstr ""
+
+#: paymaster/models.py:37
+msgid "пользователь"
+msgstr ""
+
+#: paymaster/models.py:39
+msgid "Заявленная сумма операции"
+msgstr ""
+
+#: paymaster/models.py:41
+msgid "описание товара"
+msgstr ""
+
+#: paymaster/models.py:46
+msgid "статус операции"
+msgstr ""
+
+#: paymaster/models.py:50
+msgid "Ammount"
+msgstr ""
+
+#: paymaster/models.py:52
+msgid "номер платежа в системе PayMaster"
+msgstr ""
+
+#: paymaster/models.py:55
+msgid "реквизиты плательщика"
+msgstr ""
+
+#: redactor/views.py:27
+msgid ""
+"ImproperlyConfigured: Neither Pillow nor PIL could be imported: No module "
+"named 'Image'"
+msgstr ""
+
+#: redactor/views.py:39
+msgid "Invalid file."
+msgstr ""
+
+#: registration/admin.py:24
+msgid "Activate users"
+msgstr ""
+
+#: registration/admin.py:44
+msgid "Re-send activation emails"
+msgstr ""
+
+#: registration/forms.py:34
+msgid "Username"
+msgstr ""
+
+#: registration/forms.py:35
+msgid "This value may contain only letters, numbers and @/./+/-/_ characters."
+msgstr ""
+
+#: registration/forms.py:36
+msgid "E-mail"
+msgstr ""
+
+#: registration/forms.py:38 templates/base.html:151
+#: templates/admin/templates/auth/user/change_password.html:38
+#: templates/registration/activation_complete.html:32
+#: templates/registration/login.html:28
+msgid "Password"
+msgstr ""
+
+#: registration/forms.py:40
+#: templates/admin/templates/auth/user/change_password.html:44
+#: templates/registration/password_change_form.html:41
+msgid "Password (again)"
+msgstr ""
+
+#: registration/forms.py:50
+msgid "A user with that username already exists."
+msgstr ""
+
+#: registration/forms.py:64
+msgid "The two password fields didn't match."
+msgstr ""
+
+#: registration/forms.py:75
+msgid "I have read and agree to the Terms of Service"
+msgstr ""
+
+#: registration/forms.py:76
+msgid "You must agree to the terms to register"
+msgstr ""
+
+#: registration/forms.py:92
+msgid ""
+"This email address is already in use. Please supply a different email "
+"address."
+msgstr ""
+
+#: registration/forms.py:119
+msgid ""
+"Registration using free email addresses is prohibited. Please supply a "
+"different email address."
+msgstr ""
+
+#: registration/models.py:186
+msgid "user"
+msgstr ""
+
+#: registration/models.py:187
+msgid "activation key"
+msgstr ""
+
+#: registration/models.py:192
+msgid "registration profile"
+msgstr ""
+
+#: registration/models.py:193
+msgid "registration profiles"
+msgstr ""
+
+#: registration/views.py:62
+msgid "I'm a human"
+msgstr ""
+
+#: templates/base.html:36 templates/base.html.py:196
 msgid "About us"
 msgstr ""
 
-#: templates/base.html:29
+#: templates/base.html:38 templates/base.html.py:201
+msgid "Help"
+msgstr ""
+
+#: templates/base.html:39 templates/base.html.py:202
 msgid "Contacts"
 msgstr ""
 
-#: templates/base.html:31
+#: templates/base.html:40
+msgid "Subscribe"
+msgstr "Subscribe to newspapers and magazines"
+
+#: templates/base.html:103
+msgid "Search"
+msgstr ""
+
+#: templates/base.html:106
+msgid "name of the magazine"
+msgstr ""
+
+#: templates/base.html:108
+msgid "Start"
+msgstr ""
+
+#: templates/base.html:118
+msgid "My area"
+msgstr ""
+
+#: templates/base.html:121
 msgid "Logout"
 msgstr ""
 
-#: templates/base.html:33 templates/registration/login.html:23
-#: templates/registration/login.html:37
+#: templates/base.html:142 templates/registration/activation_complete.html:23
+#: templates/registration/login.html:19
+msgid "Enter"
+msgstr ""
+
+#: templates/base.html:146 templates/base.html.py:161
+#: templates/registration/activation_complete.html:27
+#: templates/registration/activation_complete.html:41
+#: templates/registration/login.html:23 templates/registration/login.html:37
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:34 templates/registration/login.html:41
+#: templates/base.html:158 templates/registration/activation_complete.html:45
+#: templates/registration/login.html:41
 msgid "Registration"
+msgstr ""
+
+#: templates/base.html:165
+msgid "Forgot your password?"
+msgstr ""
+
+#: templates/base.html:197
+msgid "For advertiser"
+msgstr ""
+
+#: templates/base.html:198
+msgid "User agreement"
+msgstr ""
+
+#: templates/base.html:199
+msgid "Privacy"
+msgstr ""
+
+#: templates/base.html:200
+msgid "For publisher"
 msgstr ""
 
 #: templates/admin/base.html:51
@@ -135,14 +589,19 @@ msgid "Translate"
 msgstr ""
 
 #: templates/admin/base.html:75
+#: templates/registration/password_change_form.html:6
 msgid "Documentation"
 msgstr ""
 
 #: templates/admin/base.html:82
+#: templates/admin/templates/auth/user/change_password.html:17
+#: templates/admin/templates/auth/user/change_password.html:51
+#: templates/registration/password_change_form.html:6
 msgid "Change password"
 msgstr ""
 
 #: templates/admin/base.html:89
+#: templates/registration/password_change_form.html:6
 msgid "Log out"
 msgstr ""
 
@@ -150,22 +609,257 @@ msgstr ""
 msgid "Welcome,"
 msgstr ""
 
-#: templates/admin/base.html:119
-msgid "Home"
+#: templates/admin/templates/auth/user/add_form.html:6
+msgid ""
+"First, enter a username and password. Then, you'll be able to edit more user "
+"options."
 msgstr ""
 
-#: templates/catalog/journal_detail.html:11
-msgid "руб"
+#: templates/admin/templates/auth/user/add_form.html:8
+msgid "Enter a username and password."
 msgstr ""
 
-#: templates/catalog/journal_detail.html:21
-msgid "Купить выпуск"
+#: templates/admin/templates/auth/user/change_password.html:27
+#: templates/registration/password_change_form.html:19
+msgid "Please correct the error below."
 msgstr ""
+
+#: templates/admin/templates/auth/user/change_password.html:27
+#: templates/registration/password_change_form.html:19
+msgid "Please correct the errors below."
+msgstr ""
+
+#: templates/admin/templates/auth/user/change_password.html:31
+#, python-format
+msgid "Enter a new password for the user <strong>%(username)s</strong>."
+msgstr ""
+
+#: templates/admin/templates/auth/user/change_password.html:45
+msgid "Enter the same password as above, for verification."
+msgstr ""
+
+#: templates/catalog/buy.html:6
+msgid "Thank you for buying"
+msgstr ""
+
+#: templates/catalog/buy.html:10
+#, fuzzy
+msgid "Читать выпуск"
+msgstr "Read"
+
+#: templates/catalog/in_tags.html:10 templates/catalog/journal_detail.html:16
+#: templates/catalog/journal_list.html:14
+msgid "драм"
+msgstr "dram"
+
+#: templates/catalog/in_tags.html:12 templates/catalog/journal_detail.html:18
+#: templates/catalog/journal_list.html:16
+msgid "Бесплатно"
+msgstr "Free"
+
+#: templates/catalog/journal_detail.html:16
+#: templates/catalog/journal_list.html:14
+msgid "Стоимость"
+msgstr "Price"
+
+#: templates/catalog/journal_detail.html:20
+msgid "Последний выпуск "
+msgstr "Current issue"
+
+#: templates/catalog/journal_detail.html:20
+msgid "от"
+msgstr ""
+
+#: templates/catalog/journal_detail.html:26
+msgid "Выпуски"
+msgstr "Issue"
+
+#: templates/catalog/journal_list.html:5
+msgid "Онлайн библиотека армянских и зарубежных печатных СМИ | Pressinfo.am"
+msgstr ""
+"On-line library of Armenian and foreign printed Mass Media | pressinfo.am"
+
+#: templates/catalog/library.html:16
+msgid "Читать"
+msgstr "Read"
+
+#: templates/catalog/read_link.html:7
+msgid "Read for free"
+msgstr ""
+
+#: templates/catalog/read_link.html:9
+msgid "Archive (free)"
+msgstr ""
+
+#: templates/catalog/read_link.html:11
+msgid "Buy this issue"
+msgstr ""
+
+#: templates/catalog/read_link.html:16
+msgid "Only registered users can read it."
+msgstr ""
+
+#: templates/catalog/rss.html:2
+#, fuzzy
+msgid "Обзор прессы Армении"
+msgstr "Magazines"
+
+#: templates/main/home.html:35
+msgid "Армянские издания"
+msgstr "Armenian newspapers"
+
+#: templates/main/home.html:38
+#, fuzzy
+msgid "Журналы Армении"
+msgstr "Magazines"
+
+#: templates/main/home.html:52
+#, fuzzy
+msgid "Часто просматриваемые издания"
+msgstr "Most viewed edition"
 
 #: templates/registration/activate.html:4
 msgid "Your account is already activated!"
 msgstr ""
 
-#: templates/registration/login.html:28
-msgid "Password"
+#: templates/registration/activation_complete.html:4
+msgid "Thank you!"
 msgstr ""
+
+#: templates/registration/activation_complete.html:5
+msgid "Your account was successfully activated."
+msgstr ""
+
+#: templates/registration/activation_email.txt:2
+msgid "Регистрация на сайте"
+msgstr ""
+
+#: templates/registration/activation_email.txt:3
+msgid "Для активации вашего аккаунта необходимо перейти по ссылке:"
+msgstr ""
+
+#: templates/registration/activation_email.txt:5
+msgid "Спасибо!"
+msgstr ""
+
+#: templates/registration/activation_email_subject.txt:3
+msgid "Активация аккаунта"
+msgstr ""
+
+#: templates/registration/password_change_form.html:11
+#: templates/registration/password_change_form.html:23
+msgid "Password change"
+msgstr ""
+
+#: templates/registration/password_change_form.html:25
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: templates/registration/password_change_form.html:31
+msgid "Old password"
+msgstr ""
+
+#: templates/registration/password_change_form.html:36
+msgid "New password"
+msgstr ""
+
+#: templates/registration/password_change_form.html:47
+#: templates/registration/password_reset_confirm.html:19
+msgid "Change my password"
+msgstr ""
+
+#: templates/registration/password_reset_complete.html:8
+msgid "Password reset complete"
+msgstr ""
+
+#: templates/registration/password_reset_complete.html:10
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+
+#: templates/registration/password_reset_complete.html:12
+msgid "Log in"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:10
+msgid "Enter new password"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:12
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:16
+msgid "New password:"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:18
+msgid "Confirm password:"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:24
+msgid "Password reset unsuccessful"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:26
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: templates/registration/password_reset_done.html:8
+msgid "Password reset request"
+msgstr ""
+
+#: templates/registration/password_reset_done.html:10
+msgid "We sent link to your email to change your password."
+msgstr ""
+
+#: templates/registration/password_reset_email.html:2
+msgid "Someone asked for password reset for email"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:2
+msgid "Follow the link below"
+msgstr ""
+
+#: templates/registration/password_reset_form.html:7
+#: templates/registration/password_reset_form.html:11
+#: templates/registration/password_reset_form.html:15
+msgid "Password reset"
+msgstr ""
+
+#: templates/registration/password_reset_form.html:17
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll email "
+"instructions for setting a new one."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:21
+msgid "Email address:"
+msgstr ""
+
+#: templates/registration/password_reset_form.html:21
+msgid "Reset my password"
+msgstr ""
+
+#: templates/registration/registration_complete.html:4
+msgid "Registration was completed"
+msgstr ""
+
+#: templates/registration/registration_complete.html:6
+msgid ""
+"Thank you for registration. Letter with activation link was sent on your "
+"email."
+msgstr ""
+
+#: templates/registration/registration_form.html:3
+msgid "Registration form"
+msgstr ""
+
+#: templates/registration/registration_form.html:16
+msgid "Зарегистрироваться"
+msgstr "Registration"

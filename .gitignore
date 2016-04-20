@@ -12,3 +12,4 @@ supervisord.log
 supervisord.pid
 celerybeat.pid
 celerybeat-schedule 
+pshop.pid

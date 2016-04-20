@@ -221,7 +221,7 @@ def rss_rus(request):
     for i in it:
         #import pdb; pdb.set_trace()
         try:
-            items.append({ 'title': i.childNodes[1].childNodes[0].nodeValue, 'image': i.childNodes[11].getAttribute('url'), 'link': i.childNodes[3].childNodes[0].nodeValue})
+            items.append({ 'title': i.childNodes[1].childNodes[0].nodeValue, 'image': i.childNodes[5].getAttribute('url'), 'link': i.childNodes[3].childNodes[0].nodeValue})
         except:
             pass
     context = {"items": items}

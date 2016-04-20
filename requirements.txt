@@ -1,7 +1,7 @@
 Django==1.6.5
 south==1.0
 nodeenv
-django-mptt
+django-mptt==0.7.4
 Pillow
 pytils
 requests==2.3.0
@@ -22,7 +22,5 @@ django-admin-langswitch
 django-compressor
 django-recaptcha
 fabric
-django_extensions
-selenium==2.44
-pyrg==0.2.6
-django-ckeditor-updated==4.4.4
+django-hijack-admin
+
