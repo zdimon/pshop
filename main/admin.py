@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from hijack_admin.admin import HijackUserAdminMixin
 
 
-
+ 
 class CustomUserAdmin(UserAdmin,HijackUserAdminMixin):
     list_display = UserAdmin.list_display + ('hijack_field',)
 
