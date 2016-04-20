@@ -102,9 +102,18 @@ INSTALLED_APPS = (
     'captcha',
 
     'django.contrib.sitemaps',
-    
+    'hijack',
+    'hijack_admin'    
     
 )
+
+
+
+
+
+HIJACK_LOGIN_REDIRECT_URL = '/'  # Where admins are redirected to after hijacking a user
+HIJACK_LOGOUT_REDIRECT_URL = '/'  # Where admins are redirected to after releasing a user
+HIJACK_ALLOW_GET_REQUESTS = True
 
 RECAPTCHA_PUBLIC_KEY = '6LdVS_8SAAAAAD64_-IWB41qYEbBW9Qh3XjdaLGQ'
 RECAPTCHA_PRIVATE_KEY = '6LdVS_8SAAAAANiQzpQVCY2wTQfQTjn4P1e0cXxl'

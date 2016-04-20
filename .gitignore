@@ -13,3 +13,4 @@ supervisord.pid
 celerybeat.pid
 celerybeat-schedule 
 pshop.pid
+backup/data

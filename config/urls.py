@@ -15,6 +15,7 @@ sitemaps = { 'sitemap': CatalogSitemap }
 urlpatterns = patterns('',
     # Examples:
      url(r'^$', 'main.views.home', name='home'),
+     url(r'^hijack/', include('hijack.urls')),
      url(r'^buy/(?P<id>[^\.]+).html', 'catalog.views.buy', name="buy"),
      url(r'^rss_rus/$', 'catalog.views.rss_rus', name="rss_rus"),
      url(r'^payment/(?P<id>[^\.]+).html', 'catalog.views.payment', name="payment"),
